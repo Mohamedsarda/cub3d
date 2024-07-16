@@ -12,28 +12,36 @@
 
 typedef struct  s_init
 {
-    char    **file;
-    int     file_lines;
-    char    **map;
-    char    **coordinats;
-    char    **colors;
+	char    **file;
+	int     file_lines;
+	char    **map;
+	char    **coordinats;
+	char    **colors;
 }   t_init;
 
 
 
 typedef struct s_color
 {
-    int r;
-    int g;
-    int b;
+	int r;
+	int g;
+	int b;
 }   t_color;
+
+typedef struct s_coordinats
+{
+	char    direction;
+	int		fd;
+	struct s_coordinats *next;
+}   t_coordinats;
 
 typedef struct  s_data
 {
-    char    **map;
-    char    **coordinats;
-    t_color floor;
-    t_color sky;
+	char			**map;
+	char			**coordinats;
+	// t_coordinats	*coordinats;
+	t_color			floor;
+	t_color			sky;
 }   t_data;
 
 
