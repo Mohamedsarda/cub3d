@@ -201,6 +201,9 @@ int ft_get_data_init(t_init *init)
 
 	ft_check_file(init);
 	i = ft_get_start_pos(init, "1");
+	j = ft_get_start_pos(init, "0");
+	if ((j != -1) && j < i)
+		i = j;
 	if (i == -1)
 		return (-1);
 	j = 0;
@@ -222,6 +225,8 @@ int ft_count_cammas(char *ptr)
 
 	i = 0;
 	comma = 0;
+	if (!ptr)
+		return (-1);
 	while (ptr[i])
 	{
 		if (ptr[i] == ',' && (ptr[i + 1] && ptr[i + 1] >= '0' && ptr[i + 1] <= '9'))
@@ -269,16 +274,16 @@ int ft_get_color_data(t_init *init, t_data *data, int type)
 	return (1);
 }
 
-void    my_print(t_data *data)
-{
-	int i = 0;
-	printf("R : [%d]", data->floor.r);
-	printf("G : [%d]", data->floor.g);
-	printf("B : [%d]\n", data->floor.b);
-	printf("R : [%d]", data->sky.r);
-	printf("G : [%d]", data->sky.g);
-	printf("B : [%d]\n", data->sky.b);
-}
+// void    my_print(t_data *data)
+// {
+// 	int i = 0;
+// 	printf("R : [%d]", data->floor.r);
+// 	printf("G : [%d]", data->floor.g);
+// 	printf("B : [%d]\n", data->floor.b);
+// 	printf("R : [%d]", data->sky.r);
+// 	printf("G : [%d]", data->sky.g);
+// 	printf("B : [%d]\n", data->sky.b);
+// }
 
 void	ft_check_color(t_init *init, t_data *data)
 {
@@ -292,6 +297,11 @@ void	ft_check_color(t_init *init, t_data *data)
 		ft_check_color_print(init, data);
 }
 
+// int	ft_get_coordinats_data(t_init *init, t_data *data)
+// {
+	
+// }
+
 int ft_get_data(t_init *init, t_data *data)
 {
 	data = (t_data *)ft_calloc(sizeof(t_data));
@@ -300,30 +310,31 @@ int ft_get_data(t_init *init, t_data *data)
 	ft_get_color_data(init, data, 0);
 	ft_get_color_data(init, data, 1);
 	ft_check_color(init, data);
-	my_print(data);
+	// ft_get_coordinats_data(init, data);
+	// my_print(data);
 	return (1);
 }
 
-// void    my_print(t_init *init)
-// {
-// 	int i = 0;
-// 	while (init->map && init->map[i])
-// 	{
-// 		printf("%s", init->map[i++]);
-// 	}
-// 	i = 0;
-// 	puts("\n|\n");
-// 	while (init->colors && init->colors[i])
-// 	{
-// 		printf("%s", init->colors[i++]);
-// 	}
-// 	i = 0;
-// 	puts("|\n");
-// 	while (init->coordinats && init->coordinats[i])
-// 	{
-// 		printf("%s", init->coordinats[i++]);
-// 	}
-// }
+void    my_print(t_init *init)
+{
+	int i = 0;
+	while (init->map && init->map[i])
+	{
+		printf("%s", init->map[i++]);
+	}
+	// i = 0;
+	// puts("\n|\n");
+	// while (init->colors && init->colors[i])
+	// {
+	// 	printf("%s", init->colors[i++]);
+	// }
+	// i = 0;
+	// puts("|\n");
+	// while (init->coordinats && init->coordinats[i])
+	// {
+	// 	printf("%s", init->coordinats[i++]);
+	// }
+}
 
 
 int main()
@@ -366,6 +377,7 @@ int main()
 	if (ft_get_data_init(init) == -1)
 		return (1);
 	ft_get_data(init, &data);
+	my_print(init);
 	//
 	
 	//clean
