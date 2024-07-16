@@ -140,7 +140,6 @@ void    draw_player(t_cub *cube, double circle_center_x, double circle_center_y)
 
 int is_it_a_wall(double x, double y, t_cub *cube)
 {
-    // printf("++++++%f %f\n", x, y);
     double left = x + (tile_size / 2) - (cube->player->radius);
     double up = y + (tile_size / 2) + (cube->player->radius);
     double right = x + (tile_size / 2) + (cube->player->radius);
@@ -153,9 +152,7 @@ int is_it_a_wall(double x, double y, t_cub *cube)
     int  t_right = floor(right / tile_size);
     int  t_down = floor(down / tile_size);
     if(cube->map[t_up][t_left] == 1 || cube->map[t_down][t_right] == 1 || cube->map[t_up][t_right] == 1 || cube->map[t_down][t_left] == 1 )
-    {
         return (0);
-    }
     return (1);
 }
 
@@ -177,7 +174,6 @@ void draw_filled_circle(t_cub *cube)
         cube->player->player_x = new_player_x;
         cube->player->player_y = new_player_y;
     }
-    // printf("%f || %f\n", cube->player->player_x, cube->player->player_y);
     int circle_center_x = cube->player->player_x + (tile_size / 2);
     int circle_center_y = cube->player->player_y + (tile_size / 2);
 
@@ -191,60 +187,42 @@ void	handle_pixel(int x, int y, t_cub *cube, int map[map_row][map_cols])
 	int	i;
 	int	j;
     t_player *player;
-	j = 0;
-	i = 0;
+	j = -1;
     if(map[y][x] == 1)
     {
-        while (j < tile_size - 1)
+        while (++j < tile_size - 1)
         {
-            i = 0;
-            while (i < tile_size - 1)
-            {
+            i = -1;
+            while (++i < tile_size - 1)
                 my_mlx_pixel_put(&cube->img, (x * tile_size) + i , (y * tile_size) + j, WHITE);
-                i++;
-            }
-            j++;
         }
-        return ;
     }
-    if(map[y][x] == 0)
+    else if(map[y][x] == 0)
     {
-        while (j < tile_size - 1)
+        while (++j < tile_size - 1)
         {
-            i = 0;
-            while (i < tile_size - 1)
-            {
+            i = -1;
+            while (++i < tile_size - 1)
                 my_mlx_pixel_put(&cube->img, (x * tile_size) + i , (y * tile_size) + j, RED);
-                i++;
-            }
-            j++;
         }
-        return ;
     }
 }
 
 void	handle_pixel2(int x, int y, t_cub *cube, int map[map_row][map_cols])
 {
-    
 	int	i;
 	int	j;
 
-	j = 0;
-	i = 0;
+	j = -1;
     if(map[y][x] == 2)
     {
-        while (j < tile_size - 1)
+        while (++j < tile_size - 1)
         {
-            i = 0;
-            while (i < tile_size - 1)
-            {
+            i = -1;
+            while (++i < tile_size - 1)
                 my_mlx_pixel_put(&cube->img, (x * tile_size) + i , (y * tile_size) + j, BLACK);
-                i++;
-            }
-            j++;
         }
         draw_filled_circle(cube);
-        return ;
     }
 }
 
@@ -280,7 +258,6 @@ void	draw_per(t_cub *cube)
 
 int handle_input_key_down(int keycode, t_cub * data)
 {
-    // printf("%d\n",keycode);
     if(keycode == 124)
         data->player->turn_direction = +1;
     else if(keycode == 125)
@@ -311,7 +288,6 @@ int handle_input_key_up(int keycode, t_cub * data)
 int loop_fun(t_cub * cube)
 {
     draw_map(cube);
-    // updat
     draw_per(cube);
 	mlx_put_image_to_window(cube->mlx_con, cube->mlx_win, cube->img.img_ptr, 0, 0);
     return (0);
@@ -333,7 +309,6 @@ int main()
                                     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
                                 };
     ft_fractol_init(&cube, map);
-    // get_all_done(&cube);
     mlx_hook(cube.mlx_win, 17, 1L << 17, handle_close_button, &cube);
     mlx_hook(cube.mlx_win, 2, 0L, handle_input_key_down, &cube);
     mlx_hook(cube.mlx_win, 3, 0L, handle_input_key_up, &cube);
