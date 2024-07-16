@@ -31,7 +31,6 @@ typedef struct s_img
 
 typedef struct s_player
 {
-
 	double	player_x;
 	double	player_y;
 	int	radius;
@@ -45,12 +44,13 @@ typedef struct s_player
 
 typedef struct s_cub
 {
+	int map[map_row][map_cols];
 	void	*mlx_con;
 	void	*mlx_win;
 	t_img	img;
 	t_player *player;
 	// int		map[map_row][map_cols];
-	char	**map;
+	// char	**map;
 	char	**colors;
 	int		is;
 } t_cub;
