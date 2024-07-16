@@ -45,6 +45,7 @@ char	*ft_calloc(int count);
 int		ft_strlen(char *str);
 char	*get_next_line(int fd);
 
-
+//split
+char	**ft_split(char const *s, char c, char p);
 
 #endif
