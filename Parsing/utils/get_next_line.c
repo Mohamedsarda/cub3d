@@ -1,4 +1,4 @@
-#include "parsing.h"
+#include "../parsing.h"
 
 char    *ft_read(char *line, int fd)
 {
@@ -34,8 +34,8 @@ char    *ft_line(char *line)
 		return (NULL);
 	while (line[i] && line[i] != '\n')
 		i++;
-	if (line[i] == '\n')
-		i++;
+	// if (line[i] == '\n')
+	// 	i++;
 	ptr = ft_calloc(i + 1);
 	if (!ptr)
 		return (NULL);

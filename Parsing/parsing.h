@@ -31,6 +31,7 @@ typedef struct s_color
 typedef struct s_coordinats
 {
 	char    direction;
+	char	*path;
 	int		fd;
 	struct s_coordinats *next;
 }   t_coordinats;
@@ -38,7 +39,10 @@ typedef struct s_coordinats
 typedef struct  s_data
 {
 	char			**map;
-	char			**coordinats;
+	char			*no;
+	char			*so;
+	char			*we;
+	char			*ea;
 	// t_coordinats	*coordinats;
 	t_color			floor;
 	t_color			sky;
@@ -55,5 +59,30 @@ char	*get_next_line(int fd);
 
 //split
 char	**ft_split(char const *s, char c, char p);
+int		ft_words_counter(char const *str, char c, char p);
+
+//file 1
+int	ft_atoi(const char *str);
+int	ft_strncmp(char *s1, char *s2, size_t n);
+void    ft_putstr_fd(char *str, int fd);
+void	free_double_arr(char **tmp);
+
+//ft get init
+int ft_count_arrgs_in_file(t_init *init, char *key);
+void    ft_check_file(t_init *init);
+int	ft_check_2_cords_init(char **cords, t_data *data);
+
+//ft reading init
+
+int ft_get_data_init(t_init *init, t_data *data);
+int ft_get_coordinats_init(t_init *, t_data *datainit);
+int ft_get_colors_init(t_init *init);
+
+//error 1
+
+void	ft_check_color_print(t_data *data);
+void	ft_print_cords_err(t_init *init);
+void    ft_check_file(t_init *init);
+
 
 #endif
