@@ -1,4 +1,4 @@
-#include "parsing.h"
+#include "../parsing.h"
 
 int    ft_strlen(char *str)
 {

@@ -1,6 +1,5 @@
-#include "parsing.h"
-
-static int	ft_words_counter(char const *str, char c, char p)
+#include "../parsing.h"
+int	ft_words_counter(char const *str, char c, char p)
 {
 	int	i;
 	int	words;
