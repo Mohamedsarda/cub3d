@@ -66,7 +66,8 @@ int ft_get_coordinats_init(t_init *init, t_data *data)
 	init->coordinats[3] = ft_strdup(init->file[ea]);
 	init->coordinats[4] = NULL;
 	if (ft_check_2_cords_init(init->coordinats, data) == -1)
-		return (-1);
+		return (free_double_arr(init->coordinats), -1);
+	free_double_arr(init->coordinats);
 	return (1);
 }
 
