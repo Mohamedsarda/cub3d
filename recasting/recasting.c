@@ -26,7 +26,7 @@ t_player    *init_player(t_cub *cube)
 		x = -1;
 		while (++x < map_cols)
         {
-            if(cube->map[y][x] == 2)
+            if(cube->map[y][x] == 'N')
             {
                 player->player_x = x * tile_size + (tile_size / 2);
                 player->player_y = y * tile_size + (tile_size / 2);
@@ -35,7 +35,6 @@ t_player    *init_player(t_cub *cube)
 	}
     player->radius = 10;
     player->move_speed = 2.0;
-    // player->rotat_angle = deg2rad(90); 
     player->rotat_angle = deg2rad(270); 
     player->rotation_speed = 2 * (M_PI / 180);
     player->turn_direction = 0;
@@ -44,7 +43,7 @@ t_player    *init_player(t_cub *cube)
     return (player);
 }
 
-void    ft_fractol_init(t_cub *cube, int map[map_row][map_cols])
+void    ft_fractol_init(t_cub *cube, char **map)
 {
 
     cube->mlx_con = mlx_init();
@@ -66,14 +65,7 @@ void    ft_fractol_init(t_cub *cube, int map[map_row][map_cols])
 		mlx_destroy_window(cube->mlx_con, cube->mlx_win);
 		malloc_error();
 	}
-    int i = -1;
-    int j;
-    while (++i < map_row)
-    {
-        j = -1;
-        while (++j < map_cols)
-            cube->map[i][j] = map[i][j];
-    }
+    cube->map = map;
     cube->player = init_player(cube);
 }
 
@@ -99,7 +91,6 @@ void    draw_cube(t_cub *cube, int x, int y, int color)
 }
 
 // draw_player
-
 int is_it_a_wall(double x, double y, t_cub *cube)
 {
     double left = x - (cube->player->radius);
@@ -115,8 +106,8 @@ int is_it_a_wall(double x, double y, t_cub *cube)
     int  t_right = floor(right / tile_size);
     int  t_down = floor(down / tile_size);
 
-    if (cube->map[t_up][t_left] == 1 || cube->map[t_down][t_right] == 1
-        || cube->map[t_up][t_right] == 1 || cube->map[t_down][t_left] == 1)
+    if (cube->map[t_up][t_left] == '1' || cube->map[t_down][t_right] == '1'
+        || cube->map[t_up][t_right] == '1' || cube->map[t_down][t_left] == '1')
         return (0);
     return (1);
 }
@@ -166,7 +157,7 @@ int has_wall(t_cub *cube, double x1, double y1)
     int x = floor(x1 / tile_size);
     int y = floor(y1 / tile_size);
 
-    if (cube->map[y][x] == 1)
+    if (cube->map[y][x] == '1')
         return (1);
     return (0);
 }
@@ -412,9 +403,9 @@ void draw_view_player(t_cub *cube)
     draw_lines(cube, cube->player->player_x, cube->player->player_y);
 }
 
-void	handle_pixel2(int x, int y, t_cub *cube, int map[map_row][map_cols])
+void	handle_pixel2(int x, int y, t_cub *cube)
 {
-    if(map[y][x] == 2)
+    if(cube->map[y][x] == 'N')
     {
         draw_cube(cube, x, y, RED);
         draw_view_player(cube);
@@ -432,17 +423,17 @@ void	draw_per(t_cub *cube)
 	{
 		x = -1;
 		while (++x < map_cols)
-			handle_pixel2(x, y, cube, cube->map);
+			handle_pixel2(x, y, cube);
 	}
 }
 //end draw_player
 
 // draw_map
-void	handle_pixel(int x, int y, t_cub *cube, int map[map_row][map_cols])
+void	handle_pixel(int x, int y, t_cub *cube, char **map)
 {
-    if(map[y][x] == 1)
+    if(map[y][x] == '1')
         draw_cube(cube, x, y, WHITE);
-    else if(map[y][x] == 0)
+    else if(map[y][x] == '0')
         draw_cube(cube, x, y, RED);
 }
 
@@ -462,8 +453,9 @@ void	draw_map(t_cub *cube)
 }
 // end draw_map
 
+
 // all_black
-void	handle_pixel3(int x, int y, t_cub *cube, int map[map_row][map_cols])
+void	handle_pixel3(int x, int y, t_cub *cube)
 {
     
 	int	i;
@@ -488,7 +480,7 @@ void	draw_all_black(t_cub *cube)
 	{
 		x = -1;
 		while (++x < map_cols)
-			handle_pixel3(x, y, cube, cube->map);
+			handle_pixel3(x, y, cube);
 	}
 }
 // end all_black
@@ -548,27 +540,3 @@ int loop_fun(t_cub * cube)
     return (0);
 }
 // end hooks
-
-int main()
-{
-    t_cub cube;
-    int map[map_row][map_cols] = {  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                                    {1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1},
-                                    {1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1},
-                                    {1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1},
-                                    {1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1},
-                                    {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                                    {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                                    {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                                    {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                                    {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                                    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-                                };
-    ft_fractol_init(&cube, map);
-    mlx_hook(cube.mlx_win, 17, 1L << 17, handle_close_button, &cube);
-    mlx_hook(cube.mlx_win, 2, 0L, handle_input_key_down, &cube);
-    mlx_hook(cube.mlx_win, 3, 0L, handle_input_key_up, &cube);
-    mlx_loop_hook(cube.mlx_con, loop_fun, &cube);
-	mlx_loop(cube.mlx_con);
-
-}

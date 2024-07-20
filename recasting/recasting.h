@@ -8,8 +8,8 @@
 #include "mlx.h"
 
 #define tile_size 50
-#define map_row 11
-#define map_cols 15
+#define map_row 14
+#define map_cols 33
 
 #define FOV_ANGLE 60 * ( M_PI / 180)
 #define WALL_STRIP_WIDTH 4
@@ -49,7 +49,7 @@ typedef struct s_player
 
 typedef struct s_cub
 {
-	int map[map_row][map_cols];
+	char **map;
 	void	*mlx_con;
 	void	*mlx_win;
 	t_img	img;
@@ -58,5 +58,13 @@ typedef struct s_cub
 	int		is;
 } t_cub;
 
+void    ft_fractol_init(t_cub *cube, char **map);
+
+// hooks
+int loop_fun(t_cub * cube);
+int handle_input_key_down(int keycode, t_cub * data);
+int	handle_close_button(t_cub *data);
+int handle_input_key_up(int keycode, t_cub * data);
+// end hooks
 
 #endif

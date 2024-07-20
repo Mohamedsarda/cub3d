@@ -77,6 +77,7 @@ int	ft_check_2_cords_init(char **cords, t_data *data);
 int ft_get_data_init(t_init *init, t_data *data);
 int ft_get_coordinats_init(t_init *, t_data *datainit);
 int ft_get_colors_init(t_init *init);
+int ft_get_data(t_init *init, t_data *data);
 
 //error 1
 
