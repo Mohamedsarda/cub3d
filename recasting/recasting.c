@@ -35,7 +35,7 @@ t_player    *init_player(t_cub *cube)
 	}
     player->radius = 10;
     player->move_speed = 2.0;
-    player->rotat_angle = deg2rad(270); 
+    player->rotat_angle = deg2rad(270);
     player->rotation_speed = 2 * (M_PI / 180);
     player->turn_direction = 0;
     player->walk_direction = 0;
@@ -97,7 +97,7 @@ int is_it_a_wall(double x, double y, t_cub *cube)
     double up = y + (cube->player->radius);
     double right = x + (cube->player->radius);
     double down = y - (cube->player->radius);
-    
+
     if(left < 0 || right > WIDTH || up < 0 || down > HEIGHT)
         return (0);
 
@@ -130,27 +130,27 @@ void    draw_player(t_cub *cube, double circle_center_x, double circle_center_y)
 }
 
 void DDA(t_cub *cube, int X0, int Y0, int X1, int Y1)
-{ 
-    // calculate dx & dy 
-    int dx = X1 - X0; 
-    int dy = Y1 - Y0; 
-  
-    // calculate steps required for generating pixels 
-    int steps = abs(dx) > abs(dy) ? abs(dx) : abs(dy); 
-  
-    // calculate increment in x & y for each steps 
-    float Xinc = dx / (float)steps; 
-    float Yinc = dy / (float)steps; 
-  
-    // Put pixel for each step 
-    float X = X0; 
-    float Y = Y0; 
+{
+    // calculate dx & dy
+    int dx = X1 - X0;
+    int dy = Y1 - Y0;
+
+    // calculate steps required for generating pixels
+    int steps = abs(dx) > abs(dy) ? abs(dx) : abs(dy);
+
+    // calculate increment in x & y for each steps
+    float Xinc = dx / (float)steps;
+    float Yinc = dy / (float)steps;
+
+    // Put pixel for each step
+    float X = X0;
+    float Y = Y0;
     for (int i = 0; i <= steps; i++) {
         my_mlx_pixel_put(&cube->img, X, Y, GREEN);
-        X += Xinc; // increment in x at each step 
-        Y += Yinc; // increment in y at each step 
-    } 
-} 
+        X += Xinc; // increment in x at each step
+        Y += Yinc; // increment in y at each step
+    }
+}
 
 int has_wall(t_cub *cube, double x1, double y1)
 {
@@ -184,7 +184,7 @@ double normalizeAngle(double angle) {
 
 //     int new_line_end_x;
 //     int new_line_end_y;
-    
+
 // // first cube x_y
 //     double y_intercept = floor(circle_center_y/ tile_size) * tile_size;
 //     if(israyfacing_down == 1)
@@ -214,23 +214,23 @@ double normalizeAngle(double angle) {
 
 //     // double nexthorz_x = x_intercept;
 //     // double nexthorz_y = y_intercept;
-// // 
+// //
 //     // if(israyfacing_up == 1)
 //     //     nexthorz_y--;
 //     // while (/* condition */)
 //     // {
 //     //     if(has_wall(cube, nexthorz_x, nexthorz_y))
 //     //     {
-// // 
+// //
 //     //     }
 //     //     else
 //     //     {
 //     //         nexthorz_x += xstep;
 //     //         nexthorz_y += ystep;
 //     //     }
-// // 
+// //
 //     // }
-    
+
 //     // if(israyfacing_up == 1)
 //     //     y_intercept--;
 //     // double start_x =  x_intercept;
@@ -255,7 +255,7 @@ double normalizeAngle(double angle) {
 //     //     // b -= 1;
 //     // }
 //     // // start_y -= ystep;
-//     // // double start_y = tile_size;    
+//     // // double start_y = tile_size;
 //     // if(israyfacing_up == 1)
 //     //     start_y =  circle_center_y - start_y;
 //     // else if(israyfacing_down == 1)
@@ -269,7 +269,7 @@ double normalizeAngle(double angle) {
 //     // new_line_end_x = (circle_center_x  + (start_x * cos(j)));
 //     // new_line_end_y = (circle_center_y  + ((start_y - circle_center_y) * sin(j)));
 // //
-  
+
 //     // double y_intercept = 150;
 //     // double x_intercept = 525;
 //     // double ystep =  50;
@@ -312,17 +312,14 @@ double distanceBetweenPoints(x1, y1, x2, y2) {
 
 void draw_line(t_cub *cube, int circle_center_x, int circle_center_y, double angle)
 {
-    (void)angle;
-    cube->player->rotat_angle = normalizeAngle(cube->player->rotat_angle);
+    // angle;
+    angle = normalizeAngle(angle);
 
-    int isRayFacingDown = cube->player->rotat_angle > 0 && cube->player->rotat_angle < M_PI;
+    int isRayFacingDown = angle > 0 && angle < M_PI;
     int isRayFacingUp = !isRayFacingDown;
-    int isRayFacingRight = cube->player->rotat_angle < 0.5 * M_PI || cube->player->rotat_angle > 1.5 * M_PI;
+    int isRayFacingRight = angle < 0.5 * M_PI || angle > 1.5 * M_PI;
     int isRayFacingLeft = !isRayFacingRight;
 
-    ///////////////////////////////////////////
-    // HORIZONTAL RAY-GRID INTERSECTION CODE
-    ///////////////////////////////////////////
     int foundHorzWallHit = 0;
     double horzWallHitX = 0;
     double horzWallHitY = 0;
@@ -330,12 +327,12 @@ void draw_line(t_cub *cube, int circle_center_x, int circle_center_y, double ang
     double y_intercept = floor(circle_center_y / tile_size) * tile_size;
     y_intercept += isRayFacingDown ? tile_size : 0;
 
-    double x_intercept = circle_center_x + (y_intercept - circle_center_y) / tan(cube->player->rotat_angle);
+    double x_intercept = circle_center_x + (y_intercept - circle_center_y) / tan(angle);
 
     double ystep = tile_size;
     ystep *= isRayFacingUp ? -1 : 1;
 
-    double xstep = tile_size / tan(cube->player->rotat_angle);
+    double xstep = tile_size / tan(angle);
     xstep *= (isRayFacingLeft && xstep > 0) ? -1 : 1;
     xstep *= (isRayFacingRight && xstep < 0) ? -1 : 1;
 
@@ -345,7 +342,7 @@ void draw_line(t_cub *cube, int circle_center_x, int circle_center_y, double ang
     if (isRayFacingUp)
         nextHorzTouchY--;
 
-    while (nextHorzTouchX >= 0 && nextHorzTouchX <= WIDTH && nextHorzTouchY >= 0 && nextHorzTouchY <= HEIGHT) {
+    while (nextHorzTouchX >= 0 && nextHorzTouchX < WIDTH && nextHorzTouchY >= 0 && nextHorzTouchY < HEIGHT) {
         if (has_wall(cube, nextHorzTouchX, nextHorzTouchY)) {
             foundHorzWallHit = 1;
             horzWallHitX = nextHorzTouchX;
@@ -358,9 +355,6 @@ void draw_line(t_cub *cube, int circle_center_x, int circle_center_y, double ang
         }
     }
 
-    ///////////////////////////////////////////
-    // VERTICAL RAY-GRID INTERSECTION CODE
-    ///////////////////////////////////////////
     int foundVertWallHit = 0;
     double vertWallHitX = 0;
     double vertWallHitY = 0;
@@ -368,12 +362,12 @@ void draw_line(t_cub *cube, int circle_center_x, int circle_center_y, double ang
     x_intercept = floor(circle_center_x / tile_size) * tile_size;
     x_intercept += isRayFacingRight ? tile_size : 0;
 
-    y_intercept = circle_center_y + (x_intercept - circle_center_x) * tan(cube->player->rotat_angle);
+    y_intercept = circle_center_y + (x_intercept - circle_center_x) * tan(angle);
 
     xstep = tile_size;
     xstep *= isRayFacingLeft ? -1 : 1;
 
-    ystep = tile_size * tan(cube->player->rotat_angle);
+    ystep = tile_size * tan(angle);
     ystep *= (isRayFacingUp && ystep > 0) ? -1 : 1;
     ystep *= (isRayFacingDown && ystep < 0) ? -1 : 1;
 
@@ -383,7 +377,7 @@ void draw_line(t_cub *cube, int circle_center_x, int circle_center_y, double ang
     if (isRayFacingLeft)
         nextVertTouchX--;
 
-    while (nextVertTouchX >= 0 && nextVertTouchX <= WIDTH && nextVertTouchY >= 0 && nextVertTouchY <= HEIGHT) {
+    while (nextVertTouchX >= 0 && nextVertTouchX < WIDTH && nextVertTouchY >= 0 && nextVertTouchY < HEIGHT) {
         if (has_wall(cube, nextVertTouchX, nextVertTouchY)) {
             foundVertWallHit = 1;
             vertWallHitX = nextVertTouchX;
@@ -396,19 +390,18 @@ void draw_line(t_cub *cube, int circle_center_x, int circle_center_y, double ang
     }
 
     // Calculate both horizontal and vertical distances and choose the smallest value
-    double horzHitDistance = (foundHorzWallHit)
-        ? distanceBetweenPoints(circle_center_x, circle_center_y, horzWallHitX, horzWallHitY)
-        : __DBL_MAX__;
-    double vertHitDistance = (foundVertWallHit)
-        ? distanceBetweenPoints(circle_center_x, circle_center_y, vertWallHitX, vertWallHitY)
-        : __DBL_MAX__;
-
+    double horzHitDistance = __DBL_MAX__;
+    double vertHitDistance = __DBL_MAX__;
+    if (foundHorzWallHit)
+        horzHitDistance = distanceBetweenPoints(circle_center_x, circle_center_y, horzWallHitX, horzWallHitY);
+    if (foundVertWallHit)
+        vertHitDistance = distanceBetweenPoints(circle_center_x, circle_center_y, vertWallHitX, vertWallHitY);
     // Only store the smallest of the distances
     double wallHitX = (horzHitDistance < vertHitDistance) ? horzWallHitX : vertWallHitX;
     double wallHitY = (horzHitDistance < vertHitDistance) ? horzWallHitY : vertWallHitY;
-
     DDA(cube, circle_center_x, circle_center_y, wallHitX, wallHitY);
 }
+
 void    draw_lines(t_cub *cube, int circle_center_x, int circle_center_y)
 {
     double angle;
@@ -417,11 +410,12 @@ void    draw_lines(t_cub *cube, int circle_center_x, int circle_center_y)
     int i = 0;
     while (i < NUM_RAYS)
     {
+
         draw_line(cube, circle_center_x, circle_center_y, angle);
         angle -= FOV_ANGLE / NUM_RAYS;
         i++;
     }
-    
+
 }
 
 void draw_view_player(t_cub *cube)
@@ -448,10 +442,10 @@ void draw_view_player(t_cub *cube)
         cube->player->player_x = new_player_x;
         cube->player->player_y = new_player_y;
     }
-    
+
     draw_player(cube, cube->player->player_x, cube->player->player_y);
-    draw_line(cube, cube->player->player_x, cube->player->player_y, cube->player->rotat_angle);
-    // draw_lines(cube, cube->player->player_x, cube->player->player_y);
+    // draw_line(cube, cube->player->player_x, cube->player->player_y, cube->player->rotat_angle);
+    draw_lines(cube, cube->player->player_x, cube->player->player_y);
 }
 
 void	handle_pixel2(int x, int y, t_cub *cube)
@@ -508,7 +502,7 @@ void	draw_map(t_cub *cube)
 // all_black
 void	handle_pixel3(int x, int y, t_cub *cube)
 {
-    
+
 	int	i;
 	int	j;
 	j = -1;
@@ -567,7 +561,7 @@ int handle_input_key_down(int keycode, t_cub * data)
 int handle_input_key_up(int keycode, t_cub * data)
 {
 
-    if (keycode == 124 || keycode == 123) 
+    if (keycode == 124 || keycode == 123)
         data->player->turn_direction = 0;
     else if (keycode == 125 || keycode == 126)
         data->player->walk_direction = 0;
@@ -577,7 +571,7 @@ int handle_input_key_up(int keycode, t_cub * data)
 void    update_player(t_cub * cube)
 {
     cube->player->rotat_angle += cube->player->turn_direction * cube->player->rotation_speed;
-    
+
 }
 
 int loop_fun(t_cub * cube)
