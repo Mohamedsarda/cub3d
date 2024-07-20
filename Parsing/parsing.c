@@ -199,15 +199,15 @@ int	ft_check_map(char **map)
     return (1);
 }
 
-char	**ft_change_map(t_init *init)
+void	ft_change_map(t_init *init, t_data *data)
 {
 	int	i = 0;
 	int	j = 0;
 	int len = 0;
 	int tmp_len = 0;
-	char	**dst = (char **)ft_calloc((init->file_lines + 1) * sizeof(char *));
-	if (!dst)
-		return (NULL);
+	data->map = (char **)ft_calloc((init->file_lines + 1) * sizeof(char *));
+	if (!data->map)
+		return ;
 	while (init->map[i])
 	{
 		tmp_len = ft_strlen(init->map[i]);
@@ -219,41 +219,38 @@ char	**ft_change_map(t_init *init)
 	while (init->map[i])
 	{
 		j = 0;
-		dst[i] = ft_calloc(len + 1);
-		if (!dst[i])
-			return (NULL);
+		data->map[i] = ft_calloc(len + 1);
+		if (!data->map[i])
+			return ;
 		while (init->map[i][j])
 		{
 			if (init->map[i][j] == ' ')
-				dst[i][j] = '$';
+				data->map[i][j] = '$';
 			else
-				dst[i][j] = init->map[i][j];
+				data->map[i][j] = init->map[i][j];
 			j++;
 		}
 		while (j < len)
-			dst[i][j++] = '$';
-		dst[i][j] = 0;
+			data->map[i][j++] = '$';
+		data->map[i][j] = 0;
 		i++;
 	}
-	dst[i] = NULL;
-	return (dst);
+	data->map[i] = NULL;
+	return ;
 }
 
 int ft_get_data(t_init *init, t_data *data)
 {
-	data = (t_data *)ft_calloc(sizeof(t_data));
-	if (!data)
-		return (-1);
 	ft_get_color_data(init, data, 0);
 	ft_get_color_data(init, data, 1);
 	free_double_arr(init->colors);
 	ft_check_color(data);
-	data->map = ft_change_map(init);
+	ft_change_map(init, data);
 	if (ft_check_map(data->map) == -1)
 		return (-1);
-	int i =0;
-	while (data->map[i])
-		printf("[%s]\n", data->map[i++]);
+	// int i =0;
+	// while (data->map[i])
+	// 	printf("[%s]\n", data->map[i++]);
 	free_double_arr(init->map);
 	free_double_arr(init->file);
 	// free(data->ea);
@@ -272,52 +269,4 @@ void    my_print(t_init *init)
 	{
 		printf("[%s]\n", init->map[i++]);
 	}
-}
-
-
-int main()
-{
-	// atexit(ff);
-	int fd = open("./Maps/map_1.cub", O_RDONLY);
-	char *tmp;
-
-	if (fd == -1 || fd == -1)
-		return (1);
-	t_init *init;
-	t_data data;
-
-	init = (t_init *)ft_calloc(sizeof(t_init));
-	if (!init)
-		return (1);
-	int i = 0;
-	while (1)
-	{
-		tmp = get_next_line(fd);
-		if (!tmp)
-			break ;
-		free(tmp);
-		i++;
-	}
-	init->file_lines = i;
-	close(fd);
-	fd = open("./Maps/map_1.cub", O_RDONLY);
-	init->file = (char **)ft_calloc((i + 1) * sizeof(t_init *));
-	i = 0;
-	while (1)
-	{
-		init->file[i] = get_next_line(fd);
-		if (!init->file[i])
-			break ;
-		i++;
-	}
-	close(fd);
-	if (ft_get_data_init(init, &data) == -1)
-		return (1);
-	if (ft_get_data(init, &data) == -1)
-		return (ft_check_map_print(&data), 1);
-	// my_print(init);
-	//
-
-	//clean
-	// free_double_arr(init->file);
 }
