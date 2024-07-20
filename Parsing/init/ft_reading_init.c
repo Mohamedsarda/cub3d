@@ -31,10 +31,13 @@ int ft_get_data_init(t_init *init, t_data *data)
 	if (i == -1)
 		return (-1);
 	j = 0;
-	init->map = (char **)ft_calloc((init->file_lines - i + 1) * sizeof(char *));
+	int map = init->file_lines - i;
+	while (ft_strncmp(init->file[--init->file_lines], "\n", 1) == -10)
+		map--;
+	init->map = (char **)ft_calloc((map + 1) * sizeof(char *));
 	if (!init->map)
 		return (-1);
-	while (init->file[i])
+	while (j < map)
 		init->map[j++] = ft_strdup(init->file[i++]);
 	init->map[j] = NULL;
 	ft_get_colors_init(init);
