@@ -11,6 +11,11 @@
 #define map_row 11
 #define map_cols 15
 
+#define FOV_ANGLE 60 * ( M_PI / 180)
+#define WALL_STRIP_WIDTH 4
+#define NUM_RAYS 50
+#define line_leng 200
+
 #define WIDTH map_cols * tile_size
 #define HEIGHT map_row * tile_size
 
@@ -49,8 +54,6 @@ typedef struct s_cub
 	void	*mlx_win;
 	t_img	img;
 	t_player *player;
-	// int		map[map_row][map_cols];
-	// char	**map;
 	char	**colors;
 	int		is;
 } t_cub;

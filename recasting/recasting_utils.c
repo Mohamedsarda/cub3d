@@ -40,7 +40,7 @@ t_player    *init_player(t_cub *cube)
 	}
     player->radius = 10;
     player->move_speed = 2.0;
-    player->rotat_angle = M_PI;
+    player->rotat_angle = M_PI * 3 / 2; 
     player->rotation_speed = 2 * (M_PI / 180);
     player->turn_direction = 0;
     player->walk_direction = 0;
@@ -94,49 +94,28 @@ void my_mlx_pixel_put(t_img *img, int x, int y, int color)
 	*(unsigned int *)(img->pixels_ptr + offset) = color;
 }
 
-void draw_line(t_cub *cube, int circle_center_x, int circle_center_y)
-{
-    int line_end_x = circle_center_x + (50 * cos(cube->player->rotat_angle));
-    int line_end_y = circle_center_y + (50 * sin(cube->player->rotat_angle));
-
-    int dx = abs(line_end_x - circle_center_x);
-    int sx = circle_center_x < line_end_x ? 1 : -1;
-    int dy = -abs(line_end_y - circle_center_y);
-    int sy = circle_center_y < line_end_y ? 1 : -1;
-    int err = dx + dy;
-    while (1)
-    {
-        my_mlx_pixel_put(&cube->img, circle_center_x, circle_center_y, GREEN);
-        if (circle_center_x == line_end_x && circle_center_y == line_end_y)
-            break;
-        int e2 = 2 * err;
-        if (e2 >= dy)
-        {
-            err += dy;
-            circle_center_x += sx;
-        }
-        if (e2 <= dx)
-        {
-            err += dx;
-            circle_center_y += sy;
-        }
-    }
-}
-
-void    draw_player(t_cub *cube, double circle_center_x, double circle_center_y)
-{
-    int x, y;
-    for (y = -cube->player->radius; y <= cube->player->radius; y++)
-    {
-        for (x = -cube->player->radius; x <= cube->player->radius; x++)
-        {
-            if (x * x + y * y <= cube->player->radius * cube->player->radius)
-                my_mlx_pixel_put(&cube->img, circle_center_x + x, circle_center_y + y, BLUE);
-            else
-                my_mlx_pixel_put(&cube->img, circle_center_x + x, circle_center_y + y, BLACK);
-        }
-    }
-}
+void DDA(t_cub *cube, int circle_center_x, int circle_center_y, int X1, int Y1)
+{ 
+    // calculate dx & dy 
+    int dx = X1 - circle_center_x; 
+    int dy = Y1 - circle_center_y; 
+  
+    // calculate steps required for generating pixels 
+    int steps = abs(dx) > abs(dy) ? abs(dx) : abs(dy); 
+  
+    // calculate increment in x & y for each steps 
+    float Xinc = dx / (float)steps; 
+    float Yinc = dy / (float)steps; 
+  
+    // Put pixel for each step 
+    float X = circle_center_x; 
+    float Y = circle_center_y; 
+    for (int i = 0; i <= steps; i++) {
+        my_mlx_pixel_put(&cube->img, X, Y, GREEN);
+        X += Xinc; // increment in x at each step 
+        Y += Yinc; // increment in y at each step 
+    } 
+} 
 
 int is_it_a_wall(double x, double y, t_cub *cube)
 {
@@ -151,12 +130,90 @@ int is_it_a_wall(double x, double y, t_cub *cube)
     int  t_up = floor(up / tile_size);
     int  t_right = floor(right / tile_size);
     int  t_down = floor(down / tile_size);
-    if(cube->map[t_up][t_left] == 1 || cube->map[t_down][t_right] == 1 || cube->map[t_up][t_right] == 1 || cube->map[t_down][t_left] == 1 )
+    if (cube->map[t_up][t_left] == 1 || cube->map[t_down][t_right] == 1
+        || cube->map[t_up][t_right] == 1 || cube->map[t_down][t_left] == 1)
         return (0);
     return (1);
 }
 
-void draw_filled_circle(t_cub *cube)
+void draw_line(t_cub *cube, int circle_center_x, int circle_center_y, double j)
+{
+    int new_line_end_x;
+    int new_line_end_y;
+    int i = 0;
+    while (1)
+    {
+        new_line_end_x = circle_center_x + (i * cos(cube->player->rotat_angle + (11 * M_PI / 6) + j));
+        new_line_end_y = circle_center_y + (i * sin(cube->player->rotat_angle + (11 * M_PI / 6) + j));
+        if(cube->map[new_line_end_y / tile_size][new_line_end_x / tile_size] == 0
+            || cube->map[new_line_end_y / tile_size][new_line_end_x / tile_size] == 2)
+            i++;
+        else
+            break;
+    }
+    while (1)
+    {
+        new_line_end_x = circle_center_x + (i * cos(cube->player->rotat_angle + (11 * M_PI / 6) + j));
+        new_line_end_y = circle_center_y + (i * sin(cube->player->rotat_angle + (11 * M_PI / 6) + j));
+        if(cube->map[new_line_end_y / tile_size][new_line_end_x / tile_size] == 1)
+            i--;
+        else
+            break;
+    }
+    DDA(cube, circle_center_x, circle_center_y, new_line_end_x, new_line_end_y);
+    // int line_end_x = circle_center_x + (50 * cos(cube->player->rotat_angle));
+    // int line_end_y = circle_center_y + (50 * sin(cube->player->rotat_angle));
+    // 
+    // int dx = abs(line_end_x - circle_center_x);
+    // int sx = circle_center_x < line_end_x ? 1 : -1;
+    // int dy = -abs(line_end_y - circle_center_y);
+    // int sy = circle_center_y < line_end_y ? 1 : -1;
+    // int err = dx + dy;
+    // while (1)
+    // {
+    //     my_mlx_pixel_put(&cube->img, circle_center_x, circle_center_y, GREEN);
+    //     if (circle_center_x == line_end_x && circle_center_y == line_end_y)
+    //         break;
+    //     int e2 = 2 * err;
+    //     if (e2 >= dy)
+    //     {
+    //         err += dy;
+    //         circle_center_x += sx;
+    //     }
+    //     if (e2 <= dx)
+    //     {
+    //         err += dx;
+    //         circle_center_y += sy;
+    //     }
+    // }
+}
+
+void draw_lines(t_cub *cube, int circle_center_x, int circle_center_y)
+{
+    double i = 0;
+    double test = 0;
+    while(i < 180)
+    {
+        draw_line(cube, circle_center_x, circle_center_y, test);
+        i++;
+        test += ((5 * M_PI / 3) / (tile_size * 3));
+    }
+}
+
+void    draw_player(t_cub *cube, double circle_center_x, double circle_center_y)
+{
+    int x, y;
+    for (y = -cube->player->radius; y <= cube->player->radius; y++)
+    {
+        for (x = -cube->player->radius; x <= cube->player->radius; x++)
+        {
+            if (x * x + y * y <= cube->player->radius * cube->player->radius)
+                my_mlx_pixel_put(&cube->img, circle_center_x + x, circle_center_y + y, BLUE);
+        }
+    }
+}
+
+void draw_view_player(t_cub *cube)
 {
     int movestep = cube->player->walk_direction * cube->player->move_speed;
     cube->player->rotat_angle += cube->player->turn_direction * cube->player->rotation_speed;
@@ -168,8 +225,10 @@ void draw_filled_circle(t_cub *cube)
     {
         if (cube->player->walk_direction != 0)
         {
-            cube->player->player_x += cube->player->walk_direction * cube->player->move_speed * cos(cube->player->rotat_angle);
-            cube->player->player_y += cube->player->walk_direction * cube->player->move_speed * sin(cube->player->rotat_angle);
+            cube->player->player_x += movestep * cos(cube->player->rotat_angle);
+            cube->player->player_y += movestep * sin(cube->player->rotat_angle);
+            // cube->player->player_x += cube->player->walk_direction * cube->player->move_speed * cos(cube->player->rotat_angle);
+            // cube->player->player_y += cube->player->walk_direction * cube->player->move_speed * sin(cube->player->rotat_angle);
         }
         cube->player->player_x = new_player_x;
         cube->player->player_y = new_player_y;
@@ -178,7 +237,7 @@ void draw_filled_circle(t_cub *cube)
     int circle_center_y = cube->player->player_y + (tile_size / 2);
 
     draw_player(cube, circle_center_x, circle_center_y);
-    draw_line(cube, circle_center_x, circle_center_y);
+    draw_lines(cube, circle_center_x, circle_center_y);
 }
 
 void	handle_pixel(int x, int y, t_cub *cube, int map[map_row][map_cols])
@@ -220,9 +279,9 @@ void	handle_pixel2(int x, int y, t_cub *cube, int map[map_row][map_cols])
         {
             i = -1;
             while (++i < tile_size - 1)
-                my_mlx_pixel_put(&cube->img, (x * tile_size) + i , (y * tile_size) + j, BLACK);
+                my_mlx_pixel_put(&cube->img, (x * tile_size) + i , (y * tile_size) + j, RED);
         }
-        draw_filled_circle(cube);
+        draw_view_player(cube);
     }
 }
 
@@ -258,10 +317,13 @@ void	draw_per(t_cub *cube)
 
 int handle_input_key_down(int keycode, t_cub * data)
 {
+    // printf("%d\n", keycode);
     if(keycode == 124)
         data->player->turn_direction = +1;
     else if(keycode == 125)
         data->player->walk_direction = -1;
+    else if(keycode == 13)
+        mlx_clear_window(data->mlx_con, data->mlx_win);
     else if(keycode == 123)
         data->player->turn_direction = -1;
     else if(keycode == 126)
@@ -289,6 +351,7 @@ int loop_fun(t_cub * cube)
 {
     draw_map(cube);
     draw_per(cube);
+    mlx_clear_window(cube->mlx_con, cube->mlx_win);
 	mlx_put_image_to_window(cube->mlx_con, cube->mlx_win, cube->img.img_ptr, 0, 0);
     return (0);
 }
