@@ -1,13 +1,13 @@
 #include "../parsing.h"
 
-static int	ft_sign_1(const char str)
+static int	ft_sign_1(char str)
 {
 	if (str == '-')
 		return (-1);
 	return (1);
 }
 
-int	ft_atoi(const char *str)
+int	ft_atoi(char *str)
 {
 	long int	nbr;
 	long int	nb;

@@ -1,5 +1,5 @@
 #include "../parsing.h"
-int	ft_words_counter(char const *str, char c, char p)
+int	ft_words_counter(char *str, char c, char p)
 {
 	int	i;
 	int	words;
@@ -22,7 +22,7 @@ int	ft_words_counter(char const *str, char c, char p)
 	return (words);
 }
 
-static int	ft_word_len(char const *str, char c, char p)
+static int	ft_word_len(char *str, char c, char p)
 {
 	int	i;
 
@@ -46,7 +46,7 @@ static void	*ft_free(char **arr, int i)
 	return (NULL);
 }
 
-static char	**ft_putword(char const *str, char c, char p, char **dst)
+static char	**ft_putword(char *str, char c, char p, char **dst)
 {
 	int	i;
 	int	len;
@@ -61,7 +61,7 @@ static char	**ft_putword(char const *str, char c, char p, char **dst)
 		while (*str == c || *str == p)
 			str++;
 		len = ft_word_len(str, c, p);
-		dst[i] = (char *)malloc(len * sizeof(char) + 1);
+		dst[i] = (char *)ft_calloc(len * sizeof(char) + 1);
 		if (!dst[i])
 			return (ft_free(dst, i));
 		j = 0;
@@ -74,7 +74,7 @@ static char	**ft_putword(char const *str, char c, char p, char **dst)
 	return (dst);
 }
 
-char	**ft_split(char const *s, char c, char p)
+char	**ft_split(char *s, char c, char p)
 {
 	char	**dst;
 	int		words;
@@ -86,7 +86,7 @@ char	**ft_split(char const *s, char c, char p)
 	if (*s == '\0')
 		return (NULL);
 	words = ft_words_counter(s, c, p);
-	dst = (char **)malloc((words + 1) * sizeof(char *));
+	dst = (char **)ft_calloc((words + 1) * sizeof(char *));
 	if (!dst)
 		return (NULL);
 	dst = ft_putword(s, c, p, dst);
