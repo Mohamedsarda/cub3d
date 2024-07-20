@@ -11,7 +11,7 @@
 #define map_row 14
 #define map_cols 33
 
-#define FOV_ANGLE 60 * ( M_PI / 180)
+#define FOV_ANGLE M_PI / 3
 #define WALL_STRIP_WIDTH 4
 #define NUM_RAYS 50
 #define line_leng 200
