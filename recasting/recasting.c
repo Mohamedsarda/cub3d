@@ -331,23 +331,7 @@ t_vars  draw_line(t_cub *cube, int circle_center_x, int circle_center_y, double 
     return (vars);
 }
 
-void ft_draw_3d(t_cub *cube, int x, int y, int width, int height)
-{
-    for (int i = 0; i < width; i++)
-    {
-        for (int j = 0; j < height; j++)
-        {
-            int draw_x = x + i;
-            int draw_y = y + j;
 
-            // Ensure we do not draw outside the bounds
-            if (draw_x >= 0 && draw_x < (cube->data->map_cols * tile_size) && draw_y >= 0 && draw_y < (cube->data->map_row * tile_size))
-            {
-                my_mlx_pixel_put(&cube->img, draw_x, draw_y, WHITE);
-            }
-        }
-    }
-}
 
 void    draw_lines(t_cub *cube, int circle_center_x, int circle_center_y)
 {
@@ -361,27 +345,42 @@ void    draw_lines(t_cub *cube, int circle_center_x, int circle_center_y)
         angle -= FOV_ANGLE / NUM_RAYS;
         i++;
     }
-
 }
+
+void ft_draw_3d(t_cub *cube, int x, int y, int width, int height)
+{
+    for (int i = 0; i < width; i++)
+    {
+        for (int j = 0; j < height; j++)
+        {
+            int draw_x = x + i;
+            int draw_y = y + j;
+            if (draw_x >= 0 && draw_x < (cube->data->map_cols * tile_size) && draw_y >= 0 && draw_y < (cube->data->map_row * tile_size))
+                my_mlx_pixel_put(&cube->img, draw_x, draw_y, WHITE);
+        }
+    }
+}
+
+
 // void draw_lines(t_cub *cube, int circle_center_x, int circle_center_y)
-void    draw_lines_3D(t_cub *cube, int circle_center_x, int circle_center_y)
+void draw_lines_3D(t_cub *cube, int circle_center_x, int circle_center_y)
 {
     double angle = cube->player->rotat_angle - FOV_ANGLE / 2;
+    double distancePlane = ((cube->data->map_cols * tile_size) / 2) / tan(FOV_ANGLE / 2);
 
     for (int i = 0; i < NUM_RAYS; i++)
     {
         t_vars vars = draw_line(cube, circle_center_x, circle_center_y, angle);
         double rayDistance = vars.distance;
-        double distancePlane = ((cube->data->map_cols * tile_size) / 2) / tan(FOV_ANGLE / 2);
 
-        // Calculate wall height
+        // Calculate wall height based on the distance from the player to the wall
         double wallHeight = (tile_size / rayDistance) * distancePlane;
 
         // Calculate the top-left corner of the rectangle
         int rect_x = i;
         int rect_y = (cube->data->map_row / 2) - (wallHeight / 2);
 
-        // Draw the vertical slice of the wall
+        // Debugging prints
         // printf("[%d] [%d] [%d]\n", rect_x, rect_y, (int)wallHeight);
         ft_draw_3d(cube, rect_x, rect_y, 2, (int)wallHeight);
         angle += FOV_ANGLE / NUM_RAYS;
