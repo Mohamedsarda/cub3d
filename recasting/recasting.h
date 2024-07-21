@@ -6,10 +6,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "mlx.h"
+#include "../Parsing/parsing.h"
 
 #define tile_size 50
-#define map_row 14
-#define map_cols 33
+// #define map_row 14
+// #define map_cols 33
 
 #define FOV_ANGLE M_PI / 3
 #define WALL_STRIP_WIDTH 4
@@ -82,9 +83,10 @@ typedef struct s_cub
 	t_player *player;
 	char	**colors;
 	int		is;
+	t_data	*data;
 } t_cub;
 
-void    ft_fractol_init(t_cub *cube, char **map);
+void    ft_fractol_init(t_cub *cube);
 
 // hooks
 int loop_fun(t_cub * cube);

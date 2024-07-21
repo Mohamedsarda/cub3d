@@ -165,32 +165,32 @@ int	check_only_space(char *str)
 	return (1);
 }
 
-int	ft_check_map(char **map)
+int	ft_check_map(t_data *data)
 {
     int i = 0;
     int j;
 
 	// check if space 1 0 E N W S D
 	int lines = 0;
-	while (map[lines])
+	while (data->map[lines])
 		lines++;
-	
+	data->map_row = lines;
 	i = 0;
-	if (ft_map_check_words(map) == -1)
-		return (puts("?"),free_double_arr(map), -1);
-    while (map[i])
+	if (ft_map_check_words(data->map) == -1)
+		return (-1);
+    while (data->map[i])
     {
         j = 0;
-		// if (check_only_space(map[i]) == 1)
+		// if (check_only_space(data->map[i]) == 1)
 		// 	return (puts("space"),-1);
-        while (map[i][j])
+        while (data->map[i][j])
         {
-			if (map[i][j] == '\t')
+			if (data->map[i][j] == '\t')
 				return (puts("tab"), -1);
-            if (ft_check_char(map[i][j], 0) 
-			&& (map[i][j + 1] == '$' || map[i][j - 1] == '$'  || j == 0 || j == (ft_strlen(map[i]) - 1)))
+            if (ft_check_char(data->map[i][j], 0)
+			&& (data->map[i][j + 1] == '$' || data->map[i][j - 1] == '$'  || j == 0 || j == (ft_strlen(data->map[i]) - 1)))
                 return (puts("1"),-1);
-            if (ft_check_char(map[i][j], 0) && ((i == (lines -1)) || map[i + 1][j] == '$' || (i != 0 && map[i - 1][j] == '$') || i == 0))
+            if (ft_check_char(data->map[i][j], 0) && ((i == (lines -1)) || data->map[i + 1][j] == '$' || (i != 0 && data->map[i - 1][j] == '$') || i == 0))
                 return (-1);
             j++;
         }
@@ -215,6 +215,7 @@ void	ft_change_map(t_init *init, t_data *data)
 			len = tmp_len;
 		i++;
 	}
+	data->map_cols = len;
 	i = 0;
 	while (init->map[i])
 	{
@@ -246,7 +247,7 @@ int ft_get_data(t_init *init, t_data *data)
 	free_double_arr(init->colors);
 	ft_check_color(data);
 	ft_change_map(init, data);
-	if (ft_check_map(data->map) == -1)
+	if (ft_check_map(data) == -1)
 		return (-1);
 	// int i =0;
 	// while (data->map[i])

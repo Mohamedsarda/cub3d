@@ -21,12 +21,12 @@ t_player    *init_player(t_cub *cube)
     player = (t_player *)malloc(sizeof(t_player));
     if (!player)
         malloc_error();
-	while (++y < map_row)
+	while (++y < cube->data->map_row)
 	{
 		x = -1;
-		while (++x < map_cols)
+		while (++x < cube->data->map_cols)
         {
-            if(cube->map[y][x] == 'N')
+            if(cube->data->map[y][x] == 'N')
             {
                 player->player_x = x * tile_size + (tile_size / 2);
                 player->player_y = y * tile_size + (tile_size / 2);
@@ -43,16 +43,16 @@ t_player    *init_player(t_cub *cube)
     return (player);
 }
 
-void    ft_fractol_init(t_cub *cube, char **map)
+void    ft_fractol_init(t_cub *cube)
 {
 
     cube->mlx_con = mlx_init();
 	if(!cube->mlx_con)
 		malloc_error();
-	cube->mlx_win = mlx_new_window(cube->mlx_con, WIDTH, HEIGHT, "Cub3D");
+	cube->mlx_win = mlx_new_window(cube->mlx_con, cube->data->map_cols * tile_size, cube->data->map_row * tile_size, "Cub3D");
 	if(!cube->mlx_win)
 		malloc_error();
-	cube->img.img_ptr = mlx_new_image(cube->mlx_con, WIDTH, HEIGHT);
+	cube->img.img_ptr = mlx_new_image(cube->mlx_con, cube->data->map_cols * tile_size, cube->data->map_row * tile_size);
 	if(!cube->img.img_ptr)
 	{
 		mlx_destroy_window(cube->mlx_con, cube->mlx_win);
@@ -65,7 +65,6 @@ void    ft_fractol_init(t_cub *cube, char **map)
 		mlx_destroy_window(cube->mlx_con, cube->mlx_win);
 		malloc_error();
 	}
-    cube->map = map;
     cube->player = init_player(cube);
 }
 
@@ -98,7 +97,7 @@ int is_it_a_wall(double x, double y, t_cub *cube)
     double right = x + (cube->player->radius);
     double down = y - (cube->player->radius);
 
-    if(left < 0 || right > WIDTH || up < 0 || down > HEIGHT)
+    if(left < 0 || right > cube->data->map_cols * tile_size || up < 0 || down > cube->data->map_row * tile_size)
         return (0);
 
     int  t_left = floor(left / tile_size);
@@ -106,8 +105,8 @@ int is_it_a_wall(double x, double y, t_cub *cube)
     int  t_right = floor(right / tile_size);
     int  t_down = floor(down / tile_size);
 
-    if (cube->map[t_up][t_left] == '1' || cube->map[t_down][t_right] == '1'
-        || cube->map[t_up][t_right] == '1' || cube->map[t_down][t_left] == '1')
+    if (cube->data->map[t_up][t_left] == '1' || cube->data->map[t_down][t_right] == '1'
+        || cube->data->map[t_up][t_right] == '1' || cube->data->map[t_down][t_left] == '1')
         return (0);
     return (1);
 }
@@ -157,7 +156,7 @@ int has_wall(t_cub *cube, double x1, double y1)
     int x = floor(x1 / tile_size);
     int y = floor(y1 / tile_size);
 
-    if (cube->map[y][x] == '1')
+    if (cube->data->map[y][x] == '1')
         return (1);
     return (0);
 }
@@ -239,12 +238,12 @@ double normalizeAngle(double angle) {
 //     // printf("%d, %d\n", a, b);
 
 // // up down
-//     // while (start_x >= 0 && start_x <= WIDTH && start_y >= 0 && start_y <= HEIGHT)
+//     // while (start_x >= 0 && start_x <= cube->data->map_cols * tile_size && start_y >= 0 && start_y <= cube->data->map_row * tile_size)
 //     // {
 //     //     int a = floor(start_x / tile_size);
 //     //     int b = floor(start_y / tile_size);
 //     //     // printf("%d, %d\n", a, b);
-//     //     if(cube->map[b][a] == '1')
+//     //     if(cube->data->map[b][a] == '1')
 //     //     {
 //     //         // puts("++++");
 //     //         break;
@@ -285,7 +284,7 @@ double normalizeAngle(double angle) {
 //     // {
 //     //     f_x = start_x / tile_size;
 //     //     f_y = start_y / tile_size;
-//     //     if(cube->map[f_y][f_x] == 1)
+//     //     if(cube->data->map[f_y][f_x] == 1)
 //     //     {
 //     //         printf("f-y = %d | f-x = %d\n", f_y, f_x);
 //     //         printf("start_y = %f | start_x = %f\n", start_y, start_x);
@@ -335,7 +334,7 @@ void    ft_draw_hero(t_cub *cube, t_vars *vars, int circle_center_x, int circle_
     if (vars->isRayFacingUp)
         vars->nextHorzTouchY--;
 
-    while (vars->nextHorzTouchX >= 0 && vars->nextHorzTouchX < WIDTH && vars->nextHorzTouchY >= 0 && vars->nextHorzTouchY < HEIGHT) {
+    while (vars->nextHorzTouchX >= 0 && vars->nextHorzTouchX < cube->data->map_cols * tile_size && vars->nextHorzTouchY >= 0 && vars->nextHorzTouchY < cube->data->map_row * tile_size) {
         if (has_wall(cube, vars->nextHorzTouchX, vars->nextHorzTouchY)) {
             vars->foundHorzWallHit = 1;
             vars->horzWallHitX = vars->nextHorzTouchX;
@@ -377,7 +376,7 @@ void    ft_draw_ver(t_cub *cube, t_vars *vars, int circle_center_x, int circle_c
     if (vars->isRayFacingLeft)
         vars->nextVertTouchX--;
 
-    while (vars->nextVertTouchX >= 0 && vars->nextVertTouchX < WIDTH && vars->nextVertTouchY >= 0 && vars->nextVertTouchY < HEIGHT) {
+    while (vars->nextVertTouchX >= 0 && vars->nextVertTouchX < cube->data->map_cols * tile_size && vars->nextVertTouchY >= 0 && vars->nextVertTouchY < cube->data->map_row * tile_size) {
         if (has_wall(cube, vars->nextVertTouchX, vars->nextVertTouchY)) {
             vars->foundVertWallHit = 1;
             vars->vertWallHitX = vars->nextVertTouchX;
@@ -463,7 +462,7 @@ void draw_view_player(t_cub *cube)
 
 void	handle_pixel2(int x, int y, t_cub *cube)
 {
-    if(cube->map[y][x] == 'N')
+    if(cube->data->map[y][x] == 'N')
     {
         draw_cube(cube, x, y, RED);
         draw_view_player(cube);
@@ -477,21 +476,21 @@ void	draw_per(t_cub *cube)
 
 	y = -1;
 	x = -1;
-	while (++y < map_row)
+	while (++y < cube->data->map_row)
 	{
 		x = -1;
-		while (++x < map_cols)
+		while (++x < cube->data->map_cols)
 			handle_pixel2(x, y, cube);
 	}
 }
 //end draw_player
 
 // draw_map
-void	handle_pixel(int x, int y, t_cub *cube, char **map)
+void	handle_pixel(int x, int y, t_cub *cube)
 {
-    if(map[y][x] == '1')
+    if(cube->data->map[y][x] == '1')
         draw_cube(cube, x, y, WHITE);
-    else if(map[y][x] == '0')
+    else if(cube->data->map[y][x] == '0')
         draw_cube(cube, x, y, RED);
 }
 
@@ -502,11 +501,11 @@ void	draw_map(t_cub *cube)
 
 	y = -1;
 	x = -1;
-	while (++y < map_row)
+	while (++y < cube->data->map_row)
 	{
 		x = -1;
-		while (++x < map_cols)
-			handle_pixel(x, y, cube, cube->map);
+		while (++x < cube->data->map_cols)
+			handle_pixel(x, y, cube);
 	}
 }
 // end draw_map
@@ -534,10 +533,10 @@ void	draw_all_black(t_cub *cube)
 
 	y = -1;
 	x = -1;
-	while (++y < map_row)
+	while (++y < cube->data->map_row)
 	{
 		x = -1;
-		while (++x < map_cols)
+		while (++x < cube->data->map_cols)
 			handle_pixel3(x, y, cube);
 	}
 }

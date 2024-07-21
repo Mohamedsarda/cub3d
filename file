@@ -1,0 +1,145 @@
+
+typedef struct s_vars
+{
+	int isRayFacingDown;
+	int isRayFacingUp;
+	int isRayFacingRight;
+	int isRayFacingLeft;
+	int foundHorzWallHit;
+	int foundVertWallHit;
+	double horzWallHitX;
+	double horzWallHitY;
+	double y_intercept;
+	double x_intercept;
+	double ystep;
+	double xstep;
+	double nextHorzTouchX;
+	double nextHorzTouchY;
+	double vertWallHitX;
+	double vertWallHitY;
+	double nextVertTouchX;
+	double nextVertTouchY;
+	double horzHitDistance;
+	double vertHitDistance;
+	double wallHitX;
+	double wallHitY;
+	double angle;
+}	t_vars;
+
+void    ft_draw_hero(t_cub *cube, t_vars *vars, int circle_center_x, int circle_center_y)
+{
+    vars->y_intercept = floor(circle_center_y / tile_size) * tile_size;
+    if (vars->isRayFacingDown)
+        vars->y_intercept += tile_size;
+
+    vars->x_intercept = circle_center_x + (vars->y_intercept - circle_center_y) / tan(vars->angle);
+
+    vars->ystep = tile_size;
+    if (vars->isRayFacingUp)
+        vars->ystep *= -1;
+
+    vars->xstep = tile_size / tan(vars->angle);
+    if (vars->isRayFacingLeft && vars->xstep > 0)
+        vars->xstep *= -1;
+    if (vars->isRayFacingRight && vars->xstep < 0)
+        vars->xstep *= -1;
+
+    vars->nextHorzTouchX = vars->x_intercept;
+    vars->nextHorzTouchY = vars->y_intercept;
+
+    if (vars->isRayFacingUp)
+        vars->nextHorzTouchY--;
+
+    while (vars->nextHorzTouchX >= 0 && vars->nextHorzTouchX < WIDTH && vars->nextHorzTouchY >= 0 && vars->nextHorzTouchY < HEIGHT) {
+        if (has_wall(cube, vars->nextHorzTouchX, vars->nextHorzTouchY)) {
+            vars->foundHorzWallHit = 1;
+            vars->horzWallHitX = vars->nextHorzTouchX;
+            vars->horzWallHitY = vars->nextHorzTouchY;
+            break;
+        } else
+        {
+            vars->nextHorzTouchX += vars->xstep;
+            vars->nextHorzTouchY += vars->ystep;
+        }
+    }
+}
+
+void    ft_draw_ver(t_cub *cube, t_vars *vars, int circle_center_x, int circle_center_y)
+{
+    vars->foundVertWallHit = 0;
+    vars->vertWallHitX = 0;
+    vars->vertWallHitY = 0;
+
+    vars->x_intercept = floor(circle_center_x / tile_size) * tile_size;
+    if (vars->isRayFacingRight)
+        vars->x_intercept += tile_size;
+
+    vars->y_intercept = circle_center_y + (vars->x_intercept - circle_center_x) * tan(vars->angle);
+
+    vars->xstep = tile_size;
+    if (vars->isRayFacingLeft)
+        vars->xstep *= -1;
+
+    vars->ystep = tile_size * tan(vars->angle);
+    if (vars->isRayFacingUp && vars->ystep > 0)
+        vars->ystep *= -1;
+    if (vars->isRayFacingDown && vars->ystep < 0)
+        vars->ystep *= -1;
+
+    vars->nextVertTouchX = vars->x_intercept;
+    vars->nextVertTouchY = vars->y_intercept;
+
+    if (vars->isRayFacingLeft)
+        vars->nextVertTouchX--;
+
+    while (vars->nextVertTouchX >= 0 && vars->nextVertTouchX < WIDTH && vars->nextVertTouchY >= 0 && vars->nextVertTouchY < HEIGHT) {
+        if (has_wall(cube, vars->nextVertTouchX, vars->nextVertTouchY)) {
+            vars->foundVertWallHit = 1;
+            vars->vertWallHitX = vars->nextVertTouchX;
+            vars->vertWallHitY = vars->nextVertTouchY;
+            break;
+        } else {
+            vars->nextVertTouchX += vars->xstep;
+            vars->nextVertTouchY += vars->ystep;
+        }
+    }
+}
+
+void draw_line(t_cub *cube, int circle_center_x, int circle_center_y, double angle)
+{
+    // angle;
+    t_vars vars;
+    vars.angle = normalizeAngle(angle);
+
+    vars.isRayFacingDown = angle > 0 && angle < M_PI;
+    vars.isRayFacingUp = !vars.isRayFacingDown;
+    vars.isRayFacingRight = angle < 0.5 * M_PI || angle > 1.5 * M_PI;
+    vars.isRayFacingLeft = !vars.isRayFacingRight;
+
+    vars.foundHorzWallHit = 0;
+    vars.horzWallHitX = 0;
+    vars.horzWallHitY = 0;
+
+    ft_draw_hero(cube, &vars, circle_center_x, circle_center_y);
+    ft_draw_ver(cube, &vars, circle_center_x, circle_center_y);
+    vars.horzHitDistance = __DBL_MAX__;
+    vars.vertHitDistance = __DBL_MAX__;
+    if (vars.foundHorzWallHit)
+        vars.horzHitDistance = distanceBetweenPoints(circle_center_x, circle_center_y, vars.horzWallHitX, vars.horzWallHitY);
+    if (vars.foundVertWallHit)
+        vars.vertHitDistance = distanceBetweenPoints(circle_center_x, circle_center_y, vars.vertWallHitX, vars.vertWallHitY);
+    // Only store the smallest of the distances
+    vars.wallHitX = (vars.horzHitDistance < vars.vertHitDistance) ? vars.horzWallHitX : vars.vertWallHitX;
+    vars.wallHitY = (vars.horzHitDistance < vars.vertHitDistance) ? vars.horzWallHitY : vars.vertWallHitY;
+    DDA(cube, circle_center_x, circle_center_y, vars.wallHitX, vars.wallHitY);
+}
+
+
+
+
+
+
+//         11111
+//         100N1
+//         11111
+

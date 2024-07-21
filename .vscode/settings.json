@@ -2,6 +2,8 @@
     "files.associations": {
         "math.h": "c",
         "chrono": "c",
-        "file": "c"
+        "file": "c",
+        "mlx.h": "c",
+        "stdio.h": "c"
     }
 }
