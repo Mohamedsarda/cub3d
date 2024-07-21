@@ -46,7 +46,7 @@ int main()
 		return (ft_check_map_print(data), 1);
     t_cub cube;
 	cube.data = data;
-    ft_fractol_init(&cube, data->map);
+    ft_fractol_init(&cube);
     mlx_hook(cube.mlx_win, 17, 1L << 17, handle_close_button, &cube);
     mlx_hook(cube.mlx_win, 2, 0L, handle_input_key_down, &cube);
     mlx_hook(cube.mlx_win, 3, 0L, handle_input_key_up, &cube);
