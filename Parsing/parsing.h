@@ -44,6 +44,8 @@ typedef struct  s_data
 	char			*so;
 	char			*we;
 	char			*ea;
+	int				map_row;
+	int				map_cols;
 	t_color			floor;
 	t_color			sky;
 }   t_data;
