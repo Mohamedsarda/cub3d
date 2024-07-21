@@ -14,7 +14,7 @@
 
 #define FOV_ANGLE M_PI / 3
 #define WALL_STRIP_WIDTH 4
-#define NUM_RAYS 50
+#define NUM_RAYS 400
 #define line_leng 200
 
 #define WIDTH map_cols * tile_size
@@ -55,22 +55,31 @@ typedef struct s_vars
 	int isRayFacingLeft;
 	int foundHorzWallHit;
 	int foundVertWallHit;
+
 	double horzWallHitX;
 	double horzWallHitY;
+	
 	double y_intercept;
 	double x_intercept;
+	
 	double ystep;
 	double xstep;
+	
 	double nextHorzTouchX;
 	double nextHorzTouchY;
+	
 	double vertWallHitX;
 	double vertWallHitY;
+	
 	double nextVertTouchX;
 	double nextVertTouchY;
+	
 	double horzHitDistance;
 	double vertHitDistance;
+	
 	double wallHitX;
 	double wallHitY;
+	
 	double angle;
 }	t_vars;
 
