@@ -310,96 +310,116 @@ double distanceBetweenPoints(x1, y1, x2, y2) {
     return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 }
 
-void draw_line(t_cub *cube, int circle_center_x, int circle_center_y, double angle)
+
+void    ft_draw_hero(t_cub *cube, t_vars *vars, int circle_center_x, int circle_center_y)
 {
-    // angle;
-    angle = normalizeAngle(angle);
+    vars->y_intercept = floor(circle_center_y / tile_size) * tile_size;
+    if (vars->isRayFacingDown)
+        vars->y_intercept += tile_size;
 
-    int isRayFacingDown = angle > 0 && angle < M_PI;
-    int isRayFacingUp = !isRayFacingDown;
-    int isRayFacingRight = angle < 0.5 * M_PI || angle > 1.5 * M_PI;
-    int isRayFacingLeft = !isRayFacingRight;
+    vars->x_intercept = circle_center_x + (vars->y_intercept - circle_center_y) / tan(vars->angle);
 
-    int foundHorzWallHit = 0;
-    double horzWallHitX = 0;
-    double horzWallHitY = 0;
+    vars->ystep = tile_size;
+    if (vars->isRayFacingUp)
+        vars->ystep *= -1;
 
-    double y_intercept = floor(circle_center_y / tile_size) * tile_size;
-    y_intercept += isRayFacingDown ? tile_size : 0;
+    vars->xstep = tile_size / tan(vars->angle);
+    if (vars->isRayFacingLeft && vars->xstep > 0)
+        vars->xstep *= -1;
+    if (vars->isRayFacingRight && vars->xstep < 0)
+        vars->xstep *= -1;
 
-    double x_intercept = circle_center_x + (y_intercept - circle_center_y) / tan(angle);
+    vars->nextHorzTouchX = vars->x_intercept;
+    vars->nextHorzTouchY = vars->y_intercept;
 
-    double ystep = tile_size;
-    ystep *= isRayFacingUp ? -1 : 1;
+    if (vars->isRayFacingUp)
+        vars->nextHorzTouchY--;
 
-    double xstep = tile_size / tan(angle);
-    xstep *= (isRayFacingLeft && xstep > 0) ? -1 : 1;
-    xstep *= (isRayFacingRight && xstep < 0) ? -1 : 1;
-
-    double nextHorzTouchX = x_intercept;
-    double nextHorzTouchY = y_intercept;
-
-    if (isRayFacingUp)
-        nextHorzTouchY--;
-
-    while (nextHorzTouchX >= 0 && nextHorzTouchX < WIDTH && nextHorzTouchY >= 0 && nextHorzTouchY < HEIGHT) {
-        if (has_wall(cube, nextHorzTouchX, nextHorzTouchY)) {
-            foundHorzWallHit = 1;
-            horzWallHitX = nextHorzTouchX;
-            horzWallHitY = nextHorzTouchY;
+    while (vars->nextHorzTouchX >= 0 && vars->nextHorzTouchX < WIDTH && vars->nextHorzTouchY >= 0 && vars->nextHorzTouchY < HEIGHT) {
+        if (has_wall(cube, vars->nextHorzTouchX, vars->nextHorzTouchY)) {
+            vars->foundHorzWallHit = 1;
+            vars->horzWallHitX = vars->nextHorzTouchX;
+            vars->horzWallHitY = vars->nextHorzTouchY;
             break;
         } else
         {
-            nextHorzTouchX += xstep;
-            nextHorzTouchY += ystep;
+            vars->nextHorzTouchX += vars->xstep;
+            vars->nextHorzTouchY += vars->ystep;
         }
     }
+}
 
-    int foundVertWallHit = 0;
-    double vertWallHitX = 0;
-    double vertWallHitY = 0;
+void    ft_draw_ver(t_cub *cube, t_vars *vars, int circle_center_x, int circle_center_y)
+{
+    vars->foundVertWallHit = 0;
+    vars->vertWallHitX = 0;
+    vars->vertWallHitY = 0;
 
-    x_intercept = floor(circle_center_x / tile_size) * tile_size;
-    x_intercept += isRayFacingRight ? tile_size : 0;
+    vars->x_intercept = floor(circle_center_x / tile_size) * tile_size;
+    if (vars->isRayFacingRight)
+        vars->x_intercept += tile_size;
 
-    y_intercept = circle_center_y + (x_intercept - circle_center_x) * tan(angle);
+    vars->y_intercept = circle_center_y + (vars->x_intercept - circle_center_x) * tan(vars->angle);
 
-    xstep = tile_size;
-    xstep *= isRayFacingLeft ? -1 : 1;
+    vars->xstep = tile_size;
+    if (vars->isRayFacingLeft)
+        vars->xstep *= -1;
 
-    ystep = tile_size * tan(angle);
-    ystep *= (isRayFacingUp && ystep > 0) ? -1 : 1;
-    ystep *= (isRayFacingDown && ystep < 0) ? -1 : 1;
+    vars->ystep = tile_size * tan(vars->angle);
+    if (vars->isRayFacingUp && vars->ystep > 0)
+        vars->ystep *= -1;
+    if (vars->isRayFacingDown && vars->ystep < 0)
+        vars->ystep *= -1;
 
-    double nextVertTouchX = x_intercept;
-    double nextVertTouchY = y_intercept;
+    vars->nextVertTouchX = vars->x_intercept;
+    vars->nextVertTouchY = vars->y_intercept;
 
-    if (isRayFacingLeft)
-        nextVertTouchX--;
+    if (vars->isRayFacingLeft)
+        vars->nextVertTouchX--;
 
-    while (nextVertTouchX >= 0 && nextVertTouchX < WIDTH && nextVertTouchY >= 0 && nextVertTouchY < HEIGHT) {
-        if (has_wall(cube, nextVertTouchX, nextVertTouchY)) {
-            foundVertWallHit = 1;
-            vertWallHitX = nextVertTouchX;
-            vertWallHitY = nextVertTouchY;
+    while (vars->nextVertTouchX >= 0 && vars->nextVertTouchX < WIDTH && vars->nextVertTouchY >= 0 && vars->nextVertTouchY < HEIGHT) {
+        if (has_wall(cube, vars->nextVertTouchX, vars->nextVertTouchY)) {
+            vars->foundVertWallHit = 1;
+            vars->vertWallHitX = vars->nextVertTouchX;
+            vars->vertWallHitY = vars->nextVertTouchY;
             break;
         } else {
-            nextVertTouchX += xstep;
-            nextVertTouchY += ystep;
+            vars->nextVertTouchX += vars->xstep;
+            vars->nextVertTouchY += vars->ystep;
         }
     }
+}
 
-    // Calculate both horizontal and vertical distances and choose the smallest value
-    double horzHitDistance = __DBL_MAX__;
-    double vertHitDistance = __DBL_MAX__;
-    if (foundHorzWallHit)
-        horzHitDistance = distanceBetweenPoints(circle_center_x, circle_center_y, horzWallHitX, horzWallHitY);
-    if (foundVertWallHit)
-        vertHitDistance = distanceBetweenPoints(circle_center_x, circle_center_y, vertWallHitX, vertWallHitY);
+void draw_line(t_cub *cube, int circle_center_x, int circle_center_y, double angle)
+{
+    t_vars vars;
+    vars.angle = normalizeAngle(angle);
+
+    vars.isRayFacingDown = vars.angle > 0 && vars.angle < M_PI;
+    vars.isRayFacingUp = !vars.isRayFacingDown;
+    vars.isRayFacingRight = vars.angle < 0.5 * M_PI || vars.angle > 1.5 * M_PI;
+    vars.isRayFacingLeft = !vars.isRayFacingRight;
+
+    vars.foundHorzWallHit = 0;
+    vars.horzWallHitX = 0;
+    vars.horzWallHitY = 0;
+
+    ft_draw_hero(cube, &vars, circle_center_x, circle_center_y);
+    ft_draw_ver(cube, &vars, circle_center_x, circle_center_y);
+    vars.horzHitDistance = __DBL_MAX__;
+    vars.vertHitDistance = __DBL_MAX__;
+    if (vars.foundHorzWallHit)
+        vars.horzHitDistance = distanceBetweenPoints(circle_center_x, circle_center_y, vars.horzWallHitX, vars.horzWallHitY);
+    if (vars.foundVertWallHit)
+        vars.vertHitDistance = distanceBetweenPoints(circle_center_x, circle_center_y, vars.vertWallHitX, vars.vertWallHitY);
     // Only store the smallest of the distances
-    double wallHitX = (horzHitDistance < vertHitDistance) ? horzWallHitX : vertWallHitX;
-    double wallHitY = (horzHitDistance < vertHitDistance) ? horzWallHitY : vertWallHitY;
-    DDA(cube, circle_center_x, circle_center_y, wallHitX, wallHitY);
+    vars.wallHitX = vars.vertWallHitX;
+    if (vars.horzHitDistance < vars.vertHitDistance)
+        vars.wallHitX = vars.horzWallHitX;
+    vars.wallHitY = vars.vertWallHitY;
+    if (vars.horzHitDistance < vars.vertHitDistance)
+        vars.wallHitY = vars.horzWallHitY;
+    DDA(cube, circle_center_x, circle_center_y, vars.wallHitX, vars.wallHitY);
 }
 
 void    draw_lines(t_cub *cube, int circle_center_x, int circle_center_y)
@@ -432,13 +452,6 @@ void draw_view_player(t_cub *cube)
     // check new_position is in a wall or not
     if(is_it_a_wall(new_player_x, new_player_y, cube) == 1)
     {
-        // if (cube->player->walk_direction != 0)
-        // {
-        //     cube->player->player_x += movestep * cos(cube->player->rotat_angle);
-        //     cube->player->player_y += movestep * sin(cube->player->rotat_angle);
-        //     // cube->player->player_x += cube->player->walk_direction * cube->player->move_speed * cos(cube->player->rotat_angle);
-        //     // cube->player->player_y += cube->player->walk_direction * cube->player->move_speed * sin(cube->player->rotat_angle);
-        // }
         cube->player->player_x = new_player_x;
         cube->player->player_y = new_player_y;
     }
