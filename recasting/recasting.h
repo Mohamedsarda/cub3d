@@ -19,10 +19,10 @@
 #define WIDTH map_cols * tile_size
 #define HEIGHT map_row * tile_size
 
-#define BLACK       0x000000  
-#define WHITE       0xFFFFFF  
-#define RED         0xFF0000  
-#define GREEN       0x00FF00  
+#define BLACK       0x000000
+#define WHITE       0xFFFFFF
+#define RED         0xFF0000
+#define GREEN       0x00FF00
 #define BLUE        0x0000FF
 
 typedef struct s_img
@@ -44,8 +44,34 @@ typedef struct s_player
 	double rotat_angle;
 	double rotation_speed;
 	double move_speed;
-}	t_player; 
+}	t_player;
 
+typedef struct s_vars
+{
+	int isRayFacingDown;
+	int isRayFacingUp;
+	int isRayFacingRight;
+	int isRayFacingLeft;
+	int foundHorzWallHit;
+	int foundVertWallHit;
+	double horzWallHitX;
+	double horzWallHitY;
+	double y_intercept;
+	double x_intercept;
+	double ystep;
+	double xstep;
+	double nextHorzTouchX;
+	double nextHorzTouchY;
+	double vertWallHitX;
+	double vertWallHitY;
+	double nextVertTouchX;
+	double nextVertTouchY;
+	double horzHitDistance;
+	double vertHitDistance;
+	double wallHitX;
+	double wallHitY;
+	double angle;
+}	t_vars;
 
 typedef struct s_cub
 {
