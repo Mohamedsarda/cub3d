@@ -14,8 +14,10 @@
 
 #define FOV_ANGLE M_PI / 3
 #define WALL_STRIP_WIDTH 4
-#define NUM_RAYS 400
+#define NUM_RAYS 1000
 #define line_leng 200
+
+#define MAP_SCALE 0.2
 
 #define WIDTH map_cols * tile_size
 #define HEIGHT map_row * tile_size
@@ -81,6 +83,7 @@ typedef struct s_vars
 	double wallHitY;
 	
 	double angle;
+	double distance;
 }	t_vars;
 
 typedef struct s_cub
