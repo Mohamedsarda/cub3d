@@ -42,12 +42,14 @@ int main()
 	close(fd);
 	if (ft_get_data_init(init, data) == -1)
 		return (1);
-    printf("%s\n", data->ea);
 	if (ft_get_data(init, data) == -1)
 		return (ft_check_map_print(data), 1);
-   
     t_cub cube;
-    ft_fractol_init(&cube, data->map);
+	cube.data = data;
+	cube.data->height = cube.data->map_row * tile_size;
+	cube.data->width = cube.data->map_cols * tile_size;
+    ft_fractol_init(&cube);
+	
     mlx_hook(cube.mlx_win, 17, 1L << 17, handle_close_button, &cube);
     mlx_hook(cube.mlx_win, 2, 0L, handle_input_key_down, &cube);
     mlx_hook(cube.mlx_win, 3, 0L, handle_input_key_up, &cube);
