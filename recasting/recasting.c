@@ -317,15 +317,20 @@ t_vars  draw_line(t_cub *cube, int circle_center_x, int circle_center_y, double 
         vars.vertHitDistance = distanceBetweenPoints(circle_center_x, circle_center_y, vars.vertWallHitX, vars.vertWallHitY);
     // Only store the smallest of the distances
     vars.wallHitX = vars.vertWallHitX;
-    if (vars.horzHitDistance < vars.vertHitDistance)
+    if (vars.vertHitDistance < vars.horzHitDistance)
+    {
+        vars.wallHitX = vars.vertWallHitX;
+        vars.wallHitY = vars.vertWallHitY;
+        vars.distance = vars.vertHitDistance;
+        vars.wasHitVert = 1;
+    }
+    else
+    {
         vars.wallHitX = vars.horzWallHitX;
-    vars.wallHitY = vars.vertWallHitY;
-    if (vars.horzHitDistance < vars.vertHitDistance)
         vars.wallHitY = vars.horzWallHitY;
-
-    vars.distance = vars.vertHitDistance;
-    if (vars.horzHitDistance < vars.vertHitDistance)
         vars.distance = vars.horzHitDistance;
+        vars.wasHitVert = 0;
+    }
     if (is == 2)
         DDA(cube, circle_center_x, circle_center_y, vars.wallHitX, vars.wallHitY);
     return (vars);
@@ -354,6 +359,15 @@ float nor_angle(float angle) // normalize the angle
 	return (angle);
 }
 
+int create_rgb_color(int r, int g, int b)
+{
+    return (r << 16) | (g << 8) | b;
+}
+
+unsigned int rgba_to_int(unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
+    return (a << 24) | (r << 16) | (g << 8) | b;
+}
+
 void draw_lines_3D(t_cub *cube, int circle_center_x, int circle_center_y)
 {
     int i = 0;
@@ -362,7 +376,7 @@ void draw_lines_3D(t_cub *cube, int circle_center_x, int circle_center_y)
 	// double b_pix;
 	// double t_pix;
     angle = cube->player->rotat_angle + FOV_ANGLE / 2;
-    while (i < NUM_RAYS)
+    while (i < cube->data->width)
     {
         t_vars vars = draw_line(cube, circle_center_x, circle_center_y, angle, 1);
 
@@ -378,12 +392,13 @@ void draw_lines_3D(t_cub *cube, int circle_center_x, int circle_center_y)
         int wallBottompixel = ((cube->data->height) / 2) + (wallstripheight / 2);
         wallBottompixel = wallBottompixel > (cube->data->height)  ? (cube->data->height) : wallBottompixel;
         // end wall
+        int color = vars.wasHitVert ? 200 : 255;
         for (int y = wallTopPixel; y < wallBottompixel ; y++)
         {
-            my_mlx_pixel_put(&cube->img, i, y, RED);
+            my_mlx_pixel_put(&cube->img, i, y, rgba_to_int(color, color, color, 1.0));
         }
 
-        angle -= FOV_ANGLE / NUM_RAYS;
+        angle -= FOV_ANGLE / cube->data->width;
         i++;
     }
 }
@@ -412,7 +427,6 @@ void draw_view_player(t_cub *cube, int is)
         return;
     }
     draw_lines_3D(cube, cube->player->player_x, cube->player->player_y);
-    // draw_line(cube, cube->player->player_x, cube->player->player_y, cube->player->rotat_angle);
 }
 
 void	handle_pixel2(int x, int y, t_cub *cube, int is)
