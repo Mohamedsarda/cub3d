@@ -12,7 +12,7 @@ NAME	= app
 
 all: $(NAME)
 
-%.o: %.c parsing.h
+%.o: %.c parsing.h recasting.h
 	$(CC) $(CFLAGS) -c $< -o $@ 
 
 $(NAME): $(OBJS)

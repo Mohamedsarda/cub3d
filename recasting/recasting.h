@@ -57,22 +57,31 @@ typedef struct s_vars
 	int isRayFacingLeft;
 	int foundHorzWallHit;
 	int foundVertWallHit;
+
 	double horzWallHitX;
 	double horzWallHitY;
+	
 	double y_intercept;
 	double x_intercept;
+	
 	double ystep;
 	double xstep;
+	
 	double nextHorzTouchX;
 	double nextHorzTouchY;
+	
 	double vertWallHitX;
 	double vertWallHitY;
+	
 	double nextVertTouchX;
 	double nextVertTouchY;
+	
 	double horzHitDistance;
 	double vertHitDistance;
+	
 	double wallHitX;
 	double wallHitY;
+	
 	double angle;
 	double distance;
 }	t_vars;
