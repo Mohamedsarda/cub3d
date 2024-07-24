@@ -331,13 +331,6 @@ t_vars  draw_line(t_cub *cube, int circle_center_x, int circle_center_y, double 
         vars.distance = vars.horzHitDistance;
         vars.wasHitVert = 0;
     }
-    // vars.wallHitY = vars.vertWallHitY;
-    // if (vars.horzHitDistance < vars.vertHitDistance)
-    //     vars.wallHitY = vars.horzWallHitY;
-
-    // vars.distance = vars.vertHitDistance;
-    // if (vars.horzHitDistance < vars.vertHitDistance)
-    //     vars.distance = vars.horzHitDistance;
     if (is == 2)
         DDA(cube, circle_center_x, circle_center_y, vars.wallHitX, vars.wallHitY);
     return (vars);
@@ -399,15 +392,10 @@ void draw_lines_3D(t_cub *cube, int circle_center_x, int circle_center_y)
         int wallBottompixel = ((cube->data->height) / 2) + (wallstripheight / 2);
         wallBottompixel = wallBottompixel > (cube->data->height)  ? (cube->data->height) : wallBottompixel;
         // end wall
-        // double shading = 2 / (2 + wallDistance * 0.03);
         int color = vars.wasHitVert ? 200 : 255;
-        int base = 1.0;
         for (int y = wallTopPixel; y < wallBottompixel ; y++)
         {
-            // int r = (int)(255 * shading); // Adjust these values as needed
-            // int g = (int)(255 * shading);
-            // int b = (int)(255 * shading);
-            my_mlx_pixel_put(&cube->img, i, y, rgba_to_int(color, color, color, base));
+            my_mlx_pixel_put(&cube->img, i, y, rgba_to_int(color, color, color, 1.0));
         }
 
         angle -= FOV_ANGLE / cube->data->width;
