@@ -8,7 +8,7 @@
 #include "mlx.h"
 #include "../Parsing/parsing.h"
 
-#define tile_size 50
+#define tile_size 60
 // #define map_row 14
 // #define map_cols 33
 
@@ -35,7 +35,11 @@ typedef struct s_img
 	int		bpp;
 	int		endian;
 	int		line_len;
+	int		*arr;
+	int		width;
+	int		height;
 } t_img;
+
 
 typedef struct s_player
 {
@@ -60,30 +64,31 @@ typedef struct s_vars
 
 	double horzWallHitX;
 	double horzWallHitY;
-	
+
 	double y_intercept;
 	double x_intercept;
-	
+
 	double ystep;
 	double xstep;
-	
+
 	double nextHorzTouchX;
 	double nextHorzTouchY;
-	
+
 	double vertWallHitX;
 	double vertWallHitY;
-	
+
 	double nextVertTouchX;
 	double nextVertTouchY;
-	
+
 	double horzHitDistance;
 	double vertHitDistance;
-	
+
 	double wallHitX;
 	double wallHitY;
-	
+
 	double angle;
 	double distance;
+	int		wasHitVert;
 }	t_vars;
 
 typedef struct s_cub
@@ -92,6 +97,7 @@ typedef struct s_cub
 	void	*mlx_con;
 	void	*mlx_win;
 	t_img	img;
+	t_img	texture;
 	t_player *player;
 	char	**colors;
 	int		is;
