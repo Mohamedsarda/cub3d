@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "math.h": "c",
-        "chrono": "c",
-        "file": "c"
-    }
-}
