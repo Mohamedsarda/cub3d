@@ -354,6 +354,12 @@ float nor_angle(float angle) // normalize the angle
 	return (angle);
 }
 
+int create_rgb_color(int r, int g, int b)
+{
+    return (r << 16) | (g << 8) | b;
+}
+
+
 void draw_lines_3D(t_cub *cube, int circle_center_x, int circle_center_y)
 {
     int i = 0;
@@ -378,9 +384,13 @@ void draw_lines_3D(t_cub *cube, int circle_center_x, int circle_center_y)
         int wallBottompixel = ((cube->data->height) / 2) + (wallstripheight / 2);
         wallBottompixel = wallBottompixel > (cube->data->height)  ? (cube->data->height) : wallBottompixel;
         // end wall
+        double shading = 2 / (2 + wallDistance * 0.01);
         for (int y = wallTopPixel; y < wallBottompixel ; y++)
         {
-            my_mlx_pixel_put(&cube->img, i, y, RED);
+            int r = (int)(255 * shading); // Adjust these values as needed
+            int g = (int)(255 * shading);
+            int b = (int)(255 * shading);
+            my_mlx_pixel_put(&cube->img, i, y, create_rgb_color(r, g, b));
         }
 
         angle -= FOV_ANGLE / NUM_RAYS;
@@ -412,7 +422,6 @@ void draw_view_player(t_cub *cube, int is)
         return;
     }
     draw_lines_3D(cube, cube->player->player_x, cube->player->player_y);
-    // draw_line(cube, cube->player->player_x, cube->player->player_y, cube->player->rotat_angle);
 }
 
 void	handle_pixel2(int x, int y, t_cub *cube, int is)
