@@ -366,35 +366,23 @@ void draw_lines_3D(t_cub *cube, int circle_center_x, int circle_center_y)
     {
         t_vars vars = draw_line(cube, circle_center_x, circle_center_y, angle, 1);
 
-        
-        // vars.distance *= cos(nor_angle(angle - cube->player->rotat_angle)); // fix the fisheye
-        // wall_h = (tile_size / vars.distance) * ((cube->data->width / 2) / tan(FOV_ANGLE)); // get the wall height
-        // b_pix = (cube->data->height / 2) + (wall_h / 2); // get the bottom pixel
-        // t_pix = (cube->data->height / 2) - (wall_h / 2); // get the top pixel
-        // if (b_pix > cube->data->height) // check the bottom pixel
-        //     b_pix = cube->data->height;
-        // if (t_pix < 0) // check the top pixel
-        //     t_pix = 0;
-
         //////
-        double distanceprojplane = ((cube->data->width) / 2) / tan(FOV_ANGLE);
-        double projectedwallhight = (tile_size / vars.distance) * distanceprojplane;
-        // printf("+++[%f] | [%f] [%d] [%f] \n", projectedwallhight, distanceprojplane, cube->data->width  , tan(FOV_ANGLE));
-        
-        // printf("[%f]\n", vars.distance);
+        double distanceprojplane = ((cube->data->width) / 2) / (tan(FOV_ANGLE) / 0.5);
+        double wallDistance = vars.distance * cos(angle - cube->player->rotat_angle);
+        double projectedwallhight = (tile_size / wallDistance) * distanceprojplane;
+
         int wallstripheight = (int)projectedwallhight;
         // start wall
-            int wallTopPixel = ((cube->data->height) / 2) - (wallstripheight / 2);
-            wallTopPixel = wallTopPixel < 0 ? 0 : wallTopPixel;
-            int wallBottompixel = ((cube->data->height) / 2) + (wallstripheight / 2);
-            wallBottompixel = wallBottompixel > (cube->data->height)  ? (cube->data->height) : wallBottompixel;
+        int wallTopPixel = ((cube->data->height) / 2) - (wallstripheight / 2);
+        wallTopPixel = wallTopPixel < 0 ? 0 : wallTopPixel;
+        int wallBottompixel = ((cube->data->height) / 2) + (wallstripheight / 2);
+        wallBottompixel = wallBottompixel > (cube->data->height)  ? (cube->data->height) : wallBottompixel;
         // end wall
-        // printf("%d %d | %d %d\n", wallTopPixel, wallBottompixel, cube->data->height, cube->data->width);
         for (int y = wallTopPixel; y < wallBottompixel ; y++)
         {
             my_mlx_pixel_put(&cube->img, i, y, RED);
         }
-        
+
         angle -= FOV_ANGLE / NUM_RAYS;
         i++;
     }
