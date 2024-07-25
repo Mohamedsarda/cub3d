@@ -28,6 +28,16 @@
 #define GREEN       0x00FF00
 #define BLUE        0x0000FF
 
+#define KEY_ESC   65307
+#define KEY_A     97
+#define KEY_S     115
+#define KEY_D     100
+#define KEY_W     119
+#define KEY_UP    65362
+#define KEY_DOWN  65364
+#define KEY_LEFT  65361
+#define KEY_RIGHT 65363
+
 typedef struct s_img
 {
 	void	*img_ptr;
@@ -121,6 +131,7 @@ int loop_fun(t_cub * cube);
 int handle_input_key_down(int keycode, t_cub * data);
 int	handle_close_button(t_cub *data);
 int handle_input_key_up(int keycode, t_cub * data);
+int	ft_mouse_move(int x, int y, t_cub *cube);
 // end hooks
 
 #endif
