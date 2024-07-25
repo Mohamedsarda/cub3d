@@ -53,6 +53,16 @@ typedef struct s_player
 	double move_speed;
 }	t_player;
 
+typedef struct s_texture {
+    void *img_ptr;
+    char *data;
+    int width;
+    int height;
+    int bpp;
+    int line_len;
+    int endian;
+} t_texture;
+
 typedef struct s_vars
 {
 	int isRayFacingDown;
@@ -97,10 +107,10 @@ typedef struct s_cub
 	void	*mlx_con;
 	void	*mlx_win;
 	t_img	img;
-	t_img	texture;
 	t_player *player;
 	char	**colors;
 	int		is;
+	t_texture texture[4];
 	t_data	*data;
 } t_cub;
 
