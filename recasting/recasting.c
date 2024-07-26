@@ -225,8 +225,7 @@ double normalizeAngle(double angle) {
 
 
 
-void    ft_draw_hero(t_cub *cube, t_vars *vars, int circle_center_x, int circle_center_y)
-{
+void ft_draw_hero(t_cub *cube, t_vars *vars, int circle_center_x, int circle_center_y) {
     vars->y_intercept = floor(circle_center_y / (tile_size * MAP_SCALE)) * (tile_size * MAP_SCALE);
     if (vars->isRayFacingDown)
         vars->y_intercept += (tile_size * MAP_SCALE);
@@ -249,22 +248,21 @@ void    ft_draw_hero(t_cub *cube, t_vars *vars, int circle_center_x, int circle_
     if (vars->isRayFacingUp)
         vars->nextHorzTouchY--;
 
-    while (vars->nextHorzTouchX >= 0 && vars->nextHorzTouchX < cube->data->map_cols * (tile_size * MAP_SCALE) && vars->nextHorzTouchY >= 0 && vars->nextHorzTouchY < cube->data->map_row * (tile_size * MAP_SCALE)) {
+    while (vars->nextHorzTouchX >= 0 && vars->nextHorzTouchX < cube->data->map_cols * (tile_size * MAP_SCALE) &&
+           vars->nextHorzTouchY >= 0 && vars->nextHorzTouchY < cube->data->map_row * (tile_size * MAP_SCALE)) {
         if (has_wall(cube, vars->nextHorzTouchX, vars->nextHorzTouchY)) {
             vars->foundHorzWallHit = 1;
             vars->horzWallHitX = vars->nextHorzTouchX;
             vars->horzWallHitY = vars->nextHorzTouchY;
             break;
-        } else
-        {
+        } else {
             vars->nextHorzTouchX += vars->xstep;
             vars->nextHorzTouchY += vars->ystep;
         }
     }
 }
 
-void    ft_draw_ver(t_cub *cube, t_vars *vars, int circle_center_x, int circle_center_y)
-{
+void ft_draw_ver(t_cub *cube, t_vars *vars, int circle_center_x, int circle_center_y) {
     vars->foundVertWallHit = 0;
     vars->vertWallHitX = 0;
     vars->vertWallHitY = 0;
@@ -291,7 +289,8 @@ void    ft_draw_ver(t_cub *cube, t_vars *vars, int circle_center_x, int circle_c
     if (vars->isRayFacingLeft)
         vars->nextVertTouchX--;
 
-    while (vars->nextVertTouchX >= 0 && vars->nextVertTouchX < cube->data->map_cols * (tile_size * MAP_SCALE) && vars->nextVertTouchY >= 0 && vars->nextVertTouchY < cube->data->map_row * (tile_size * MAP_SCALE)) {
+    while (vars->nextVertTouchX >= 0 && vars->nextVertTouchX < cube->data->map_cols * (tile_size * MAP_SCALE) &&
+           vars->nextVertTouchY >= 0 && vars->nextVertTouchY < cube->data->map_row * (tile_size * MAP_SCALE)) {
         if (has_wall(cube, vars->nextVertTouchX, vars->nextVertTouchY)) {
             vars->foundVertWallHit = 1;
             vars->vertWallHitX = vars->nextVertTouchX;
@@ -303,6 +302,7 @@ void    ft_draw_ver(t_cub *cube, t_vars *vars, int circle_center_x, int circle_c
         }
     }
 }
+
 
 int map_has_wall_at(t_cub *cube, double x, double y) {
     int mapGridIndexX;
@@ -324,8 +324,7 @@ double distanceBetweenPoints(x1, y1, x2, y2) {
     return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 }
 
-t_vars  draw_line(t_cub *cube, int circle_center_x, int circle_center_y, double angle, int is)
-{
+t_vars draw_line(t_cub *cube, int circle_center_x, int circle_center_y, double angle, int is) {
     t_vars vars;
     vars.angle = normalizeAngle(angle);
 
@@ -342,39 +341,45 @@ t_vars  draw_line(t_cub *cube, int circle_center_x, int circle_center_y, double 
     ft_draw_ver(cube, &vars, circle_center_x, circle_center_y);
     vars.horzHitDistance = __DBL_MAX__;
     vars.vertHitDistance = __DBL_MAX__;
+
     if (vars.foundHorzWallHit)
         vars.horzHitDistance = distanceBetweenPoints(circle_center_x, circle_center_y, vars.horzWallHitX, vars.horzWallHitY);
     if (vars.foundVertWallHit)
         vars.vertHitDistance = distanceBetweenPoints(circle_center_x, circle_center_y, vars.vertWallHitX, vars.vertWallHitY);
-    // Only store the smallest of the distances
+
     vars.wallHitX = vars.vertWallHitX;
-    if (vars.vertHitDistance < vars.horzHitDistance)
-    {
+    vars.wallHitY = vars.vertWallHitY;
+    vars.distance = vars.vertHitDistance;
+    vars.wasHitVert = 1;
+
+    if (vars.vertHitDistance < vars.horzHitDistance) {
         vars.wallHitX = vars.vertWallHitX;
         vars.wallHitY = vars.vertWallHitY;
         vars.distance = vars.vertHitDistance;
         vars.wasHitVert = 1;
-    }
-    else
-    {
+    } else {
         vars.wallHitX = vars.horzWallHitX;
         vars.wallHitY = vars.horzWallHitY;
         vars.distance = vars.horzHitDistance;
         vars.wasHitVert = 0;
     }
+
     if (is == 2)
         DDA(cube, circle_center_x, circle_center_y, vars.wallHitX, vars.wallHitY);
-    return (vars);
+
+    return vars;
 }
+
 
 
 void draw_lines(t_cub *cube, int circle_center_x, int circle_center_y) {
     double angle = cube->player->rotat_angle + FOV_ANGLE / 2;
     int i = 0;
-    while (i < 500) {
+    double x = (double)cube->data->width / NUM_RAYS;
+    while (i < NUM_RAYS) {
         draw_line(cube, circle_center_x, circle_center_y, angle, 2);
-        angle -= FOV_ANGLE / 500;
-        i++;
+        angle -= FOV_ANGLE / NUM_RAYS;
+        i += x;
     }
 }
 
@@ -398,61 +403,15 @@ void draw_wall(t_cub *cube, int x, int wall_top, int wall_bottom, int texture_nu
     }
 }
 
-
-// void draw_lines_3D(t_cub *cube, int circle_center_x, int circle_center_y)
-// {
-//     int i = 0;
-//     double angle;
-//     double distance_proj_plane = (cube->data->width / 2.0) / tan(FOV_ANGLE) / 0.5;
-
-//     angle = cube->player->rotat_angle - FOV_ANGLE / 2.0;
-//     while (i < cube->data->width) {
-//         t_vars vars = draw_line(cube, circle_center_x, circle_center_y, angle, 1);
-
-//         int texture_num = 0;
-//         if (vars.wasHitVert) {
-//             if (vars.isRayFacingLeft)
-//                 texture_num = 2; // West
-//             else
-//                 texture_num = 3; // East
-//         } else {
-//             if (vars.isRayFacingUp)
-//                 texture_num = 0; // North
-//             else
-//                 texture_num = 1; // South
-//         }
-//         t_texture *texture = &cube->texture[texture_num];
-//         double wall_distance = vars.distance * cos(angle - cube->player->rotat_angle);
-//         double projected_wall_height = (tile_size / wall_distance) * distance_proj_plane;
-
-//         int wall_top_pixel = (cube->data->height / 2) - (projected_wall_height / 2);
-//         wall_top_pixel = wall_top_pixel < 0 ? 0 : wall_top_pixel;
-//         int wall_bottom_pixel = (cube->data->height / 2) + (projected_wall_height / 2);
-//         wall_bottom_pixel = wall_bottom_pixel > cube->data->height ? cube->data->height : wall_bottom_pixel;
-
-//         double texture_step = (double)texture->height / (wall_bottom_pixel - wall_top_pixel);
-//         double texture_x_pos = 0;
-
-//         int texture_x = (int)vars.wallHitX % tile_size;
-//         if (vars.wasHitVert)
-//             texture_x = (int)vars.wallHitY % tile_size;
-
-//         texture_x_pos = texture_x * texture_step;
-//         draw_wall(cube, i, wall_top_pixel, wall_bottom_pixel, texture_num, texture_x_pos, texture_step);
-
-//         angle += FOV_ANGLE / cube->data->width;
-//         i++;
-//     }
-// }
-
-
 void draw_lines_3D(t_cub *cube, int circle_center_x, int circle_center_y) {
     int i = 0;
     double angle;
-    double distanceprojplane = (cube->data->width / 2.0) / (tan(FOV_ANGLE) / 0.8);
+    double distanceprojplane = (cube->data->width / 2.0) / (tan(FOV_ANGLE) / 0.5);
 
     angle = cube->player->rotat_angle - FOV_ANGLE / 2.0;
-    while (i < cube->data->width) {
+    double rayWidth = (double)cube->data->width / NUM_RAYS;
+
+    while (i < NUM_RAYS) {
         t_vars vars = draw_line(cube, circle_center_x, circle_center_y, angle, 1);
 
         double wallDistance = vars.distance * cos(angle - cube->player->rotat_angle);
@@ -467,22 +426,18 @@ void draw_lines_3D(t_cub *cube, int circle_center_x, int circle_center_y) {
         double textureStep = 1.3 * cube->texture[0].height / wallstripheight;
         double textureOffsetY = 0;
 
-        if (wallstripheight > cube->data->height)
-        {
+        if (wallstripheight > cube->data->height) {
             textureOffsetY = (wallstripheight - cube->data->height) / 2.0;
             wallstripheight = cube->data->height;
         }
 
         int textureNum = 0;
-        if (vars.wasHitVert)
-        {
+        if (vars.wasHitVert) {
             if (vars.isRayFacingLeft)
                 textureNum = 2; // West
             else
                 textureNum = 3; // East
-        }
-        else
-        {
+        } else {
             if (vars.isRayFacingUp)
                 textureNum = 0; // North
             else
@@ -497,17 +452,24 @@ void draw_lines_3D(t_cub *cube, int circle_center_x, int circle_center_y) {
             textureX = (int)vars.wallHitX % tile_size;
 
         double texturePos = textureOffsetY * textureStep;
+
+        // Calculate the x position of the current ray on the screen
+        int x = i * rayWidth;
+
+        // Drawing the vertical stripe on the screen
         for (int y = wallTopPixel; y < wallBottompixel; y++) {
             int textureY = (int)texturePos & (texture->height - 1);
             texturePos += textureStep;
 
             int color = *(unsigned int *)(texture->data + (textureY * texture->line_len + textureX * (texture->bpp / 8)));
-            my_mlx_pixel_put(&cube->img, i, y, color);
+            my_mlx_pixel_put(&cube->img, x, y, color);
         }
-        angle += FOV_ANGLE / cube->data->width;
+
+        angle += FOV_ANGLE / NUM_RAYS;
         i++;
     }
 }
+
 
 
 float nor_angle(float angle) // normalize the angle
@@ -530,29 +492,33 @@ unsigned int rgba_to_int(unsigned char r, unsigned char g, unsigned char b, unsi
 
 void draw_view_player(t_cub *cube, int is)
 {
-    // get new_angle of view and if he move or not
+    // Calculate movement step based on direction and speed
     int movestep = cube->player->walk_direction * cube->player->move_speed;
 
-    // new_position of the player
-    double new_player_x = 0.0;
-    double new_player_y = 0.0;
-    new_player_x = cube->player->player_x + (movestep * 0.5) * cos(cube->player->rotat_angle);
-    new_player_y = cube->player->player_y + (movestep * 0.5) * sin(cube->player->rotat_angle);
+    // Calculate new position of the player
+    double new_player_x = cube->player->player_x + (double)movestep * cos(cube->player->rotat_angle);
+    double new_player_y = cube->player->player_y + (double)movestep * sin(cube->player->rotat_angle);
 
-    // check new_position is in a wall or not
+    // Check if new position is a wall
     if(is_it_a_wall(new_player_x, new_player_y, cube) == 1)
     {
+        // Update player position only if the new position is not a wall
         cube->player->player_x = new_player_x;
         cube->player->player_y = new_player_y;
     }
+
+    // Draw the player and lines based on the 'is' parameter
     if (is == 1)
     {
         draw_player(cube, cube->player->player_x, cube->player->player_y);
         draw_lines(cube, cube->player->player_x, cube->player->player_y);
-        return;
     }
-    draw_lines_3D(cube, cube->player->player_x, cube->player->player_y);
+    else
+    {
+        draw_lines_3D(cube, cube->player->player_x, cube->player->player_y);
+    }
 }
+
 
 void	handle_pixel2(int x, int y, t_cub *cube, int is)
 {
