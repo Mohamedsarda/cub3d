@@ -3,7 +3,7 @@
 
 void	malloc_error(void)
 {
-	printf("error in malloc\n");
+	printf("Error: in malloc\n");
 	exit(EXIT_FAILURE);
 }
 
@@ -76,7 +76,8 @@ void ft_fractol_init(t_cub *cube)
 
     // Load multiple textures
     // char *texture_files[] = {"wall.xpm", "wall.xpm", "wall.xpm", "wall.xpm"};
-    char *texture_files[] = {"wood0.xpm", "wood1.xpm", "wood2.xpm", "wood3.xpm"};
+    // char *texture_files[] = {"./wood0.xpm", "./wood1.xpm", "./wood2.xpm", "./wood3.xpm"};
+    char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea};
     for (int i = 0; i < 4; i++) {
         cube->texture[i].img_ptr = mlx_xpm_file_to_image(cube->mlx_con, texture_files[i], &cube->texture[i].width, &cube->texture[i].height);
         if (!cube->texture[i].img_ptr)
@@ -498,42 +499,6 @@ void draw_view_player(t_cub *cube, int is)
     else
         draw_lines_3D(cube);
 }
-
-
-// void draw_view_player(t_cub *cube, int is)
-// {
-//     // Normalize the player's rotation angle
-//     cube->player->rotat_angle = normalizeAngle(cube->player->rotat_angle);
-//     cube->player->rotat_angle += (double)cube->player->turn_direction * cube->player->rotation_speed;
-
-//     // Calculate movement step
-//     double movestep = (double)cube->player->walk_direction * cube->player->move_speed;
-//     double new_player_x = cube->player->player_x + movestep * cos(cube->player->rotat_angle);
-//     double new_player_y = cube->player->player_y + movestep * sin(cube->player->rotat_angle);
-
-//     // Handle strafe movement (left/right)
-//     if (cube->player->strafe_direction != 0)
-//     {
-//         new_player_x += (double)cube->player->strafe_direction * (cube->player->move_speed / 2) * cos(cube->player->rotat_angle + M_PI / 2);
-//         new_player_y += (double)cube->player->strafe_direction * (cube->player->move_speed / 2) * sin(cube->player->rotat_angle + M_PI / 2);
-//     }
-//     // Check if the new position is within bounds and not a wall
-//     if (is_it_a_wall(new_player_x, new_player_y, cube) == 1)
-//     {
-//         cube->player->player_x = new_player_x;
-//         cube->player->player_y = new_player_y;
-//     }
-
-//     if (is == 1)
-//     {
-//         // Draw the player and the 2D map view
-//         draw_player(cube);
-//         draw_lines(cube);
-//     }
-//     else
-//         // Draw the 3D view
-//         draw_lines_3D(cube);
-// }
 
 void	handle_pixel2(int x, int y, t_cub *cube, int is)
 {

@@ -259,8 +259,21 @@ void	ft_change_map(t_init *init, t_data *data)
 	return ;
 }
 
+void ft_open_files(t_data *data)
+{
+	if (open(data->ea, O_RDONLY) < 0
+		||open(data->so, O_RDONLY) < 0
+		|| open(data->we, O_RDONLY) < 0
+		|| open(data->no, O_RDONLY) < 0 )
+	{
+		ft_putstr_fd("Error: Please Check The Paths Provided For The Textures\n", 2);
+		exit(1);
+	}
+}
+
 int ft_get_data(t_init *init, t_data *data)
 {
+	ft_open_files(data);
 	ft_get_color_data(init, data, 0);
 	ft_get_color_data(init, data, 1);
 	free_double_arr(init->colors);

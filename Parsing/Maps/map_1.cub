@@ -1,19 +1,19 @@
-NO ./path_to_the_north_texture1
+NO ./wood0.xpm
 
-SO ./path_to_the_south_texture2
-
-
+SO ./wood1.xpm
 
 
 
 
 
-WE 					 ./path_to_the_west_texture3
+
+
+WE 					 ./wood2.xpm
 
 C   225,255,25
 
 
- EA ../path_to_the_east_texture4
+ EA ./wood3.xpm
 
 F           255,25,15
 
