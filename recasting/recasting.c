@@ -27,7 +27,7 @@ t_player *init_player(t_cub *cube)
         x = -1;
         while (++x < cube->data->map_cols)
         {
-            if (cube->data->map[y][x] == 'N')
+            if (cube->data->map[y][x] == cube->data->p)
             {
                 player->player_x = x * (tile_size * MAP_SCALE) + ((tile_size * MAP_SCALE) / 2);
                 player->player_y = y * (tile_size * MAP_SCALE) + ((tile_size * MAP_SCALE) / 2);
@@ -36,7 +36,14 @@ t_player *init_player(t_cub *cube)
     }
     player->radius = 10;
     player->move_speed = 7;
-    player->rotat_angle = deg2rad(90);  // Initialize in radians
+    if (cube->data->p == 'W')
+        player->rotat_angle = deg2rad(180);  // Initialize in radians
+    else if (cube->data->p == 'S')
+        player->rotat_angle = deg2rad(90);  // Initialize in radians
+    else if (cube->data->p == 'N')
+        player->rotat_angle = deg2rad(270);  // Initialize in radians
+    else if (cube->data->p == 'E')
+        player->rotat_angle = deg2rad(0);  // Initialize in radians
     player->rotation_speed = 0.05;
     player->turn_direction = 0;
     player->strafe_direction = 0;
@@ -68,6 +75,7 @@ void ft_fractol_init(t_cub *cube)
     }
 
     // Load multiple textures
+    // char *texture_files[] = {"wall.xpm", "wall.xpm", "wall.xpm", "wall.xpm"};
     char *texture_files[] = {"wood0.xpm", "wood1.xpm", "wood2.xpm", "wood3.xpm"};
     for (int i = 0; i < 4; i++) {
         cube->texture[i].img_ptr = mlx_xpm_file_to_image(cube->mlx_con, texture_files[i], &cube->texture[i].width, &cube->texture[i].height);
@@ -448,7 +456,6 @@ unsigned int rgba_to_int(unsigned char r, unsigned char g, unsigned char b, unsi
     return (a << 24) | (r << 16) | (g << 8) | b;
 }
 
-
 void draw_view_player(t_cub *cube, int is)
 {
     // Normalize the player's rotation angle
@@ -466,11 +473,20 @@ void draw_view_player(t_cub *cube, int is)
         new_player_x += (double)cube->player->strafe_direction * (cube->player->move_speed / 2) * cos(cube->player->rotat_angle + M_PI / 2);
         new_player_y += (double)cube->player->strafe_direction * (cube->player->move_speed / 2) * sin(cube->player->rotat_angle + M_PI / 2);
     }
+
     // Check if the new position is within bounds and not a wall
-    if (is_it_a_wall(new_player_x, new_player_y, cube) == 1)
+    if (is_it_a_wall(new_player_x, new_player_y, cube))
     {
         cube->player->player_x = new_player_x;
         cube->player->player_y = new_player_y;
+    }
+    else
+    {
+        // Try sliding along the wall
+        if (is_it_a_wall(cube->player->player_x, new_player_y, cube))
+            cube->player->player_y = new_player_y;
+        else if (is_it_a_wall(new_player_x, cube->player->player_y, cube))
+            cube->player->player_x = new_player_x;
     }
 
     if (is == 1)
@@ -480,13 +496,48 @@ void draw_view_player(t_cub *cube, int is)
         draw_lines(cube);
     }
     else
-        // Draw the 3D view
         draw_lines_3D(cube);
 }
 
+
+// void draw_view_player(t_cub *cube, int is)
+// {
+//     // Normalize the player's rotation angle
+//     cube->player->rotat_angle = normalizeAngle(cube->player->rotat_angle);
+//     cube->player->rotat_angle += (double)cube->player->turn_direction * cube->player->rotation_speed;
+
+//     // Calculate movement step
+//     double movestep = (double)cube->player->walk_direction * cube->player->move_speed;
+//     double new_player_x = cube->player->player_x + movestep * cos(cube->player->rotat_angle);
+//     double new_player_y = cube->player->player_y + movestep * sin(cube->player->rotat_angle);
+
+//     // Handle strafe movement (left/right)
+//     if (cube->player->strafe_direction != 0)
+//     {
+//         new_player_x += (double)cube->player->strafe_direction * (cube->player->move_speed / 2) * cos(cube->player->rotat_angle + M_PI / 2);
+//         new_player_y += (double)cube->player->strafe_direction * (cube->player->move_speed / 2) * sin(cube->player->rotat_angle + M_PI / 2);
+//     }
+//     // Check if the new position is within bounds and not a wall
+//     if (is_it_a_wall(new_player_x, new_player_y, cube) == 1)
+//     {
+//         cube->player->player_x = new_player_x;
+//         cube->player->player_y = new_player_y;
+//     }
+
+//     if (is == 1)
+//     {
+//         // Draw the player and the 2D map view
+//         draw_player(cube);
+//         draw_lines(cube);
+//     }
+//     else
+//         // Draw the 3D view
+//         draw_lines_3D(cube);
+// }
+
 void	handle_pixel2(int x, int y, t_cub *cube, int is)
 {
-    if(cube->data->map[y][x] == 'N')
+    if(cube->data->map[y][x] == cube->data->p)
     {
         draw_cube(cube, x, y, RED, is);
         draw_view_player(cube, is);
