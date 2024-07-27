@@ -14,7 +14,7 @@
 
 #define FOV_ANGLE M_PI / 3
 #define WALL_STRIP_WIDTH 1
-#define NUM_RAYS 4000
+#define NUM_RAYS 5000
 #define line_leng 200
 
 #define MAP_SCALE 1
