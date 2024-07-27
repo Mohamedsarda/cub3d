@@ -53,7 +53,7 @@ int main()
     mlx_hook(cube.mlx_win, 17, 1L << 17, handle_close_button, &cube);
     mlx_hook(cube.mlx_win, 2, 0L, handle_input_key_down, &cube);
     mlx_hook(cube.mlx_win, 3, 0L, handle_input_key_up, &cube);
-	mlx_hook(cube.mlx_win, 6, 0, ft_mouse_move, &cube);
+	// mlx_hook(cube.mlx_win, 6, 0, ft_mouse_move, &cube);
     mlx_loop_hook(cube.mlx_con, loop_fun, &cube);
 	mlx_loop(cube.mlx_con);
 

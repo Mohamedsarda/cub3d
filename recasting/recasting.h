@@ -8,16 +8,16 @@
 #include "mlx.h"
 #include "../Parsing/parsing.h"
 
-#define tile_size 60
+#define tile_size 64
 // #define map_row 14
 // #define map_cols 33
 
 #define FOV_ANGLE M_PI / 3
 #define WALL_STRIP_WIDTH 1
-#define NUM_RAYS 2000
+#define NUM_RAYS 4000
 #define line_leng 200
 
-#define MAP_SCALE 0.2
+#define MAP_SCALE 1
 
 #define WIDTH map_cols * tile_size
 #define HEIGHT map_row * tile_size
@@ -27,16 +27,6 @@
 #define RED         0xFF0000
 #define GREEN       0x00FF00
 #define BLUE        0x0000FF
-
-#define KEY_ESC   65307
-#define KEY_A     97
-#define KEY_S     115
-#define KEY_D     100
-#define KEY_W     119
-#define KEY_UP    65362
-#define KEY_DOWN  65364
-#define KEY_LEFT  65361
-#define KEY_RIGHT 65363
 
 typedef struct s_img
 {
@@ -57,6 +47,7 @@ typedef struct s_player
 	double	player_y;
 	int	radius;
 	int turn_direction;
+	int strafe_direction;
 	int walk_direction;
 	double rotat_angle;
 	double rotation_speed;
