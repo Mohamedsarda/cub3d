@@ -5,9 +5,9 @@
 #include <stdio.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "mlx.h"
+// #include "mlx.h"
 #include "../Parsing/parsing.h"
-
+#include "../../MLX42/include/MLX42/MLX42.h"
 #define tile_size 64
 // #define map_row 14
 // #define map_cols 33
@@ -17,14 +17,14 @@
 #define NUM_RAYS 5000
 #define line_leng 200
 
-#define MAP_SCALE 1
+#define MAP_SCALE 0.2
 
 #define WIDTH map_cols * tile_size
 #define HEIGHT map_row * tile_size
 
 #define BLACK       0x000000
 #define WHITE       0xFFFFFF
-#define RED         0xFF0000
+#define RED         0xFF0000FF
 #define GREEN       0x00FF00
 #define BLUE        0x0000FF
 
@@ -105,9 +105,9 @@ typedef struct s_vars
 typedef struct s_cub
 {
 	char **map;
-	void	*mlx_con;
-	void	*mlx_win;
-	t_img	img;
+	// t_img	img;
+	mlx_image_t* image;
+	mlx_t* mlx;
 	t_player *player;
 	char	**colors;
 	int		is;
@@ -118,11 +118,8 @@ typedef struct s_cub
 void    ft_fractol_init(t_cub *cube);
 
 // hooks
-int loop_fun(t_cub * cube);
-int handle_input_key_down(int keycode, t_cub * data);
-int	handle_close_button(t_cub *data);
-int handle_input_key_up(int keycode, t_cub * data);
-int	ft_mouse_move(int x, int y, t_cub *cube);
+void loop_fun(void* param);
+void my_keyhook(mlx_key_data_t keydata, void* param);
 // end hooks
 
 #endif
