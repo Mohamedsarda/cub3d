@@ -1,11 +1,11 @@
 CC		= cc
-CFLAGS	= -Wall -Wextra -Werror -g   #-fsanitize=address
+CFLAGS	=   -pthread  -Wall -Wextra -Werror -g  -fsanitize=address
 RM		= rm -rf
 SRCS	= main.c 	./Parsing/parsing.c	\
 		  ./Parsing/init/ft_get_init.c		./Parsing/init/ft_reading_init.c\
 		  ./Parsing/utils/file_1.c	./Parsing/utils/ft_split.c	./Parsing/utils/get_next_line.c	./Parsing/utils/get_next_line_utils.c\
 		  ./Parsing/error/error_1.c \
-		  recasting/recasting.c
+		  recasting/recasting_1.c
 
 OBJS	= $(SRCS:.c=.o)
 NAME	= app
@@ -14,9 +14,9 @@ all: $(NAME)
 
 %.o: %.c parsing.h recasting.h
 	$(CC) $(CFLAGS) -c $< -o $@
-
+#-lmlx -framework OpenGL -framework AppKit 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS)  -lmlx -framework OpenGL -framework AppKit -o $@
+	$(CC) $(CFLAGS) $(OBJS) ~/Desktop/MLX42/build/libmlx42.a -lglfw -L/Users/eel-ghal/.brew/opt/glfw/lib -pthread -lm -g -o $@
 
 clean:
 	$(RM) $(OBJS) $(OBJSB)

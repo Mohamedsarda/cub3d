@@ -1,19 +1,19 @@
-NO ./wood0.xpm
+NO ./wall.xpm
 
-SO ./wood1.xpm
-
-
+SO ./wall.xpm
 
 
 
 
 
-WE 					 ./wood2.xpm
+
+
+WE 					 ./wall.xpm
 
 C   225,255,25
 
 
- EA ./wood3.xpm
+ EA ./wall.xpm
 
 F           255,25,15
 
