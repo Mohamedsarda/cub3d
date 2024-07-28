@@ -49,7 +49,7 @@ int main()
     ft_fractol_init(&cube);
 
 
-	
+
 	// int	x;
 	// int	y;
 
