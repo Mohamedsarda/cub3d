@@ -14,9 +14,9 @@ all: $(NAME)
 
 %.o: %.c parsing.h recasting.h
 	$(CC) $(CFLAGS) -c $< -o $@
-#-lmlx -framework OpenGL -framework AppKit 
+#-lmlx -framework OpenGL -framework AppKit
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) ~/Desktop/MLX42/build/libmlx42.a -lglfw -L/Users/eel-ghal/.brew/opt/glfw/lib -pthread -lm -g -o $@
+	$(CC) $(CFLAGS) $(OBJS) ~/Desktop/MLX42/build/libmlx42.a -lglfw -L/Users/msarda/.brew/opt/glfw/lib -pthread -lm -g -o $@
 
 clean:
 	$(RM) $(OBJS) $(OBJSB)
