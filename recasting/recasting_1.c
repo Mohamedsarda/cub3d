@@ -95,14 +95,15 @@ void ft_fractol_init(t_cub *cube)
     // char *texture_files[] = {"wall.xpm", "wall.xpm", "wall.xpm", "wall.xpm"};
     // char *texture_files[] = {"./wood0.xpm", "./wood1.xpm", "./wood2.xpm", "./wood3.xpm"};
     // char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea};
-    // // mlx_load_xpm42
-    // for (int i = 0; i < 4; i++)
-    // {
-    //     cube->texture[i] = mlx_load_png(texture_files[i]);
-    //     cube->img[i] = mlx_texture_to_image(cube->mlx, cube->texture[i]);
-    //     if (mlx_image_to_window(cube->mlx, cube->img[i], 0, 0) < 0)
-    //         ft_error();
-    // }
+
+    // Load and display textures
+    for (int i = 0; i < 4; i++)
+    {
+        cube->texture[i] = mlx_load_png("./wall.png");
+
+        cube->img[i] = mlx_texture_to_image(cube->mlx, cube->texture[i]);
+    }
+
 
     cube->player = init_player(cube);
 }
@@ -193,7 +194,7 @@ void draw_player(t_cub *cube)
     double radius = (double)cube->player->radius * MAP_SCALE;
     double centerX = cube->player->player_x * MAP_SCALE;
     double centerY = cube->player->player_y * MAP_SCALE;
-    printf("%f | %f | %f | %f | %f\n",cube->player->player_x, cube->player->player_y, cube->player->player_x * MAP_SCALE, cube->player->player_y * MAP_SCALE, radius);
+    // printf("%f | %f | %f | %f | %f\n",cube->player->player_x, cube->player->player_y, cube->player->player_x * MAP_SCALE, cube->player->player_y * MAP_SCALE, radius);
     for (int y = -radius; y <= radius; y++)
     {
         for (int x = -radius; x <= radius; x++)
@@ -377,7 +378,7 @@ t_vars draw_line(t_cub *cube, double angle, int is)
         vars.distance = vars.horzHitDistance;
         vars.wasHitVert = 0;
     }
-    if (cube->is == 0.25)
+    if (cube->is == MAP_SCALE)
         DDA(cube, cube->player->player_x * cube->is, cube->player->player_y * cube->is, vars.wallHitX * cube->is, vars.wallHitY * cube->is);
 
     return vars;
@@ -385,7 +386,7 @@ t_vars draw_line(t_cub *cube, double angle, int is)
 
 void draw_lines(t_cub *cube, int is)
 {
-    cube->is = 0.25;
+    cube->is = MAP_SCALE;
     double angle = cube->player->rotat_angle + (FOV_ANGLE / 2);
     int i = 0;
     while (i < NUM_RAYS)
@@ -471,58 +472,103 @@ void draw_lines(t_cub *cube, int is)
 //         i++;
 //     }
 // }
-// void draw_lines_3D(t_cub *cube)
-// {
-//     int i = 0;
-//     double angle;
-//     double distanceprojplane = ((double)cube->data->width / 2.0) / tan(FOV_ANGLE / 2);
 
-//     angle = cube->player->rotat_angle - FOV_ANGLE / 2.0;
-//     double rayWidth = (double)cube->data->width / NUM_RAYS;
+uint32_t get_pixel_color(mlx_texture_t* texture, int x, int y)
+{
+    if (x < 0 || x >= (int)texture->width || y < 0 || y >= (int)texture->height)
+        return 0;
+    int index = (y * texture->width + x) * 4; // 4 bytes per pixel
+    uint8_t* pixels = texture->pixels;
+    uint32_t color = *(uint32_t*)&pixels[index];
 
-//     while (i < NUM_RAYS)
-//     {
-//         t_vars vars = draw_line(cube, angle, 1);
+    // Assuming the color format is ARGB and we need RGBA
+    uint8_t a = (color >> 24) & 0xFF;
+    uint8_t r = (color >> 16) & 0xFF;
+    uint8_t g = (color >> 8) & 0xFF;
+    uint8_t b = color & 0xFF;
 
-//         double wallDistance = vars.distance * cos(angle - cube->player->rotat_angle);
-//         double projectedwallheight = (tile_size / wallDistance) * distanceprojplane;
+    // Convert ARGB to RGBA
+    return (r << 24) | (g << 16) | (b << 8) | a;
+}
 
-//         int wallstripheight = (int)projectedwallheight;
-//         int wallTopPixel = (cube->data->height / 2) - (wallstripheight / 2);
-//         wallTopPixel = wallTopPixel < 0 ? 0 : wallTopPixel;
-//         int wallBottompixel = (cube->data->height / 2) + (wallstripheight / 2);
-//         wallBottompixel = wallBottompixel > cube->data->height ? cube->data->height : wallBottompixel;
 
-//         // double textureStep = (double)cube->image[0].height / wallstripheight;
-//         double textureOffsetY = 0;
+void draw_lines_3D(t_cub *cube)
+{
+    int i = 0;
+    double angle;
+    double distanceProjPlane = ((double)cube->data->width / 2.0) / tan(FOV_ANGLE / 2);
+    double rayWidth = (double)cube->data->width / NUM_RAYS;
 
-//         if (wallstripheight > cube->data->height)
-//         {
-//             textureOffsetY = ((double)wallstripheight - (double)cube->data->height) / 2.0;
-//             wallstripheight = (double)cube->data->height;
-//         }
+    angle = cube->player->rotat_angle - FOV_ANGLE / 2.0;
 
-//         // int textureNum = 0;
-//         // if (vars.wasHitVert)
-//         // {
-//         //     if (vars.isRayFacingLeft)
-//         //         textureNum = 2; // West
-//         //     else
-//         //         textureNum = 3; // East
-//         // } else {
-//         //     if (vars.isRayFacingUp)
-//         //         textureNum = 0; // North
-//         //     else
-//         //         textureNum = 1; // South
-//         // }
-//         int x = i * rayWidth;
+    while (i < NUM_RAYS)
+    {
+        t_vars vars = draw_line(cube, angle, 1);
 
-//         //get textures
+        double wallDistance = vars.distance * cos(angle - cube->player->rotat_angle);
+        double projectedWallHeight = (tile_size / wallDistance) * distanceProjPlane;
 
-//         angle += FOV_ANGLE / NUM_RAYS;
-//         i++;
-//     }
-// }
+        int wallStripHeight = (int)projectedWallHeight;
+        int wallTopPixel = (cube->data->height / 2) - (wallStripHeight / 2);
+        wallTopPixel = wallTopPixel < 0 ? 0 : wallTopPixel;
+        int wallBottomPixel = (cube->data->height / 2) + (wallStripHeight / 2);
+        wallBottomPixel = wallBottomPixel > cube->data->height ? cube->data->height : wallBottomPixel;
+
+        double textureStep = (double)cube->texture[0]->height / wallStripHeight;
+        double textureOffsetY = 0;
+
+        if (wallStripHeight > cube->data->height)
+        {
+            textureOffsetY = ((double)wallStripHeight - (double)cube->data->height) / 2.0;
+            wallStripHeight = (double)cube->data->height;
+        }
+
+        int textureNum = 0;
+        if (vars.wasHitVert)
+        {
+            if (vars.isRayFacingLeft)
+                textureNum = 2; // West
+            else
+                textureNum = 3; // East
+        }
+        else
+        {
+            if (vars.isRayFacingUp)
+                textureNum = 0; // North
+            else
+                textureNum = 1; // South
+        }
+
+        mlx_texture_t *texture = cube->texture[textureNum];
+        int textureX;
+        if (vars.wasHitVert)
+            textureX = (int)vars.wallHitY % tile_size;
+        else
+            textureX = (int)vars.wallHitX % tile_size;
+
+        // Ensure textureX is within the texture width
+        textureX = textureX % texture->width;
+
+        double texturePos = textureOffsetY * textureStep;
+
+        int x = i * rayWidth;
+        for (int y = wallTopPixel; y < wallBottomPixel; y++)
+        {
+            int textureY = (int)texturePos % texture->height;
+            texturePos += textureStep;
+
+            uint32_t color = get_pixel_color(texture, textureX, textureY);
+            mlx_put_pixel(cube->image, x, y, color);
+        }
+
+        angle += FOV_ANGLE / NUM_RAYS;
+        i++;
+    }
+}
+
+
+
+
 
 int create_rgb_color(int r, int g, int b)
 {
@@ -580,7 +626,7 @@ void draw_view_player(t_cub *cube, int is)
             cube->player->player_x = new_player_x;
     }
 
-    // draw_lines_3D(cube);
+    draw_lines_3D(cube);
 }
 
 void	handle_pixel2(int x, int y, t_cub *cube)
