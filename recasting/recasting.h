@@ -17,7 +17,7 @@
 #define NUM_RAYS 5000
 #define line_leng 200
 
-#define MAP_SCALE 0.2
+#define MAP_SCALE 0.25
 
 #define WIDTH map_cols * tile_size
 #define HEIGHT map_row * tile_size
@@ -25,8 +25,9 @@
 #define BLACK       0x000000
 #define WHITE       0xFFFFFF
 #define RED         0xFF0000FF
-#define GREEN       0x00FF00
+#define GREEN       0x98FB98
 #define BLUE        0x0000FF
+#define GRAY        0xC0C0C0
 
 typedef struct s_img
 {
@@ -109,9 +110,11 @@ typedef struct s_cub
 	mlx_image_t* image;
 	mlx_t* mlx;
 	t_player *player;
+	mlx_texture_t* texture[4];
+	mlx_image_t* img[4];
 	char	**colors;
-	int		is;
-	t_texture texture[4];
+	double		is;
+	// t_texture texture[4];
 	t_data	*data;
 } t_cub;
 

@@ -5,6 +5,8 @@
         "mlx42.h": "c",
         "glad.h": "c",
         "math.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "__locale": "c",
+        "locale": "c"
     }
 }
