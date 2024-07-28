@@ -17,7 +17,7 @@
 #define NUM_RAYS 5000
 #define line_leng 200
 
-#define MAP_SCALE 0.25
+#define MAP_SCALE 0.3
 
 #define WIDTH map_cols * tile_size
 #define HEIGHT map_row * tile_size
