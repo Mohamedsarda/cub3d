@@ -19,7 +19,7 @@
 
 #define MAP_SCALE 1
 
-#define WIDTH 100
+#define WIDTH 1900
 #define HEIGHT 1000
 
 #define BLACK       0x000000
