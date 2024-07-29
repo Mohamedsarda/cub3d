@@ -65,7 +65,7 @@ t_player *init_player(t_cub *cube)
     //     player->rotat_angle = deg2rad(270);  // Initialize in radians
     // else if (cube->data->p == 'E')
     //     player->rotat_angle = deg2rad(0);  // Initialize in radians
-    player->rotation_speed = 0.09;
+    player->rotation_speed = 0.02;
     player->turn_direction = 0;
     player->strafe_direction = 0;
     player->walk_direction = 0;
@@ -639,13 +639,7 @@ void draw_minimap(t_cub *cube)
 void	handle_pixel2(int x, int y, t_cub *cube)
 {
     if(cube->data->map[y][x] == cube->data->p)
-    {
-        draw_cube(cube, x, y, create_rgba(0, 255, 255, 255));
-        draw_lines_3D(cube);
-        // draw_player(cube);
         draw_minimap(cube);
-        // draw_lines(cube, 1);
-    }
 }
 
 void	draw_per(t_cub *cube)
@@ -851,6 +845,7 @@ void loop_fun(void* param)
         handle_mouse(cube);
     draw_all_black(cube);
     // draw_map(cube);
+    draw_lines_3D(cube);
     draw_per(cube);
     // fill_rectangle(cube, MINIMAP_X_OFFSET, MINIMAP_Y_OFFSET, MINIMAP_SIZE, MINIMAP_SIZE, create_rgba(0, 0, 0, 128));
 }
