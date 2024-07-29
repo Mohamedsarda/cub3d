@@ -44,6 +44,7 @@ typedef struct  s_data
 	char			*so;
 	char			*we;
 	char			*ea;
+	char			p;
 	int				map_row;
 	int				map_cols;
 	int				height;
