@@ -40,7 +40,7 @@ int ft_get_color_data(t_init *init, t_data *data, int type)
 	tmp = &data->floor;
 	if (type == 1)
 		tmp = &data->sky;
-	if (ft_count_cammas(colors[1]) != 2)
+	if (ft_count_cammas(colors[1]) != 2 || colors[1][ft_strlen(colors[1]) - 1] == ',')
 		return (free_double_arr(colors), ft_check_color_print(data), -1);
 	j = 0;
 	i = 0;
@@ -63,16 +63,6 @@ int ft_get_color_data(t_init *init, t_data *data, int type)
 		return (free_double_arr(colors), ft_check_color_print(data), -1);
 	free_double_arr(colors);
 	return (1);
-}
-
-void    my_print_color(t_data *data)
-{
-	printf("R : [%d]", data->floor.r);
-	printf("G : [%d]", data->floor.g);
-	printf("B : [%d]\n", data->floor.b);
-	printf("R : [%d]", data->sky.r);
-	printf("G : [%d]", data->sky.g);
-	printf("B : [%d]\n", data->sky.b);
 }
 
 void	ft_check_color(t_data *data)
@@ -292,7 +282,6 @@ int ft_get_data(t_init *init, t_data *data)
 	// free(data->no);
 	// free(data->we);
 	// free_double_arr(data->map);
-	// free_double_arr(init->coordinats);
 	return (1);
 }
 
