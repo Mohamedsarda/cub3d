@@ -13,12 +13,12 @@
 // #define map_cols 33
 
 //check map
-#define WIDTH 3000
-#define HEIGHT 2000
+// #define WIDTH 3000
+// #define HEIGHT 2000
 
 //check 3D
-// #define WIDTH 2000
-// #define HEIGHT 1000
+#define WIDTH 2000
+#define HEIGHT 1000
 
 
 #define FOV_ANGLE M_PI / 3
@@ -114,6 +114,12 @@ typedef struct s_vars
 	double angle;
 	double distance;
 	int		wasHitVert;
+
+	int	textureNum;
+	double textureStep;
+	double textureOffsetY;
+	double wallBottomPixel;
+	double wallTopPixel;
 }	t_vars;
 
 typedef struct s_cub
