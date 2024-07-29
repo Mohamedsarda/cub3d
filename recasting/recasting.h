@@ -13,12 +13,12 @@
 // #define map_cols 33
 
 //check map
-#define WIDTH 3000
-#define HEIGHT 2000
+// #define WIDTH 3000
+// #define HEIGHT 2000
 
 //check 3D
-// #define WIDTH 2000
-// #define HEIGHT 1000
+#define WIDTH 2000
+#define HEIGHT 1000
 
 
 #define FOV_ANGLE M_PI / 3
@@ -28,6 +28,10 @@
 
 #define MAP_SCALE 1
 
+
+#define MINIMAP_SIZE 200
+#define MINIMAP_X_OFFSET 20
+#define MINIMAP_Y_OFFSET 20
 
 #define BLACK       0x000000
 #define WHITE       0xFFFFFF
@@ -57,6 +61,7 @@ typedef struct s_player
 	int turn_direction;
 	int strafe_direction;
 	int walk_direction;
+	int start;
 	double rotat_angle;
 	double rotation_speed;
 	double move_speed;

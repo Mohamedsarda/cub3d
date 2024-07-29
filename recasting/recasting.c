@@ -60,6 +60,7 @@ t_player *init_player(t_cub *cube)
     player->turn_direction = 0;
     player->strafe_direction = 0;
     player->walk_direction = 0;
+    player->start = 0;
 
     return (player);
 }
@@ -77,15 +78,15 @@ void ft_fractol_init(t_cub *cube)
 
 
     //check map
-	cube->image = mlx_new_image(cube->mlx, cube->data->width, cube->data->height);
-	if (!cube->image || (mlx_image_to_window(cube->mlx, cube->image, WIDTH / 10, HEIGHT / 10) < 0))
-		ft_error();
+	// cube->image = mlx_new_image(cube->mlx, cube->data->width, cube->data->height);
+	// if (!cube->image || (mlx_image_to_window(cube->mlx, cube->image, WIDTH / 10, HEIGHT / 10) < 0))
+	// 	ft_error();
 
 
     //check 3D
-    // cube->image = mlx_new_image(cube->mlx, WIDTH, HEIGHT);
-	// if (!cube->image || (mlx_image_to_window(cube->mlx, cube->image, 0, 0) < 0))
-	// 	ft_error();
+    cube->image = mlx_new_image(cube->mlx, WIDTH, HEIGHT);
+	if (!cube->image || (mlx_image_to_window(cube->mlx, cube->image, 0, 0) < 0))
+		ft_error();
 
 
     // cube->mlx_con = mlx_init();
@@ -114,7 +115,8 @@ void ft_fractol_init(t_cub *cube)
     // char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea};
 
     // Load and display textures
-    for (int i = 0; i < 4; i++)
+    int i = 0;
+    while (i < 4)
     {
         cube->texture[i] = mlx_load_png("./wall.png");
         if (!cube->texture[i])
@@ -122,6 +124,7 @@ void ft_fractol_init(t_cub *cube)
         cube->img[i] = mlx_texture_to_image(cube->mlx, cube->texture[i]);
         if (!cube->img[i])
             ft_error();
+        i++;
     }
 
 
@@ -144,20 +147,6 @@ void    draw_cube(t_cub *cube, int x, int y, int color)
 }
 
 // all_black
-void	handle_pixel3(int x, int y, t_cub *cube)
-{
-
-	int	i;
-	int	j;
-	j = -1;
-    while (++j < tile_size)
-    {
-        i = -1;
-        while (++i < tile_size)
-            mlx_put_pixel(cube->image, (x * tile_size) + i , (y * tile_size) + j, create_rgba(0, 0, 0, 150));
-    }
-}
-
 void	draw_all_black(t_cub *cube)
 {
 	int	x;
@@ -165,11 +154,11 @@ void	draw_all_black(t_cub *cube)
 
 	y = -1;
 	x = -1;
-	while (++y < cube->data->map_row)
+	while (++y < HEIGHT)
 	{
 		x = -1;
-		while (++x < cube->data->map_cols)
-			handle_pixel3(x, y, cube);
+		while (++x < WIDTH)
+			mlx_put_pixel(cube->image, x, y, create_rgba(0, 0, 0, 150));
 	}
 }
 // end all_black
@@ -204,11 +193,17 @@ void draw_player(t_cub *cube)
     double centerX = cube->player->player_x;
     double centerY = cube->player->player_y;
     // printf("%f | %f | %f | %f | %f\n",cube->player->player_x, cube->player->player_y, cube->player->player_x, cube->player->player_y, radius);
-    for (int y = -radius; y <= radius; y++)
+    int y = -radius;
+    while (y <= radius)
     {
-        for (int x = -radius; x <= radius; x++)
+        int x = -radius;
+        y++;
+        while (x <= radius)
+        {
             if (x * x + y * y <= radius * radius)
                 mlx_put_pixel(cube->image, centerX + (double)x , centerY + (double)y, RED);
+                x++;
+        }
     }
 }
 
@@ -221,11 +216,13 @@ void DDA(t_cub *cube, double X0, double Y0, double X1, double Y1)
     double Yinc = dy / steps;
     double X = X0;
     double Y = Y0;
-    for (int i = 0; i <= steps; i++)
+    int i = 0;
+    while (i <= steps)
     {
         mlx_put_pixel(cube->image, X , Y, create_rgba(250, 100, 100 , 255));
         X += Xinc;
         Y += Yinc;
+        i++;
     }
 }
 
@@ -436,18 +433,25 @@ void draw_lines_3D(t_cub* cube)
     angle = cube->player->rotat_angle - FOV_ANGLE / 2.0;
 
     // Draw sky and floor
-    for (int i = 0; i < WIDTH; i++)
+    int i = 0;
+    while (i < WIDTH)
     {
-        for (int j = 0; j < HEIGHT / 2; j++)
+        int j = 0;
+        while (j < HEIGHT / 2)
         {
             mlx_put_pixel(cube->image, i, j, create_rgba(cube->data->sky.r, cube->data->sky.g, cube->data->sky.b, 255));
+            j++;
         }
-        for (int j = HEIGHT / 2; j < HEIGHT; j++)
+        j = HEIGHT / 2;
+        while (j < HEIGHT)
         {
             mlx_put_pixel(cube->image, i, j, create_rgba(cube->data->floor.r, cube->data->floor.g, cube->data->floor.b, 255));
+            j++;
         }
+        i++;
     }
-    for (int i = 0; i < WIDTH; i++)
+    i = 0;
+    while (i < WIDTH)
     {
         t_vars vars = draw_line(cube, angle, 0);
 
@@ -493,7 +497,8 @@ void draw_lines_3D(t_cub* cube)
         double texturePos = textureOffsetY * textureStep;
 
         // int x = i * rayWidth;
-        for (int y = wallTopPixel; y < wallBottomPixel; y++)
+        int y = wallTopPixel;
+        while (y < wallBottomPixel)
         {
             int textureY = (int)texturePos & (texture->height - 1);
             texturePos += textureStep;
@@ -506,9 +511,10 @@ void draw_lines_3D(t_cub* cube)
             // uint8_t b = ((color >> 8) & 0xFF) * shadeFactor;
             // uint32_t shadedColor = (r << 24) | (g << 16) | (b << 8) | 0xFF;
             // mlx_put_pixel(cube->image, i, y, shadedColor);
+            y++;
         }
-
         angle += FOV_ANGLE / WIDTH;
+        i++;
     }
 }
 
@@ -546,17 +552,16 @@ void draw_view_player(t_cub *cube, int is)
             cube->player->player_y = new_player_y;
             break;
         }
-        // if (is_it_a_wall(cube->player->player_x, new_player_y, cube, is))
-        // {
-        //     puts("++");
-        //     cube->player->player_y = new_player_y;
-        //     break;
-        // }
-        // if (is_it_a_wall(new_player_x, cube->player->player_y, cube, is))
-        // {
-        //     cube->player->player_x = new_player_x;
-        //     break;
-        // }
+        if (is_it_a_wall(cube->player->player_x, new_player_y, cube, is))
+        {
+            cube->player->player_y = new_player_y;
+            break;
+        }
+        if (is_it_a_wall(new_player_x, cube->player->player_y, cube, is))
+        {
+            cube->player->player_x = new_player_x;
+            break;
+        }
     }
     
     // cube->player->rotat_angle = normalizeAngle(cube->player->rotat_angle);
@@ -589,17 +594,17 @@ void draw_view_player(t_cub *cube, int is)
     //         cube->player->player_x = new_player_x;
     // }
 
-    // draw_lines_3D(cube);
+    draw_lines_3D(cube);
 }
 
 void	handle_pixel2(int x, int y, t_cub *cube)
 {
     if(cube->data->map[y][x] == cube->data->p)
     {
-        draw_cube(cube, x, y, create_rgba(0, 255, 255, 255));
+        // draw_cube(cube, x, y, create_rgba(0, 255, 255, 255));
         draw_view_player(cube, 1);
-        draw_player(cube);
-        draw_lines(cube, 1);
+        // draw_player(cube);
+        // draw_lines(cube, 1);
     }
 }
 
@@ -652,7 +657,7 @@ void my_keyhook(mlx_key_data_t keydata, void* param)
 
     if(keydata.action == MLX_PRESS)
     {
-        if ((keydata.key == MLX_KEY_UP || keydata.key == MLX_KEY_W))
+        if (keydata.key == MLX_KEY_UP || keydata.key == MLX_KEY_W)
             cube->player->walk_direction = 1;
         if ((keydata.key == MLX_KEY_DOWN || keydata.key == MLX_KEY_S))
             cube->player->walk_direction = -1;
@@ -692,9 +697,8 @@ void my_keyhook(mlx_key_data_t keydata, void* param)
 
 }
 
-void loop_fun(void* param)
+void    handle_mouse(t_cub *cube)
 {
-    t_cub* cube = (t_cub*)param;
     int32_t prev_xpos = WIDTH / 2;
     int32_t xpos, ypos;
     double sensitivity = 0.002;
@@ -703,14 +707,44 @@ void loop_fun(void* param)
 
     int32_t delta_x = xpos - prev_xpos;
 
+    // printf("%d | %d | %d | %d | %f\n",prev_xpos, xpos, ypos, delta_x, cube->player->rotat_angle);
     cube->player->rotat_angle += delta_x * sensitivity;
-
     mlx_set_mouse_pos(cube->mlx, WIDTH / 2, HEIGHT / 2);
 
     mlx_set_cursor_mode(cube->mlx, MLX_MOUSE_HIDDEN);
+}
 
+void fill_rectangle(t_cub* cube, int x, int y, int width, int height, int color)
+{
+    int j = y;
+    while (j < y + height)
+    {
+        int i = x;
+        while (i < x + width)
+        {
+            mlx_put_pixel(cube->image, i, j, color);
+            i++;
+        }
+        j++;
+    }
+}
+
+void loop_fun(void* param)
+{
+    t_cub* cube = (t_cub*)param;
+    int32_t xpos, ypos;
+    mlx_get_mouse_pos(cube->mlx, &xpos, &ypos);
+
+    if(xpos != WIDTH / 2 && ypos != HEIGHT / 2 && cube->player->start == 0)
+    {
+        mlx_set_mouse_pos(cube->mlx, WIDTH / 2, HEIGHT / 2);
+        cube->player->start = 1;
+    }
+    else
+        handle_mouse(cube);
     draw_all_black(cube);
-    draw_map(cube);
+    // draw_map(cube);
     draw_per(cube);
+    fill_rectangle(cube, MINIMAP_X_OFFSET, MINIMAP_Y_OFFSET, MINIMAP_SIZE, MINIMAP_SIZE, create_rgba(0, 0, 0, 128));
 }
 // // end hooks
