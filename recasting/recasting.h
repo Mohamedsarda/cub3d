@@ -5,28 +5,40 @@
 #include <stdio.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "mlx.h"
+// #include "mlx.h"
 #include "../Parsing/parsing.h"
-
+#include "../../MLX42/include/MLX42/MLX42.h"
 #define tile_size 64
 // #define map_row 14
 // #define map_cols 33
 
+//check map
+// #define WIDTH 3000
+// #define HEIGHT 2000
+
+//check 3D
+#define WIDTH 2000
+#define HEIGHT 1000
+
+
 #define FOV_ANGLE M_PI / 3
 #define WALL_STRIP_WIDTH 1
-#define NUM_RAYS 4000
+#define NUM_RAYS WIDTH
 #define line_leng 200
 
 #define MAP_SCALE 1
 
-#define WIDTH map_cols * tile_size
-#define HEIGHT map_row * tile_size
+
+#define MINIMAP_SIZE 200
+#define MINIMAP_X_OFFSET 20
+#define MINIMAP_Y_OFFSET 20
 
 #define BLACK       0x000000
 #define WHITE       0xFFFFFF
-#define RED         0xFF0000
-#define GREEN       0x00FF00
+#define RED         0xFF0000FF
+#define GREEN       0x98FB98
 #define BLUE        0x0000FF
+#define GRAY        0xC0C0C0
 
 typedef struct s_img
 {
@@ -45,10 +57,12 @@ typedef struct s_player
 {
 	double	player_x;
 	double	player_y;
+	double	player_z;
 	int	radius;
 	int turn_direction;
 	int strafe_direction;
 	int walk_direction;
+	int start;
 	double rotat_angle;
 	double rotation_speed;
 	double move_speed;
@@ -100,29 +114,34 @@ typedef struct s_vars
 	double angle;
 	double distance;
 	int		wasHitVert;
+
+	int	textureNum;
+	double textureStep;
+	double textureOffsetY;
+	double wallBottomPixel;
+	double wallTopPixel;
 }	t_vars;
 
 typedef struct s_cub
 {
 	char **map;
-	void	*mlx_con;
-	void	*mlx_win;
-	t_img	img;
+	// t_img	img;
+	mlx_image_t* image;
+	mlx_t* mlx;
 	t_player *player;
+	mlx_texture_t* texture[4];
+	mlx_image_t* img[4];
 	char	**colors;
-	int		is;
-	t_texture texture[4];
+	double		is;
+	// t_texture texture[4];
 	t_data	*data;
 } t_cub;
 
 void    ft_fractol_init(t_cub *cube);
 
 // hooks
-int loop_fun(t_cub * cube);
-int handle_input_key_down(int keycode, t_cub * data);
-int	handle_close_button(t_cub *data);
-int handle_input_key_up(int keycode, t_cub * data);
-int	ft_mouse_move(int x, int y, t_cub *cube);
+void loop_fun(void* param);
+void my_keyhook(mlx_key_data_t keydata, void* param);
 // end hooks
 
 #endif

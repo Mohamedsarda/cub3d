@@ -98,6 +98,25 @@ int	ft_check_char(char c, int is)
 	return (c == '0' || c == 'N' || c == 'E' || c == 'W' || c == 'S' || c == 'D');
 }
 
+int	ft_get_player(t_data *data)
+{
+	int	i = 0;
+	int	j = 0;
+
+	while (data->map[i])
+	{
+		j = 0;
+		while (data->map[i][j])
+		{
+			if (ft_check_char(data->map[i][j], 2))
+				return (data->p = data->map[i][j], 1);
+			j++;
+		}
+		i++;
+	}
+	return (0);
+}
+
 int	ft_count_map_words(char **map)
 {
 	int	i = 0;
@@ -240,8 +259,21 @@ void	ft_change_map(t_init *init, t_data *data)
 	return ;
 }
 
+void ft_open_files(t_data *data)
+{
+	if (open(data->ea, O_RDONLY) < 0
+		||open(data->so, O_RDONLY) < 0
+		|| open(data->we, O_RDONLY) < 0
+		|| open(data->no, O_RDONLY) < 0 )
+	{
+		ft_putstr_fd("Error: Please Check The Paths Provided For The Textures\n", 2);
+		exit(1);
+	}
+}
+
 int ft_get_data(t_init *init, t_data *data)
 {
+	ft_open_files(data);
 	ft_get_color_data(init, data, 0);
 	ft_get_color_data(init, data, 1);
 	free_double_arr(init->colors);
@@ -249,6 +281,7 @@ int ft_get_data(t_init *init, t_data *data)
 	ft_change_map(init, data);
 	if (ft_check_map(data) == -1)
 		return (-1);
+	ft_get_player(data);
 	// int i =0;
 	// while (data->map[i])
 	// 	printf("[%s]\n", data->map[i++]);

@@ -1,5 +1,5 @@
 CC		= cc
-CFLAGS	= -Wall -Wextra -Werror -g   #-fsanitize=address
+CFLAGS	=   -pthread  -Wall -Wextra -Werror -g  -fsanitize=address -Ofast
 RM		= rm -rf
 SRCS	= main.c 	./Parsing/parsing.c	\
 		  ./Parsing/init/ft_get_init.c		./Parsing/init/ft_reading_init.c\
@@ -14,9 +14,9 @@ all: $(NAME)
 
 %.o: %.c parsing.h recasting.h
 	$(CC) $(CFLAGS) -c $< -o $@
-
+#-lmlx -framework OpenGL -framework AppKit
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS)  -lmlx -framework OpenGL -framework AppKit -o $@
+	$(CC) $(CFLAGS) $(OBJS) ~/Desktop/MLX42/build/libmlx42.a -lglfw -L/Users/$(USER)/.brew/opt/glfw/lib -pthread -lm -g -o $@
 
 clean:
 	$(RM) $(OBJS) $(OBJSB)
