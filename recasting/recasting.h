@@ -12,15 +12,22 @@
 // #define map_row 14
 // #define map_cols 33
 
+//check map
+#define WIDTH 3000
+#define HEIGHT 2000
+
+//check 3D
+// #define WIDTH 2000
+// #define HEIGHT 1000
+
+
 #define FOV_ANGLE M_PI / 3
 #define WALL_STRIP_WIDTH 1
-#define NUM_RAYS 5000
+#define NUM_RAYS WIDTH
 #define line_leng 200
 
 #define MAP_SCALE 1
 
-#define WIDTH 1900
-#define HEIGHT 1000
 
 #define BLACK       0x000000
 #define WHITE       0xFFFFFF
