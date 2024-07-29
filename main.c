@@ -1,10 +1,10 @@
 #include "./recasting/recasting.h"
 #include "./Parsing/parsing.h"
 
-// void ffqwe()
-// {
-// 	system("leaks app");
-// }
+void ffqwe()
+{
+	system("leaks app");
+}
 
 int main()
 {
