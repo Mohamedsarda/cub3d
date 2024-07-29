@@ -161,4 +161,11 @@ void my_keyhook(mlx_key_data_t keydata, void* param);
 void	draw_per(t_cub *cube);
 int create_rgba(int r, int g, int b, int a);
 
+//raycasting
+void DDA(t_cub *cube, double X0, double Y0, double X1, double Y1);
+int has_wall(t_cub *cube, double x1, double y1, int is);
+t_vars draw_line(t_cub *cube, double angle, int is);
+void draw_lines(t_cub *cube, int is);
+double normalizeAngle(double angle);
+
 #endif
