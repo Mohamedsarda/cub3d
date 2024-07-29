@@ -58,6 +58,7 @@ int ft_get_color_data(t_init *init, t_data *data, int type)
 		tmp->r = ft_atoi(rgb[0]);
 		tmp->g = ft_atoi(rgb[1]);
 		tmp->b = ft_atoi(rgb[2]);
+		free_double_arr(rgb);
 	}
 	else
 		return (free_double_arr(colors), ft_check_color_print(data), -1);
@@ -272,16 +273,8 @@ int ft_get_data(t_init *init, t_data *data)
 	if (ft_check_map(data) == -1)
 		return (-1);
 	ft_get_player(data);
-	// int i =0;
-	// while (data->map[i])
-	// 	printf("[%s]\n", data->map[i++]);
-	free_double_arr(init->map);
 	free_double_arr(init->file);
-	// free(data->ea);
-	// free(data->so);
-	// free(data->no);
-	// free(data->we);
-	// free_double_arr(data->map);
+	free_double_arr(init->map);
 	return (1);
 }
 

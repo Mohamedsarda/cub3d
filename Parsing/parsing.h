@@ -29,14 +29,6 @@ typedef struct s_color
 	int b;
 }   t_color;
 
-typedef struct s_coordinats
-{
-	char    direction;
-	char	*path;
-	int		fd;
-	struct s_coordinats *next;
-}   t_coordinats;
-
 typedef struct  s_data
 {
 	char			**map;
