@@ -443,7 +443,7 @@ void    ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i)
         texturePos += vars.textureStep;
 
         uint32_t color = get_pixel_color(texture, textureX, textureY);
-        double shadeFactor = fmin(10.0 / (1.0 + vars.distance * 0.05), 1.0);
+        double shadeFactor = fmin(2.0 / (1.0 + vars.distance * 0.05), 1.0);
 
         uint8_t r = fmin(((color >> 24) & 0xFF) * shadeFactor, 255);
         uint8_t g = fmin(((color >> 16) & 0xFF) * shadeFactor, 255);
@@ -510,10 +510,6 @@ void draw_lines_3D(t_cub* cube)
     }
 }
 
-int create_rgb_color(int r, int g, int b)
-{
-    return (r << 16) | (g << 8) | b;
-}
 
 void draw_minimap(t_cub *cube)
 {
@@ -530,6 +526,19 @@ void draw_minimap(t_cub *cube)
 
     // Calculate the range of pixels to draw
     int pixels_to_draw = minimap_size / 2;
+    for (int y = -pixels_to_draw; y <= pixels_to_draw; y++)
+    {
+        for (int x = -pixels_to_draw; x <= pixels_to_draw; x++)
+        {
+            int screen_x = minimap_start_x + minimap_radius + x;
+            int screen_y = minimap_start_y + minimap_radius + y;
+
+            int dx = x;
+            int dy = y;
+            if (dx * dx + dy * dy <= minimap_radius * minimap_radius)
+                mlx_put_pixel(cube->image, screen_x, screen_y, create_rgba(192, 192, 192, 100));
+        }
+    }
 
     for (int y = -pixels_to_draw; y <= pixels_to_draw; y++)
     {

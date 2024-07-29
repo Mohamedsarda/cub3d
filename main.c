@@ -8,7 +8,7 @@ void ffqwe()
 
 int main()
 {
-	atexit(ffqwe);
+	// atexit(ffqwe);
 	int fd = open("./Parsing/Maps/map_1.cub", O_RDONLY);
 	char *tmp;
 
