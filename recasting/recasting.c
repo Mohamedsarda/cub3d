@@ -161,26 +161,6 @@ int is_it_a_wall(double x, double y, t_cub *cube)
     return (1);
 }
 
-    // printf("%f %f\n", centerX , centerY);
-void draw_player(t_cub *cube)
-{
-    double radius = (double)cube->player->radius;
-    double centerX = cube->player->player_x;
-    double centerY = cube->player->player_y;
-    int y = -radius;
-    while (y <= radius)
-    {
-        int x = -radius;
-        y++;
-        while (x <= radius)
-        {
-            if (x * x + y * y <= radius * radius)
-                mlx_put_pixel(cube->image, centerX + (double)x , centerY + (double)y, RED);
-                x++;
-        }
-    }
-}
-
 void DDA(t_cub *cube, double X0, double Y0, double X1, double Y1)
 {
     double dx = X1 - X0;
@@ -510,152 +490,6 @@ void draw_lines_3D(t_cub* cube)
     }
 }
 
-
-void draw_minimap(t_cub *cube)
-{
-    int minimap_size = 200; // Fixed size of the minimap
-    int minimap_radius = minimap_size / 2;
-
-    // Bottom-left corner position of the minimap
-    int minimap_start_x = 10; // 10 pixels from the left edge
-    int minimap_start_y = cube->image->height - minimap_size - 10; // 10 pixels from the bottom edge
-
-    // Calculate player's position in pixel coordinates
-    double player_pixel_x = cube->player->player_x;
-    double player_pixel_y = cube->player->player_y;
-
-    // Calculate the range of pixels to draw
-    int pixels_to_draw = minimap_size / 2;
-    for (int y = -pixels_to_draw; y <= pixels_to_draw; y++)
-    {
-        for (int x = -pixels_to_draw; x <= pixels_to_draw; x++)
-        {
-            int screen_x = minimap_start_x + minimap_radius + x;
-            int screen_y = minimap_start_y + minimap_radius + y;
-
-            int dx = x;
-            int dy = y;
-            if (dx * dx + dy * dy <= minimap_radius * minimap_radius)
-                mlx_put_pixel(cube->image, screen_x, screen_y, create_rgba(192, 192, 192, 100));
-        }
-    }
-
-    for (int y = -pixels_to_draw; y <= pixels_to_draw; y++)
-    {
-        for (int x = -pixels_to_draw; x <= pixels_to_draw; x++)
-        {
-            double world_x = player_pixel_x + x * 2; // Scale factor of 2 to match the tile size reduction
-            double world_y = player_pixel_y + y * 2;
-
-            int map_x = floor(world_x / tile_size);
-            int map_y = floor(world_y / tile_size);
-
-            if (map_x >= 0 && map_x < cube->data->map_cols && map_y >= 0 && map_y < cube->data->map_row)
-            {
-                int color = (cube->data->map[map_y][map_x] == '1') ? create_rgba(255, 255, 255, 255) : create_rgba(192, 192, 192, 255);
-
-                int screen_x = minimap_start_x + minimap_radius + x;
-                int screen_y = minimap_start_y + minimap_radius + y;
-
-                int dx = x;
-                int dy = y;
-                if (dx * dx + dy * dy <= minimap_radius * minimap_radius)
-                {
-                    mlx_put_pixel(cube->image, screen_x, screen_y, color);
-                }
-            }
-        }
-    }
-
-    // Draw player on minimap
-    int minimap_player_x = minimap_start_x + minimap_radius;
-    int minimap_player_y = minimap_start_y + minimap_radius;
-    int player_radius = 2; // Adjust for desired player size
-
-    for (int j = -player_radius; j <= player_radius; j++)
-    {
-        for (int i = -player_radius; i <= player_radius; i++)
-        {
-            if (i * i + j * j <= player_radius * player_radius)
-                mlx_put_pixel(cube->image, minimap_player_x + i * 2, minimap_player_y + j * 2, create_rgba(255, 0, 0, 255));
-        }
-    }
-
-    // Draw direction indicator
-    int indicator_length = 20;
-    int end_x = minimap_player_x + cos(cube->player->rotat_angle) * indicator_length;
-    int end_y = minimap_player_y + sin(cube->player->rotat_angle) * indicator_length;
-
-    // Simple line drawing algorithm
-    int dx = abs(end_x - minimap_player_x);
-    int dy = abs(end_y - minimap_player_y);
-    int sx = minimap_player_x < end_x ? 1 : -1;
-    int sy = minimap_player_y < end_y ? 1 : -1;
-    int err = dx - dy;
-
-    while ((int)minimap_player_x != end_x || (int)minimap_player_y != end_y)
-    {
-        mlx_put_pixel(cube->image, minimap_player_x, minimap_player_y, create_rgba(255, 0, 0, 255));
-        int e2 = 2 * err;
-        if (e2 > -dy)
-        {
-            err -= dy;
-            minimap_player_x += sx;
-        }
-        if (e2 < dx)
-        {
-            err += dx;
-            minimap_player_y += sy;
-        }
-    }
-}
-
-void	handle_pixel2(int x, int y, t_cub *cube)
-{
-    if(cube->data->map[y][x] == cube->data->p)
-        draw_minimap(cube);
-}
-
-void	draw_per(t_cub *cube)
-{
-	int	x;
-	int	y;
-
-	y = -1;
-	x = -1;
-	while (++y < cube->data->map_row)
-	{
-		x = -1;
-		while (++x < cube->data->map_cols)
-			handle_pixel2(x, y, cube);
-	}
-}
-//end draw_player
-
-// draw_map
-void handle_pixel(int x, int y, t_cub *cube)
-{
-    // Compute the screen coordinates based on player's position
-    if (cube->data->map[y][x] == '1')
-        draw_cube(cube, x, y, create_rgba(255, 255, 255, 10));
-    else if (cube->data->map[y][x] == '0')
-        draw_cube(cube, x, y, create_rgba(255, 255, 255, 255));
-    //  || cube->data->map[y][x] == cube->data->p
-}
-
-void draw_map(t_cub *cube)
-{
-    int x, y;
-    y = -1;
-    while (++y < cube->data->map_row)
-    {
-        x = -1;
-        while (++x < cube->data->map_cols)
-            handle_pixel(x, y, cube);
-    }
-}
-// end draw_map
-
 // hooks
 void my_keyhook(mlx_key_data_t keydata, void* param)
 {
@@ -749,21 +583,6 @@ void    handle_mouse(t_cub *cube)
     mlx_set_mouse_pos(cube->mlx, WIDTH / 2, HEIGHT / 2);
 
     mlx_set_cursor_mode(cube->mlx, MLX_MOUSE_HIDDEN);
-}
-
-void fill_rectangle(t_cub* cube, int x, int y, int width, int height, int color)
-{
-    int j = y;
-    while (j < y + height)
-    {
-        int i = x;
-        while (i < x + width)
-        {
-            mlx_put_pixel(cube->image, i, j, color);
-            i++;
-        }
-        j++;
-    }
 }
 
 void update_player(t_cub *cube)

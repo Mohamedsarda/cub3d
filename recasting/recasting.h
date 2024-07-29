@@ -122,6 +122,19 @@ typedef struct s_vars
 	double wallTopPixel;
 }	t_vars;
 
+typedef struct s_minimap_vars
+{
+	double world_x;
+	double world_y;
+	int	map_x;
+	int	map_y;
+	int	color;
+	int	screen_x;
+	int	screen_y;
+	int	dx;
+	int	dy;
+}	t_minimap_vars;
+
 typedef struct s_cub
 {
 	char **map;
@@ -133,6 +146,7 @@ typedef struct s_cub
 	mlx_image_t* img[4];
 	char	**colors;
 	double		is;
+	t_minimap_vars map_data;
 	// t_texture texture[4];
 	t_data	*data;
 } t_cub;
@@ -143,5 +157,8 @@ void    ft_fractol_init(t_cub *cube);
 void loop_fun(void* param);
 void my_keyhook(mlx_key_data_t keydata, void* param);
 // end hooks
+//minimap
+void	draw_per(t_cub *cube);
+int create_rgba(int r, int g, int b, int a);
 
 #endif
