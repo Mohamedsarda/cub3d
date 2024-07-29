@@ -13,12 +13,12 @@
 // #define map_cols 33
 
 //check map
-// #define WIDTH 3000
-// #define HEIGHT 2000
+#define WIDTH 3000
+#define HEIGHT 2000
 
 //check 3D
-#define WIDTH 2000
-#define HEIGHT 1000
+// #define WIDTH 2000
+// #define HEIGHT 1000
 
 
 #define FOV_ANGLE M_PI / 3
@@ -57,6 +57,7 @@ typedef struct s_player
 {
 	double	player_x;
 	double	player_y;
+	double	player_z;
 	int	radius;
 	int turn_direction;
 	int strafe_direction;

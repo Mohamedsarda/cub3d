@@ -1,9 +1,14 @@
 #include "./recasting/recasting.h"
 #include "./Parsing/parsing.h"
 
+// void ffqwe()
+// {
+// 	system("leaks app");
+// }
+
 int main()
 {
-	// atexit(ff);
+	// atexit(ffqwe);
 	int fd = open("./Parsing/Maps/map_1.cub", O_RDONLY);
 	char *tmp;
 
