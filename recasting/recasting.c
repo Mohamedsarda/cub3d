@@ -3,7 +3,7 @@
 
 static void ft_error(void)
 {
-	fprintf(stderr, "%s", mlx_strerror(mlx_errno));
+	fprintf(stderr, "%s\n", mlx_strerror(mlx_errno));
 	exit(EXIT_FAILURE);
 }
 
@@ -65,7 +65,7 @@ t_player *init_player(t_cub *cube)
     //     player->rotat_angle = deg2rad(270);  // Initialize in radians
     // else if (cube->data->p == 'E')
     //     player->rotat_angle = deg2rad(0);  // Initialize in radians
-    player->rotation_speed = 0.09;
+    player->rotation_speed = 0.04;
     player->turn_direction = 0;
     player->strafe_direction = 0;
     player->walk_direction = 0;
@@ -94,6 +94,7 @@ void ft_fractol_init(t_cub *cube)
 
 
     //check 3D
+    // cube->image = mlx_new_image(cube->mlx, WIDTH, HEIGHT);
     cube->image = mlx_new_image(cube->mlx, WIDTH, HEIGHT);
 	if (!cube->image || (mlx_image_to_window(cube->mlx, cube->image, 0, 0) < 0))
 		ft_error();
@@ -122,13 +123,13 @@ void ft_fractol_init(t_cub *cube)
     // Load multiple textures
     // char *texture_files[] = {"wall.xpm", "wall.xpm", "wall.xpm", "wall.xpm"};
     // char *texture_files[] = {"./wood0.xpm", "./wood1.xpm", "./wood2.xpm", "./wood3.xpm"};
-    // char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea};
+    char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea};
 
     // Load and display textures
     int i = 0;
     while (i < 4)
     {
-        cube->texture[i] = mlx_load_png("./handpaintedwall2.png");
+        cube->texture[i] = mlx_load_png(texture_files[i]);
         if (!cube->texture[i])
             ft_error();
         cube->img[i] = mlx_texture_to_image(cube->mlx, cube->texture[i]);
@@ -434,6 +435,7 @@ uint32_t get_pixel_color(mlx_texture_t* texture, int x, int y)
 }
 
 // 3d
+
 void    ft_draw_sky_floor(t_cub *cube)
 {
     int i;
@@ -474,17 +476,17 @@ void    ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i)
     int y = vars.wallTopPixel;
     while (y < vars.wallBottomPixel)
     {
-        int textureY = (int)texturePos & (texture->height - 1);
+        int textureY = (int)texturePos % texture->height;
         texturePos += vars.textureStep;
 
         uint32_t color = get_pixel_color(texture, textureX, textureY);
-        mlx_put_pixel(cube->image, i, y, color);
-        // double shadeFactor = 5 / (1.0 + vars.distance * 0.1);
-        // uint8_t r = ((color >> 24) & 0xFF) * shadeFactor;
-        // uint8_t g = ((color >> 16) & 0xFF) * shadeFactor;
-        // uint8_t b = ((color >> 8) & 0xFF) * shadeFactor;
-        // uint32_t shadedColor = (r << 24) | (g << 16) | (b << 8) | 0xFF;
-        // mlx_put_pixel(cube->image, i, y, shadedColor);
+        double shadeFactor = fmin(10.0 / (1.0 + vars.distance * 0.05), 1.0);
+
+        uint8_t r = fmin(((color >> 24) & 0xFF) * shadeFactor, 255);
+        uint8_t g = fmin(((color >> 16) & 0xFF) * shadeFactor, 255);
+        uint8_t b = fmin(((color >> 8) & 0xFF) * shadeFactor, 255);
+        uint32_t shadedColor = (r << 24) | (g << 16) | (b << 8) | 0xFF;
+        mlx_put_pixel(cube->image, i, y, shadedColor);
         y++;
     }
 }
@@ -578,7 +580,7 @@ void draw_minimap(t_cub *cube)
 
             if (map_x >= 0 && map_x < cube->data->map_cols && map_y >= 0 && map_y < cube->data->map_row)
             {
-                int color = (cube->data->map[map_y][map_x] == '1') ? create_rgba(255, 255, 255, 255) : create_rgba(100, 100, 100, 255);
+                int color = (cube->data->map[map_y][map_x] == '1') ? create_rgba(255, 255, 255, 255) : create_rgba(192, 192, 192, 255);
 
                 int screen_x = minimap_start_x + minimap_radius + x;
                 int screen_y = minimap_start_y + minimap_radius + y;
@@ -621,7 +623,7 @@ void draw_minimap(t_cub *cube)
 
     while ((int)minimap_player_x != end_x || (int)minimap_player_y != end_y)
     {
-        mlx_put_pixel(cube->image, minimap_player_x, minimap_player_y, create_rgba(255, 255, 0, 255));
+        mlx_put_pixel(cube->image, minimap_player_x, minimap_player_y, create_rgba(255, 0, 0, 255));
         int e2 = 2 * err;
         if (e2 > -dy)
         {
@@ -639,13 +641,7 @@ void draw_minimap(t_cub *cube)
 void	handle_pixel2(int x, int y, t_cub *cube)
 {
     if(cube->data->map[y][x] == cube->data->p)
-    {
-        draw_cube(cube, x, y, create_rgba(0, 255, 255, 255));
-        draw_lines_3D(cube);
-        // draw_player(cube);
         draw_minimap(cube);
-        // draw_lines(cube, 1);
-    }
 }
 
 void	draw_per(t_cub *cube)
@@ -719,7 +715,7 @@ void my_keyhook(mlx_key_data_t keydata, void* param)
             mlx_delete_image(cube->mlx, cube->image);
         }
         if(keydata.key == MLX_KEY_LEFT_SHIFT)
-            cube->player->move_speed = 5;
+            cube->player->move_speed = 2;
         if(keydata.key == MLX_KEY_SPACE)
         {
         }
@@ -750,7 +746,7 @@ void my_keyhook(mlx_key_data_t keydata, void* param)
             cube->player->strafe_direction = 0;
 
         if(keydata.key == MLX_KEY_LEFT_SHIFT)
-            cube->player->move_speed = 10;
+            cube->player->move_speed = 4;
 
         if(keydata.key == MLX_KEY_SPACE)
         {
@@ -769,10 +765,11 @@ void    handle_mouse(t_cub *cube)
 {
     int32_t prev_xpos = WIDTH / 2;
     int32_t xpos, ypos;
-    double sensitivity = 0.002;
+    double sensitivity = 0.001;
 
     mlx_get_mouse_pos(cube->mlx, &xpos, &ypos);
-
+    if ((xpos > WIDTH || xpos < 0) || ypos > HEIGHT || ypos < 0)
+        return ;
     int32_t delta_x = xpos - prev_xpos;
 
     // printf("%d | %d | %d | %d | %f\n",prev_xpos, xpos, ypos, delta_x, cube->player->rotat_angle);
@@ -812,8 +809,8 @@ void update_player(t_cub *cube)
         new_player_y = cube->player->player_y + movestep * sin(cube->player->rotat_angle);
 
         if (cube->player->strafe_direction != 0) {
-            new_player_x += (double)cube->player->strafe_direction * (move_speed / 2) * cos(cube->player->rotat_angle + M_PI / 2);
-            new_player_y += (double)cube->player->strafe_direction * (move_speed / 2) * sin(cube->player->rotat_angle + M_PI / 2);
+            new_player_x += (double)cube->player->strafe_direction * (move_speed / 1.5) * cos(cube->player->rotat_angle + M_PI / 2);
+            new_player_y += (double)cube->player->strafe_direction * (move_speed / 1.5) * sin(cube->player->rotat_angle + M_PI / 2);
         }
 
         // Check for wall collision before updating player position
@@ -851,7 +848,7 @@ void loop_fun(void* param)
         handle_mouse(cube);
     draw_all_black(cube);
     // draw_map(cube);
+    draw_lines_3D(cube);
     draw_per(cube);
-    // fill_rectangle(cube, MINIMAP_X_OFFSET, MINIMAP_Y_OFFSET, MINIMAP_SIZE, MINIMAP_SIZE, create_rgba(0, 0, 0, 128));
 }
 // // end hooks

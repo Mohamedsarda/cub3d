@@ -7,6 +7,11 @@ static int	ft_sign_1(char str)
 	return (1);
 }
 
+int	ft_isdigit(int c)
+{
+	return (c >= '0' && c <= '9');
+}
+
 int	ft_atoi(char *str)
 {
 	long int	nbr;
@@ -15,6 +20,10 @@ int	ft_atoi(char *str)
 
 	nbr = 0;
 	sign = 1;
+	if (!str)
+		return (-1);
+	if (!ft_isdigit(*str))
+		return (-1);
 	while ((*str == ' ' || *str == '\t' || *str == '\n'
 			|| *str == '\v' || *str == '\f' || *str == '\r') && (str++));
 	if (*str == '-' || *str == '+')
