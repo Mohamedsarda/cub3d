@@ -1,21 +1,21 @@
-NO ./wall.xpm
+NO ./wall_1.png
 
-SO ./wall.xpm
-
-
+SO wall.png
 
 
 
 
 
-WE 					 ./wall.xpm
+
+
+WE 					 ./wall.png
 
 C   225,255,25
 
 
- EA ./wall.xpm
+ EA ./wall.png
 
-F           4,4,4
+F           100,100,100
 
 
 

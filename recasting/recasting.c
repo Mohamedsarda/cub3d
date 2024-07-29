@@ -3,7 +3,7 @@
 
 static void ft_error(void)
 {
-	fprintf(stderr, "%s", mlx_strerror(mlx_errno));
+	fprintf(stderr, "%s\n", mlx_strerror(mlx_errno));
 	exit(EXIT_FAILURE);
 }
 
@@ -94,6 +94,7 @@ void ft_fractol_init(t_cub *cube)
 
 
     //check 3D
+    // cube->image = mlx_new_image(cube->mlx, WIDTH, HEIGHT);
     cube->image = mlx_new_image(cube->mlx, WIDTH, HEIGHT);
 	if (!cube->image || (mlx_image_to_window(cube->mlx, cube->image, 0, 0) < 0))
 		ft_error();
@@ -122,13 +123,13 @@ void ft_fractol_init(t_cub *cube)
     // Load multiple textures
     // char *texture_files[] = {"wall.xpm", "wall.xpm", "wall.xpm", "wall.xpm"};
     // char *texture_files[] = {"./wood0.xpm", "./wood1.xpm", "./wood2.xpm", "./wood3.xpm"};
-    // char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea};
+    char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea};
 
     // Load and display textures
     int i = 0;
     while (i < 4)
     {
-        cube->texture[i] = mlx_load_png("./handpaintedwall2.png");
+        cube->texture[i] = mlx_load_png(texture_files[i]);
         if (!cube->texture[i])
             ft_error();
         cube->img[i] = mlx_texture_to_image(cube->mlx, cube->texture[i]);
@@ -474,17 +475,18 @@ void    ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i)
     int y = vars.wallTopPixel;
     while (y < vars.wallBottomPixel)
     {
-        int textureY = (int)texturePos & (texture->height - 1);
+        int textureY = (int)texturePos % texture->height;
         texturePos += vars.textureStep;
 
         uint32_t color = get_pixel_color(texture, textureX, textureY);
-        mlx_put_pixel(cube->image, i, y, color);
-        // double shadeFactor = 5 / (1.0 + vars.distance * 0.1);
-        // uint8_t r = ((color >> 24) & 0xFF) * shadeFactor;
-        // uint8_t g = ((color >> 16) & 0xFF) * shadeFactor;
-        // uint8_t b = ((color >> 8) & 0xFF) * shadeFactor;
-        // uint32_t shadedColor = (r << 24) | (g << 16) | (b << 8) | 0xFF;
-        // mlx_put_pixel(cube->image, i, y, shadedColor);
+        double shadeFactor = fmin(10.0 / (1.0 + vars.distance * 0.1), 1.0);
+
+        uint8_t r = fmin(((color >> 24) & 0xFF) * shadeFactor, 255);
+        uint8_t g = fmin(((color >> 16) & 0xFF) * shadeFactor, 255);
+        uint8_t b = fmin(((color >> 8) & 0xFF) * shadeFactor, 255);
+        uint32_t shadedColor = (r << 24) | (g << 16) | (b << 8) | 0xFF;
+
+        mlx_put_pixel(cube->image, i, y, shadedColor);
         y++;
     }
 }
@@ -578,7 +580,7 @@ void draw_minimap(t_cub *cube)
 
             if (map_x >= 0 && map_x < cube->data->map_cols && map_y >= 0 && map_y < cube->data->map_row)
             {
-                int color = (cube->data->map[map_y][map_x] == '1') ? create_rgba(255, 255, 255, 255) : create_rgba(100, 100, 100, 255);
+                int color = (cube->data->map[map_y][map_x] == '1') ? create_rgba(255, 255, 255, 255) : create_rgba(192, 192, 192, 255);
 
                 int screen_x = minimap_start_x + minimap_radius + x;
                 int screen_y = minimap_start_y + minimap_radius + y;
@@ -621,7 +623,7 @@ void draw_minimap(t_cub *cube)
 
     while ((int)minimap_player_x != end_x || (int)minimap_player_y != end_y)
     {
-        mlx_put_pixel(cube->image, minimap_player_x, minimap_player_y, create_rgba(255, 255, 0, 255));
+        mlx_put_pixel(cube->image, minimap_player_x, minimap_player_y, create_rgba(255, 0, 0, 255));
         int e2 = 2 * err;
         if (e2 > -dy)
         {
