@@ -91,6 +91,12 @@ void ft_fractol_init(t_cub *cube)
 
     // Load and display textures
     int i = 0;
+    cube->gun[0] = mlx_load_png("call-of-duty-wiki-call-of-duty-modern-warfare-machine-gun-weapon-weaponry-armory-transparent-png-1324476.png");
+    if (!cube->gun[0])
+        ft_error();
+    cube->gun_img[0] = mlx_texture_to_image(cube->mlx, cube->gun[0]);
+    if (!cube->gun_img[0])
+        ft_error();
     while (i < 4)
     {
         cube->texture[i] = mlx_load_png(texture_files[i]);
@@ -488,6 +494,8 @@ void loop_fun(void* param)
     draw_all_black(cube);
     // draw_map(cube);
     draw_lines_3D(cube);
+    if (mlx_image_to_window(cube->mlx, cube->gun_img[0], (WIDTH - cube->gun[0]->width) / 2, HEIGHT - cube->gun[0]->height) < 0)
+        ft_error();
     draw_per(cube);
 }
 // // end hooks

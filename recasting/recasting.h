@@ -66,6 +66,7 @@ typedef struct s_player
 	double rotat_angle;
 	double rotation_speed;
 	double move_speed;
+	double is_moving_up;
 }	t_player;
 
 typedef struct s_texture {
@@ -144,6 +145,8 @@ typedef struct s_cub
 	t_player *player;
 	mlx_texture_t* texture[4];
 	mlx_image_t* img[4];
+	mlx_texture_t* gun[4];
+	mlx_image_t* gun_img[4];
 	char	**colors;
 	double		is;
 	t_minimap_vars map_data;
