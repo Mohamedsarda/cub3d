@@ -1,4 +1,4 @@
-NO ./wall_1.png
+NO ./Ground_03.png
 
 SO wall.png
 
@@ -8,14 +8,14 @@ SO wall.png
 
 
 
-WE 					 ./wall.png
+WE 					 ./Ground_02.png
 
-C   225,255,25
+C   135,206,250
 
 
- EA ./wall.png
+ EA ./Ground_01.png
 
-F           100,100,100
+F           50,50,50
 
 
 
