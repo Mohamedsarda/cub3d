@@ -14,6 +14,7 @@ void    ft_free_data(t_cub *cube)
     free(cube->data->so);
     free(cube->data->no);
     free(cube->data->we);
+    free(cube->player);
 }
 
 void	malloc_error(void)
@@ -51,27 +52,26 @@ t_player *init_player(t_cub *cube)
 {
     t_player *player;
 
-    player = (t_player *)malloc(sizeof(t_player));
+    player = (t_player *)ft_calloc(sizeof(t_player));
     if (!player)
         malloc_error();
     ft_get_player_pos(player, cube);
     player->radius = 10;
     player->move_speed = 4;
-    // if (cube->data->p == 'W')
-    //     player->rotat_angle = deg2rad(180);  // Initialize in radians
-    // else if (cube->data->p == 'S')
-    //     player->rotat_angle = deg2rad(90);  // Initialize in radians
-    // else if (cube->data->p == 'N')
-    //     player->rotat_angle = deg2rad(270);  // Initialize in radians
-    // else if (cube->data->p == 'E')
-    //     player->rotat_angle = deg2rad(0);  // Initialize in radians
+    if (cube->data->p == 'W')
+        player->rotat_angle = deg2rad(180);  // Initialize in radians
+    else if (cube->data->p == 'S')
+        player->rotat_angle = deg2rad(90);  // Initialize in radians
+    else if (cube->data->p == 'N')
+        player->rotat_angle = deg2rad(270);  // Initialize in radians
+    else if (cube->data->p == 'E')
+        player->rotat_angle = deg2rad(0);  // Initialize in radians
     player->rotation_speed = 0.04;
     player->turn_direction = 0;
     player->strafe_direction = 0;
     player->walk_direction = 0;
     player->player_z = 0;
     player->start = 0;
-
     return (player);
 }
 
@@ -85,44 +85,9 @@ void ft_fractol_init(t_cub *cube)
    cube->mlx = mlx_init(WIDTH, HEIGHT, "42Balls", true);
 	if (!cube->mlx)
 		ft_error();
-
-
-    //check map
-        // cube->image = mlx_new_image(cube->mlx, cube->data->width, cube->data->height);
-        // if (!cube->image || (mlx_image_to_window(cube->mlx, cube->image, WIDTH / 10, HEIGHT / 10) < 0))
-        //     ft_error();
-
-
-    //check 3D
-    // cube->image = mlx_new_image(cube->mlx, WIDTH, HEIGHT);
     cube->image = mlx_new_image(cube->mlx, WIDTH, HEIGHT);
 	if (!cube->image || (mlx_image_to_window(cube->mlx, cube->image, 0, 0) < 0))
 		ft_error();
-
-
-    // cube->mlx_con = mlx_init();
-    // if (!cube->mlx_con)
-    //     malloc_error();
-    // cube->mlx_win = mlx_new_window(cube->mlx_con, WIDTH, HEIGHT, "Cub3D");
-    // if (!cube->mlx_win)
-    //     malloc_error();
-    // cube->img.img_ptr = mlx_new_image(cube->mlx_con, WIDTH, HEIGHT);
-    // if (!cube->img.img_ptr)
-    // {
-    //     mlx_destroy_window(cube->mlx_con, cube->mlx_win);
-    //     malloc_error();
-    // }
-    // cube->img.pixels_ptr = mlx_get_data_addr(cube->img.img_ptr, &cube->img.bpp, &cube->img.line_len, &cube->img.endian);
-    // if (!cube->img.pixels_ptr)
-    // {
-    //     mlx_destroy_image(cube->mlx_con, cube->img.img_ptr);
-    //     mlx_destroy_window(cube->mlx_con, cube->mlx_win);
-    //     malloc_error();
-    // }
-
-    // Load multiple textures
-    // char *texture_files[] = {"wall.xpm", "wall.xpm", "wall.xpm", "wall.xpm"};
-    // char *texture_files[] = {"./wood0.xpm", "./wood1.xpm", "./wood2.xpm", "./wood3.xpm"};
     char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea};
 
     // Load and display textures
@@ -202,7 +167,6 @@ void draw_player(t_cub *cube)
     double radius = (double)cube->player->radius;
     double centerX = cube->player->player_x;
     double centerY = cube->player->player_y;
-    // printf("%f | %f | %f | %f | %f\n",cube->player->player_x, cube->player->player_y, cube->player->player_x, cube->player->player_y, radius);
     int y = -radius;
     while (y <= radius)
     {
@@ -328,7 +292,6 @@ void ft_draw_ver(t_cub *cube, t_vars *vars)
     if (vars->isRayFacingLeft)
         a = 2;
 
-        // printf("%f | %f | %f | %f\n", vars->nextVertTouchX, vars->nextVertTouchY, cube->player->player_x, cube->player->player_y);
     while (vars->nextVertTouchX > 0 && vars->nextVertTouchX < cube->data->map_cols * tile_size &&
            vars->nextVertTouchY > 0 && vars->nextVertTouchY < cube->data->map_row * tile_size)
            {
