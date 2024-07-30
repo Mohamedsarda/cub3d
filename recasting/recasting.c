@@ -93,7 +93,6 @@ void ft_fractol_init(t_cub *cube)
     cube->image = mlx_new_image(cube->mlx, WIDTH, HEIGHT);
 	if (!cube->image || (mlx_image_to_window(cube->mlx, cube->image, 0, 0) < 0))
 		ft_error();
-    char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea};
 
     // Load and display textures
     int i = 0;
@@ -103,6 +102,16 @@ void ft_fractol_init(t_cub *cube)
     cube->gun_img[0] = mlx_texture_to_image(cube->mlx, cube->gun[0]);
     if (!cube->gun_img[0])
         ft_error();
+
+    //door
+
+    cube->doors[0] = mlx_load_png("./doorframes/tile000_pls.png");
+    if (!cube->doors[0])
+        ft_error();
+    cube->door_img[0] = mlx_texture_to_image(cube->mlx, cube->doors[0]);
+    if (!cube->door_img[0])
+        ft_error();
+    char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea};
     while (i < 4)
     {
         cube->texture[i] = mlx_load_png(texture_files[i]);
@@ -257,15 +266,14 @@ uint32_t get_pixel_color(mlx_texture_t* texture, int x, int y)
         return 0;
     int index = (y * texture->width + x) * 4; // 4 bytes per pixel
     uint8_t* pixels = texture->pixels;
-    uint32_t color = *(uint32_t*)&pixels[index];
 
-    // Assuming the color format is ARGB and we need RGBA
-    uint8_t a = (color >> 24) & 0xFF;
-    uint8_t r = (color >> 16) & 0xFF;
-    uint8_t g = (color >> 8) & 0xFF;
-    uint8_t b = color & 0xFF;
+    // Read individual color components
+    uint8_t r = pixels[index];
+    uint8_t g = pixels[index + 1];
+    uint8_t b = pixels[index + 2];
+    uint8_t a = pixels[index + 3];
 
-    // Convert ARGB to RGBA
+    // Combine into RGBA format
     return (r << 24) | (g << 16) | (b << 8) | a;
 }
 
@@ -276,7 +284,7 @@ void ft_draw_sky_floor(t_cub *cube)
     int i, j;
     int sky_end_y = HEIGHT / 2 - cube->player->player_z - cube->player->jump_var;
     int floor_start_y = HEIGHT / 2 - cube->player->player_z - cube->player->jump_var;
-    
+
     if (sky_end_y < 0)
         sky_end_y = 0;
     if (floor_start_y >= HEIGHT)
@@ -329,7 +337,10 @@ void ft_draw_sky_floor(t_cub *cube)
 
 void    ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i)
 {
-    mlx_texture_t* texture = cube->texture[textureNum];
+    mlx_texture_t* texture;
+    texture = cube->texture[textureNum];
+    if (vars.door)
+        texture = cube->doors[0];
     int textureX;
     if (vars.wasHitVert)
         textureX = (int)vars.wallHitY % tile_size;
@@ -346,14 +357,14 @@ void    ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i)
         texturePos += vars.textureStep;
 
         uint32_t color = get_pixel_color(texture, textureX, textureY);
-        double shadeFactor = fmin(10.0 / (1.0 + vars.distance * 0.05), 1.0);
+        // double shadeFactor = fmin(10.0 / (1.0 + vars.distance * 0.05), 1.0);
 
-        uint8_t r = fmin(((color >> 24) & 0xFF) * shadeFactor, 255);
-        uint8_t g = fmin(((color >> 16) & 0xFF) * shadeFactor, 255);
-        uint8_t b = fmin(((color >> 8) & 0xFF) * shadeFactor, 255);
-        uint32_t shadedColor = (r << 24) | (g << 16) | (b << 8) | 0xFF;
+        // uint8_t r = fmin(((color >> 24) & 0xFF) * shadeFactor, 255);
+        // uint8_t g = fmin(((color >> 16) & 0xFF) * shadeFactor, 255);
+        // uint8_t b = fmin(((color >> 8) & 0xFF) * shadeFactor, 255);
+        // uint32_t shadedColor = (r << 24) | (g << 16) | (b << 8) | 0xFF;
         if (y >= 0)
-            mlx_put_pixel(cube->image, i, y, shadedColor);
+            mlx_put_pixel(cube->image, i, y, color);
         y++;
     }
 }
@@ -369,7 +380,7 @@ void draw_lines_3D(t_cub* cube)
     // Draw sky and floor
     ft_draw_sky_floor(cube);
     // end Draw sky and floor
-    
+
     // Draw wall texture
     i = 0;
     while (i < WIDTH)
@@ -417,7 +428,7 @@ void my_keyhook(mlx_key_data_t keydata, void* param)
     t_cub * cube = param;
     if(keydata.action == MLX_PRESS)
     {
-        
+
         // if (keydata.key == MLX_KEY_RIGHT_SHIFT)
         //     cube->player->stop_mouse = 1;
 
@@ -440,7 +451,7 @@ void my_keyhook(mlx_key_data_t keydata, void* param)
             cube->player->walk_direction = -1;
         if (keydata.key == MLX_KEY_DOWN)
             cube->player->walk_direction = -1;
-        
+
         if (keydata.key == MLX_KEY_D)
             cube->player->strafe_direction = 1;
         if (keydata.key == MLX_KEY_A)
@@ -459,7 +470,7 @@ void my_keyhook(mlx_key_data_t keydata, void* param)
             cube->player->jump = 1;
         if(keydata.key == MLX_KEY_LEFT_CONTROL)
             cube->player->jump = -1;
-        
+
         if(keydata.key == MLX_KEY_F)
         {
             // mlx_delete_image(cube->mlx, cube->image);
@@ -647,11 +658,11 @@ void loop_fun(void* param)
     int32_t xpos, ypos;
     mlx_get_mouse_pos(cube->mlx, &xpos, &ypos);
 
-    
+
     draw_all_black(cube);
     // draw_map(cube);
     draw_lines_3D(cube);
-    
+
     draw_per(cube);
     heal_bar(cube);
     draw_shots(cube);

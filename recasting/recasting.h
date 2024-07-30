@@ -154,6 +154,8 @@ typedef struct s_cub
 	mlx_image_t* img[4];
 	mlx_texture_t* gun[4];
 	mlx_image_t* gun_img[4];
+	mlx_texture_t* doors[9];
+	mlx_image_t* door_img[9];
 	char	**colors;
 	double		is;
 	t_minimap_vars map_data;
