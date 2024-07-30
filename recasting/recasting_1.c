@@ -416,7 +416,7 @@ void ft_draw_sky_floor(t_cub *cube)
     sky_end_y = HEIGHT / 2 - clamped_player_z;
     if (sky_end_y < 0)
         sky_end_y = 0;
-        
+
     floor_start_y = HEIGHT / 2 - clamped_player_z;
     if (floor_start_y < 0)
         floor_start_y = 0;
@@ -477,7 +477,8 @@ void    ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i)
         uint8_t g = fmin(((color >> 16) & 0xFF) * shadeFactor, 255);
         uint8_t b = fmin(((color >> 8) & 0xFF) * shadeFactor, 255);
         uint32_t shadedColor = (r << 24) | (g << 16) | (b << 8) | 0xFF;
-        mlx_put_pixel(cube->image, i, y, shadedColor);
+        if (y >= 0)
+            mlx_put_pixel(cube->image, i, y, shadedColor);
         y++;
     }
 }
@@ -503,7 +504,7 @@ void draw_lines_3D(t_cub* cube)
 
         double wallStripHeight = projectedWallHeight;
         vars.wallTopPixel = ((double)HEIGHT / 2) - (wallStripHeight / 2) - cube->player->player_z;
-        vars.wallTopPixel = vars.wallTopPixel < 0 ? 0 : vars.wallTopPixel;
+        // vars.wallTopPixel = vars.wallTopPixel < 0 ? 0 : vars.wallTopPixel;
         // wallTopPixel += 20;
         vars.wallBottomPixel = ((double)HEIGHT / 2) + (wallStripHeight / 2) - cube->player->player_z;
         vars.wallBottomPixel = vars.wallBottomPixel > (double)HEIGHT ? (double)HEIGHT : vars.wallBottomPixel;
@@ -511,11 +512,13 @@ void draw_lines_3D(t_cub* cube)
         vars.textureStep = (double)cube->texture[0]->height / wallStripHeight;
         vars.textureOffsetY = 0;
 
-        if (wallStripHeight > HEIGHT)
-        {
-            vars.textureOffsetY = ((double)wallStripHeight - (double)HEIGHT) / 2.0;
-            wallStripHeight = HEIGHT;
-        }
+        // if (wallStripHeight > HEIGHT)
+        // {
+        //     vars.textureOffsetY = ((double)wallStripHeight - (double)HEIGHT) / 2.0;
+        //     wallStripHeight = HEIGHT;
+
+        // }
+
 
         int textureNum = 0;
         if (vars.wasHitVert)
@@ -548,15 +551,15 @@ void draw_minimap(t_cub *cube)
     int minimap_size = 200;
     int minimap_radius = minimap_size / 2;
 
-   
+
     int minimap_start_x = 10;
     int minimap_start_y = cube->image->height - minimap_size - 10;
 
-   
+
     double player_pixel_x = cube->player->player_x;
     double player_pixel_y = cube->player->player_y;
 
-   
+
     int pixels_to_draw = minimap_size / 2;
 
     for (int y = -pixels_to_draw; y <= pixels_to_draw; y++)
@@ -771,7 +774,6 @@ void handle_mouse(t_cub *cube)
     int32_t delta_y = ypos - prev_ypos;
 
     cube->player->rotat_angle += delta_x * sensitivity;
-    cube->player->player_z += delta_y;
 
 
     // if (cube->player->player_z < 0)
@@ -785,6 +787,10 @@ void handle_mouse(t_cub *cube)
     prev_ypos = HEIGHT / 2;
 
     mlx_set_cursor_mode(cube->mlx, MLX_MOUSE_HIDDEN);
+    printf("%f\n", cube->player->player_z);
+    int z = cube->player->player_z + delta_y;
+    if (z < 500 && z > -500)
+        cube->player->player_z = z;
 }
 
 void fill_rectangle(t_cub* cube, int x, int y, int width, int height, int color)
