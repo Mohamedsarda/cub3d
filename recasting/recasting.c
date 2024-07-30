@@ -85,6 +85,16 @@ int create_rgba(int r, int g, int b, int a)
     return (r << 24) | (g << 16) | (b << 8) | a;
 }
 
+void    ft_load_doors(t_cub *cube, int i, char *path)
+{
+    cube->doors[i] = mlx_load_png(path);
+    if (!cube->doors[i])
+        ft_error();
+    cube->door_img[i] = mlx_texture_to_image(cube->mlx, cube->doors[i]);
+    if (!cube->door_img[i])
+        ft_error();
+}
+
 void ft_fractol_init(t_cub *cube)
 {
    cube->mlx = mlx_init(WIDTH, HEIGHT, "42Balls", true);
@@ -104,13 +114,17 @@ void ft_fractol_init(t_cub *cube)
         ft_error();
 
     //door
+    ft_load_doors(cube, 0, "./Doors/tile000.png");
+    ft_load_doors(cube, 1, "./Doors/tile001.png");
+    ft_load_doors(cube, 2, "./Doors/tile002.png");
+    ft_load_doors(cube, 3, "./Doors/tile003.png");
+    ft_load_doors(cube, 4, "./Doors/tile004.png");
+    ft_load_doors(cube, 4, "./Doors/tile004.png");
+    ft_load_doors(cube, 5, "./Doors/tile005.png");
+    ft_load_doors(cube, 6, "./Doors/tile006.png");
+    ft_load_doors(cube, 7, "./Doors/tile007.png");
+    ft_load_doors(cube, 8, "./Doors/tile008.png");
 
-    cube->doors[0] = mlx_load_png("./doorframes/tile000_pls.png");
-    if (!cube->doors[0])
-        ft_error();
-    cube->door_img[0] = mlx_texture_to_image(cube->mlx, cube->doors[0]);
-    if (!cube->door_img[0])
-        ft_error();
     char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea};
     while (i < 4)
     {
@@ -298,49 +312,21 @@ void ft_draw_sky_floor(t_cub *cube)
         while (j < HEIGHT)
         {
             if (j < sky_end_y)
-            {
                 mlx_put_pixel(cube->image, i, j, create_rgba(cube->data->sky.r, cube->data->sky.g, cube->data->sky.b, 255));
-            }
             else if (j >= floor_start_y)
-            {
                 mlx_put_pixel(cube->image, i, j, create_rgba(cube->data->floor.r, cube->data->floor.g, cube->data->floor.b, 255));
-            }
             ++j;
         }
         ++i;
     }
 }
 
-// void    ft_draw_sky_floor(t_cub *cube)
-// {
-//     int i;
-//     i = 0;
-//     while (i < WIDTH)
-//     {
-//         int j = 0;
-//         while (j < HEIGHT / 2 - cube->player->player_z - cube->player->jump_var)
-//         {
-//             mlx_put_pixel(cube->image, i, j, create_rgba(cube->data->sky.r, cube->data->sky.g, cube->data->sky.b, 255));
-//             j++;
-//         }
-//         j = HEIGHT / 2 - cube->player->player_z - cube->player->jump_var;
-//         while (j < HEIGHT)
-//         {
-//             mlx_put_pixel(cube->image, i, j, create_rgba(cube->data->floor.r, cube->data->floor.g, cube->data->floor.b, 255));
-//             j++;
-//         }
-//         i++;
-//     }
-// }
-
-// get texture
-
-void    ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i)
+void    ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i, int door)
 {
     mlx_texture_t* texture;
     texture = cube->texture[textureNum];
     if (vars.door)
-        texture = cube->doors[0];
+        texture = cube->doors[door];
     int textureX;
     if (vars.wasHitVert)
         textureX = (int)vars.wallHitY % tile_size;
@@ -357,14 +343,14 @@ void    ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i)
         texturePos += vars.textureStep;
 
         uint32_t color = get_pixel_color(texture, textureX, textureY);
-        // double shadeFactor = fmin(10.0 / (1.0 + vars.distance * 0.05), 1.0);
-
-        // uint8_t r = fmin(((color >> 24) & 0xFF) * shadeFactor, 255);
-        // uint8_t g = fmin(((color >> 16) & 0xFF) * shadeFactor, 255);
-        // uint8_t b = fmin(((color >> 8) & 0xFF) * shadeFactor, 255);
-        // uint32_t shadedColor = (r << 24) | (g << 16) | (b << 8) | 0xFF;
-        if (y >= 0)
-            mlx_put_pixel(cube->image, i, y, color);
+        // Skip pixel if it's transparent or black
+        if (!(vars.door && ((color & 0xFFFFFF00) == 0)))
+        {
+            if (y >= 0)
+                mlx_put_pixel(cube->image, i, y, color);
+        }
+        // if (y >= 0)
+        //     mlx_put_pixel(cube->image, i, y, color);
         y++;
     }
 }
@@ -414,7 +400,7 @@ void draw_lines_3D(t_cub* cube)
             else
                 textureNum = 1; // South
         }
-        ft_get_texture(cube, vars, textureNum, i);
+        ft_get_texture(cube, vars, textureNum, i, 0);
         angle += FOV_ANGLE / WIDTH;
         i++;
     }
@@ -522,6 +508,8 @@ void handle_mouse(t_cub *cube)
     double sensitivity = 0.001;
 
     mlx_get_mouse_pos(cube->mlx, &xpos, &ypos);
+    if (xpos < 0 || xpos > WIDTH || ypos < 0 || ypos > HEIGHT)
+        return ;
 
     int32_t delta_x = xpos - prev_xpos;
     int32_t delta_y = ypos - prev_ypos;
@@ -676,7 +664,7 @@ void loop_fun(void* param)
         handle_mouse(cube);
     else
         mlx_set_cursor_mode(cube->mlx, MLX_MOUSE_NORMAL);
-if (mlx_image_to_window(cube->mlx, cube->gun_img[0], WIDTH/ 2, HEIGHT - cube->gun[0]->height) < 0)
+    if (mlx_image_to_window(cube->mlx, cube->gun_img[0], WIDTH/ 2, HEIGHT - cube->gun[0]->height) < 0)
         ft_error();
 }
 // // end hooks
