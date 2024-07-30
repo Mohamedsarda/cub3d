@@ -67,6 +67,12 @@ typedef struct s_player
 	double rotation_speed;
 	double move_speed;
 	double is_moving_up;
+	double jump;
+	double jump_var;
+	int tab;
+	int middle;
+	int mouse;
+	int stop_mouse;
 }	t_player;
 
 typedef struct s_texture {
@@ -121,6 +127,7 @@ typedef struct s_vars
 	double textureOffsetY;
 	double wallBottomPixel;
 	double wallTopPixel;
+	int door;
 }	t_vars;
 
 typedef struct s_minimap_vars
@@ -171,4 +178,5 @@ t_vars draw_line(t_cub *cube, double angle, int is);
 void draw_lines(t_cub *cube, int is);
 double normalizeAngle(double angle);
 
+void    ft_draw_player(t_cub *cube, int minimap_player_x, int minimap_player_y);
 #endif

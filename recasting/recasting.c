@@ -71,6 +71,12 @@ t_player *init_player(t_cub *cube)
     player->walk_direction = 0;
     player->player_z = 0;
     player->start = 0;
+    player->jump = 0;
+    player->tab = 0;
+    player->jump_var = 0;
+    player->middle = 0;
+    player->mouse = 0;
+    player->stop_mouse = 0;
     return (player);
 }
 
@@ -166,6 +172,39 @@ int is_it_a_wall(double x, double y, t_cub *cube)
     return (1);
 }
 
+// void	ft_draw_line(t_point x1, t_point x2, t_fdf *box)
+// {
+// 	box->draw.dx = abs(x2.x - x1.x);
+// 	box->draw.dy = abs(x2.y - x1.y);
+// 	if (x1.x < x2.x)
+// 		box->draw.sx = 1;
+// 	else
+// 		box->draw.sx = -1;
+// 	if (x1.y < x2.y)
+// 		box->draw.sy = 1;
+// 	else
+// 		box->draw.sy = -1;
+// 	box->draw.error = box->draw.dx - box->draw.dy;
+// 	while (1)
+// 	{
+// 		if (x1.x >= 0 && x1.y >= 0 && x1.x < WIDTH && x1.y < HEIGHT)
+// 			my_pixel_put(x1.x, x1.y, box->var.color, box);
+// 		if (x1.x == x2.x && x1.y == x2.y)
+// 			break ;
+// 		box->draw.e2 = 2 * box->draw.error;
+// 		if (box->draw.e2 >= -box->draw.dy)
+// 		{
+// 			box->draw.error -= box->draw.dy;
+// 			x1.x += box->draw.sx;
+// 		}
+// 		if (box->draw.e2 <= box->draw.dx)
+// 		{
+// 			box->draw.error += box->draw.dx;
+// 			x1.y += box->draw.sy;
+// 		}
+// 	}
+// }
+
 void DDA(t_cub *cube, double X0, double Y0, double X1, double Y1)
 {
     double dx = X1 - X0;
@@ -194,7 +233,7 @@ int has_wall(t_cub *cube, double x1, double y1, int is)
     int x = floor(x1 / tile_size);
     int y = floor(y1 / tile_size);
 
-    if (cube->data->map[y][x] == '1')
+    if (cube->data->map[y][x] == '1' || cube->data->map[y][x] == 'D')
         return (1);
     return (0);
 }
@@ -206,7 +245,6 @@ double normalizeAngle(double angle)
         angle += 2 * M_PI;
     return angle;
 }
-
 
 uint32_t ft_rgb(uint8_t r, uint8_t g, uint8_t b)
 {
@@ -233,28 +271,59 @@ uint32_t get_pixel_color(mlx_texture_t* texture, int x, int y)
 
 // 3d
 
-void    ft_draw_sky_floor(t_cub *cube)
+void ft_draw_sky_floor(t_cub *cube)
 {
-    int i;
+    int i, j;
+    int sky_end_y = HEIGHT / 2 - cube->player->player_z - cube->player->jump_var;
+    int floor_start_y = HEIGHT / 2 - cube->player->player_z - cube->player->jump_var;
+    
+    if (sky_end_y < 0)
+        sky_end_y = 0;
+    if (floor_start_y >= HEIGHT)
+        floor_start_y = HEIGHT - 1;
 
+    // Draw sky and floor
     i = 0;
     while (i < WIDTH)
     {
-        int j = 0;
-        while (j < HEIGHT / 2 - cube->player->player_z)
-        {
-            mlx_put_pixel(cube->image, i, j, create_rgba(cube->data->sky.r, cube->data->sky.g, cube->data->sky.b, 255));
-            j++;
-        }
-        j = HEIGHT / 2 - cube->player->player_z;
+        j = 0;
         while (j < HEIGHT)
         {
-            mlx_put_pixel(cube->image, i, j, create_rgba(cube->data->floor.r, cube->data->floor.g, cube->data->floor.b, 255));
-            j++;
+            if (j < sky_end_y)
+            {
+                mlx_put_pixel(cube->image, i, j, create_rgba(cube->data->sky.r, cube->data->sky.g, cube->data->sky.b, 255));
+            }
+            else if (j >= floor_start_y)
+            {
+                mlx_put_pixel(cube->image, i, j, create_rgba(cube->data->floor.r, cube->data->floor.g, cube->data->floor.b, 255));
+            }
+            ++j;
         }
-        i++;
+        ++i;
     }
 }
+
+// void    ft_draw_sky_floor(t_cub *cube)
+// {
+//     int i;
+//     i = 0;
+//     while (i < WIDTH)
+//     {
+//         int j = 0;
+//         while (j < HEIGHT / 2 - cube->player->player_z - cube->player->jump_var)
+//         {
+//             mlx_put_pixel(cube->image, i, j, create_rgba(cube->data->sky.r, cube->data->sky.g, cube->data->sky.b, 255));
+//             j++;
+//         }
+//         j = HEIGHT / 2 - cube->player->player_z - cube->player->jump_var;
+//         while (j < HEIGHT)
+//         {
+//             mlx_put_pixel(cube->image, i, j, create_rgba(cube->data->floor.r, cube->data->floor.g, cube->data->floor.b, 255));
+//             j++;
+//         }
+//         i++;
+//     }
+// }
 
 // get texture
 
@@ -294,12 +363,14 @@ void draw_lines_3D(t_cub* cube)
     double angle;
     int i;
     double distanceProjPlane = ((double)WIDTH / 2.0) / tan(FOV_ANGLE / 2);
-    // double rayWidth = (double)WIDTH / NUM_RAYS;
 
     angle = cube->player->rotat_angle - FOV_ANGLE / 2.0;
 
     // Draw sky and floor
     ft_draw_sky_floor(cube);
+    // end Draw sky and floor
+    
+    // Draw wall texture
     i = 0;
     while (i < WIDTH)
     {
@@ -309,9 +380,9 @@ void draw_lines_3D(t_cub* cube)
         double projectedWallHeight = (tile_size / wallDistance) * distanceProjPlane;
 
         double wallStripHeight = projectedWallHeight;
-        vars.wallTopPixel = ((double)HEIGHT / 2) - (wallStripHeight / 2) - cube->player->player_z;
+        vars.wallTopPixel = ((double)HEIGHT / 2) - (wallStripHeight / 2) - cube->player->player_z - cube->player->jump_var;
         // wallTopPixel += 20;
-        vars.wallBottomPixel = ((double)HEIGHT / 2) + (wallStripHeight / 2) - cube->player->player_z;
+        vars.wallBottomPixel = ((double)HEIGHT / 2) + (wallStripHeight / 2) - cube->player->player_z - cube->player->jump_var;
         vars.wallBottomPixel = vars.wallBottomPixel > (double)HEIGHT ? (double)HEIGHT : vars.wallBottomPixel;
 
         vars.textureStep = (double)cube->texture[0]->height / wallStripHeight;
@@ -344,13 +415,17 @@ void my_keyhook(mlx_key_data_t keydata, void* param)
     (void)keydata;
     (void)param;
     t_cub * cube = param;
-
     if(keydata.action == MLX_PRESS)
     {
-        if (keydata.key == MLX_KEY_UP)
-            cube->player->is_moving_up = 1;
-        if (keydata.key == MLX_KEY_DOWN)
-            cube->player->is_moving_up = -1;
+        
+        // if (keydata.key == MLX_KEY_RIGHT_SHIFT)
+        //     cube->player->stop_mouse = 1;
+
+        if (keydata.key == MLX_KEY_RIGHT_SHIFT)
+            cube->player->mouse = 1;
+
+        if (keydata.key == MLX_KEY_TAB)
+            cube->player->tab = 1;
 
         if (keydata.key == MLX_KEY_RIGHT)
             cube->player->turn_direction = 1;
@@ -359,8 +434,13 @@ void my_keyhook(mlx_key_data_t keydata, void* param)
 
         if (keydata.key == MLX_KEY_W)
             cube->player->walk_direction = 1;
+        if (keydata.key == MLX_KEY_UP)
+            cube->player->walk_direction = 1;
         if (keydata.key == MLX_KEY_S)
             cube->player->walk_direction = -1;
+        if (keydata.key == MLX_KEY_DOWN)
+            cube->player->walk_direction = -1;
+        
         if (keydata.key == MLX_KEY_D)
             cube->player->strafe_direction = 1;
         if (keydata.key == MLX_KEY_A)
@@ -372,14 +452,14 @@ void my_keyhook(mlx_key_data_t keydata, void* param)
             mlx_close_window(cube->mlx);
             mlx_delete_image(cube->mlx, cube->image);
         }
+
         if(keydata.key == MLX_KEY_LEFT_SHIFT)
-            cube->player->move_speed = 2;
+            cube->player->jump = 2;
         if(keydata.key == MLX_KEY_SPACE)
-        {
-        }
+            cube->player->jump = 1;
         if(keydata.key == MLX_KEY_LEFT_CONTROL)
-        {
-        }
+            cube->player->jump = -1;
+        
         if(keydata.key == MLX_KEY_F)
         {
             // mlx_delete_image(cube->mlx, cube->image);
@@ -395,7 +475,13 @@ void my_keyhook(mlx_key_data_t keydata, void* param)
 
     if(keydata.action == MLX_RELEASE)
     {
-        if (keydata.key == MLX_KEY_W || keydata.key == MLX_KEY_DOWN || keydata.key == MLX_KEY_S)
+        if (keydata.key == MLX_KEY_W)
+            cube->player->walk_direction = 0;
+        if (keydata.key == MLX_KEY_DOWN)
+            cube->player->walk_direction = 0;
+        if (keydata.key == MLX_KEY_S)
+            cube->player->walk_direction = 0;
+        if (keydata.key == MLX_KEY_UP)
             cube->player->walk_direction = 0;
         if (keydata.key == MLX_KEY_RIGHT || keydata.key == MLX_KEY_LEFT)
             cube->player->turn_direction = 0;
@@ -403,20 +489,16 @@ void my_keyhook(mlx_key_data_t keydata, void* param)
         if (keydata.key == MLX_KEY_D || keydata.key == MLX_KEY_A)
             cube->player->strafe_direction = 0;
 
-        if(keydata.key == MLX_KEY_LEFT_SHIFT)
-            cube->player->move_speed = 4;
-
-        if(keydata.key == MLX_KEY_SPACE)
-        {
-        }
-        if(keydata.key == MLX_KEY_LEFT_CONTROL)
-        {
-        }
+        if(keydata.key == MLX_KEY_SPACE || keydata.key == MLX_KEY_LEFT_CONTROL || keydata.key == MLX_KEY_LEFT_SHIFT)
+            cube->player->jump = 0;
         if(keydata.key == MLX_KEY_F)
         {
         }
-        if(keydata.key == MLX_KEY_UP || keydata.key == MLX_KEY_DOWN)
-            cube->player->is_moving_up = 0;
+        // if(keydata.key == MLX_KEY_UP || keydata.key == MLX_KEY_DOWN)
+        //     cube->player->is_moving_up = 0;
+
+        if (keydata.key == MLX_KEY_TAB)
+            cube->player->tab = 0;
     }
 
 }
@@ -435,12 +517,6 @@ void handle_mouse(t_cub *cube)
 
     cube->player->rotat_angle += delta_x * sensitivity;
 
-
-    // if (cube->player->player_z < 0)
-    //     cube->player->player_z = 0;
-    // if (cube->player->player_z > HEIGHT)
-    //     cube->player->player_z = HEIGHT;
-
     mlx_set_mouse_pos(cube->mlx, WIDTH / 2, HEIGHT / 2);
 
     prev_xpos = WIDTH / 2;
@@ -452,15 +528,23 @@ void handle_mouse(t_cub *cube)
         cube->player->player_z = z;
 }
 
-
 void update_player(t_cub *cube)
 {
-    if (cube->player->is_moving_up == 1)
-        cube->player->player_z -= 2;
-    else if (cube->player->is_moving_up == -1)
-        cube->player->player_z += 2;
-    else if (cube->player->is_moving_up == 0)
-        cube->player->player_z += 0;
+    if (cube->player->jump == 1)
+        cube->player->jump_var = -100;
+    else if (cube->player->jump == -1)
+    {
+        cube->player->move_speed = 3;
+        cube->player->jump_var = 100;
+    }
+    else if (cube->player->jump == 0)
+    {
+        cube->player->move_speed = 4;
+        cube->player->jump_var = 0;
+    }
+    else if (cube->player->jump == 2)
+        cube->player->move_speed = 2;
+
     int move_speed = cube->player->move_speed;
     cube->player->rotat_angle = normalizeAngle(cube->player->rotat_angle);
     cube->player->rotat_angle += (double)cube->player->turn_direction * cube->player->rotation_speed;
@@ -497,6 +581,65 @@ void update_player(t_cub *cube)
     }
 }
 
+// heal
+void    draw_inside_head(t_cub *cube)
+{
+    int i = 0;
+    int y;
+    while (i <= 400)
+    {
+        y = 0;
+        while (y <= 20)
+        {
+            if(i != 0 && y != 0 && y != 20 && i != 400)
+                mlx_put_pixel(cube->image, i + 10, y + 10, create_rgba(0, 0, 255, 255));
+            y++;
+        }
+        i++;
+    }
+}
+
+void    heal_bar(t_cub *cube)
+{
+    int i = 0;
+    int y;
+    while (i <= 400)
+    {
+        y = 0;
+        while (y <= 20)
+        {
+            if(i == 0 || y == 0 || y == 20 || i == 400)
+                mlx_put_pixel(cube->image, i + 10, y + 10, create_rgba(255, 0, 0, 255));
+            y++;
+        }
+        i++;
+    }
+    draw_inside_head(cube);
+}
+// end heal
+
+// shots
+void    draw_shots(t_cub *cube)
+{
+    int i = 0;
+    int y;
+    while (i <= 280)
+    {
+        y = 0;
+        while (y <= 150)
+        {
+            if(i == 135)
+                mlx_put_pixel(cube->image, i + WIDTH / 1.2, y + HEIGHT / 1.2, create_rgba(0, 0, 255, 255));
+            else
+                mlx_put_pixel(cube->image, i + WIDTH / 1.2, y + HEIGHT / 1.2, create_rgba(0, 0, 0, 255));
+            y++;
+        }
+        i++;
+    }
+}
+// end shots
+
+
 void loop_fun(void* param)
 {
     t_cub* cube = (t_cub*)param;
@@ -504,18 +647,25 @@ void loop_fun(void* param)
     int32_t xpos, ypos;
     mlx_get_mouse_pos(cube->mlx, &xpos, &ypos);
 
+    
+    draw_all_black(cube);
+    // draw_map(cube);
+    draw_lines_3D(cube);
+    
+    draw_per(cube);
+    heal_bar(cube);
+    draw_shots(cube);
+    ft_draw_player(cube, WIDTH / 2, HEIGHT / 2);
     if(xpos != WIDTH / 2 && ypos != HEIGHT / 2 && cube->player->start == 0)
     {
         mlx_set_mouse_pos(cube->mlx, WIDTH / 2, HEIGHT / 2);
         cube->player->start = 1;
     }
-    else
+    else if(!mlx_is_key_down(cube->mlx, MLX_KEY_RIGHT_SHIFT))
         handle_mouse(cube);
-    draw_all_black(cube);
-    // draw_map(cube);
-    draw_lines_3D(cube);
-    if (mlx_image_to_window(cube->mlx, cube->gun_img[0], (WIDTH - cube->gun[0]->width) / 2, HEIGHT - cube->gun[0]->height) < 0)
+    else
+        mlx_set_cursor_mode(cube->mlx, MLX_MOUSE_NORMAL);
+if (mlx_image_to_window(cube->mlx, cube->gun_img[0], WIDTH/ 2, HEIGHT - cube->gun[0]->height) < 0)
         ft_error();
-    draw_per(cube);
 }
 // // end hooks
