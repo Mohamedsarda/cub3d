@@ -133,6 +133,12 @@ t_vars draw_line(t_cub *cube, double angle, int is)
         vars.wasHitVert = 0;
     }
 
+    int x = floor(vars.wallHitX / tile_size);
+    int y = floor(vars.wallHitY / tile_size);
+    vars.door = 0;
+    if (cube->data->map[y][x] == 'D')
+        vars.door = 1;
+
     if (is == 1)
         DDA(cube, cube->player->player_x, cube->player->player_y, vars.wallHitX, vars.wallHitY);
 

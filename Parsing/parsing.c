@@ -198,7 +198,7 @@ int	ft_check_map(t_data *data)
 			if (data->map[i][j] == '\t')
 				return (puts("tab"), -1);
             if (ft_check_char(data->map[i][j], 0)
-			&& (data->map[i][j + 1] == '$' || data->map[i][j - 1] == '$'  || j == 0 || j == (ft_strlen(data->map[i]) - 1)))
+			&& (data->map[i][j + 1] == '$' || (j != 0 && data->map[i][j - 1] == '$') || j == 0 || j == (ft_strlen(data->map[i]) - 1)))
                 return (puts("1"),-1);
             if (ft_check_char(data->map[i][j], 0) && ((i == (lines -1)) || data->map[i + 1][j] == '$' || (i != 0 && data->map[i - 1][j] == '$') || i == 0))
                 return (-1);
