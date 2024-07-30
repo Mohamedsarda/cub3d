@@ -6,6 +6,33 @@ void ffqwe()
 	system("leaks app");
 }
 
+void my_mousehook(mouse_key_t button, action_t action, modifier_key_t mods, void *param)
+{
+	(void)mods;
+	(void)param;
+	(void)action;
+	(void)button;
+    t_cub *cube = (t_cub *)param;
+
+    // if (button == MLX_MOUSE_BUTTON_MIDDLE && action == MLX_PRESS && cube->player->middle == 0)
+	// 	cube->player->middle = 1;
+    // if (button == MLX_MOUSE_BUTTON_MIDDLE && action == MLX_RELEASE)
+	// 	cube->player->middle = 0;
+    if (button == MLX_MOUSE_BUTTON_LEFT && action == MLX_PRESS)
+	{
+		int i = 0;
+		while (i < 2)
+		{
+			if (mlx_image_to_window(cube->mlx, cube->gun_img[i], WIDTH/ 2, HEIGHT - cube->gun[i]->height) < 0)
+				return ;
+			// mlx_delete_image(cube->mlx, cube->gun_img[i]);
+			i++;
+		}
+			if (mlx_image_to_window(cube->mlx, cube->gun_img[i], WIDTH/ 2, HEIGHT - cube->gun[i]->height) < 0)
+				return ;
+	}
+}
+
 int main()
 {
 	// atexit(ffqwe);
@@ -54,6 +81,7 @@ int main()
     ft_fractol_init(&cube);
 
 	mlx_key_hook(cube.mlx, &my_keyhook, &cube);
+	mlx_mouse_hook(cube.mlx, &my_mousehook, &cube);
     mlx_loop_hook(cube.mlx, loop_fun, &cube);
 	mlx_loop(cube.mlx);
 	// mlx_terminate(cube.mlx);
