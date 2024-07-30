@@ -125,8 +125,8 @@ void ft_fractol_init(t_cub *cube)
     ft_load_doors(cube, 7, "./Doors/tile007.png");
     ft_load_doors(cube, 8, "./Doors/tile008.png");
 
-    char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea};
-    while (i < 4)
+    char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea, "./iloveimg-resized/tile000.png"};
+    while (i < 5)
     {
         cube->texture[i] = mlx_load_png(texture_files[i]);
         if (!cube->texture[i])
@@ -337,6 +337,8 @@ void    ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i, int door
 
     // int x = i * rayWidth;
     int y = vars.wallTopPixel;
+    double shade = 1.0 - (vars.distance / 1000.0); // Adjust 1000.0 to change shading intensity
+    if (shade < 0.3) shade = 0.3;
     while (y < vars.wallBottomPixel)
     {
         int textureY = (int)texturePos % texture->height;
@@ -344,16 +346,78 @@ void    ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i, int door
 
         uint32_t color = get_pixel_color(texture, textureX, textureY);
         // Skip pixel if it's transparent or black
-        if (!(vars.door && ((color & 0xFFFFFF00) == 0)))
+        uint8_t r = ((color >> 24) & 0xFF) * shade;
+        uint8_t g = ((color >> 16) & 0xFF) * shade;
+        uint8_t b = ((color >> 8) & 0xFF) * shade;
+        uint8_t a = color & 0xFF;
+
+        uint32_t shaded_color = (r << 24) | (g << 16) | (b << 8) | a;
+
+        // Skip pixel if it's transparent or black
+        if (!(vars.door && ((shaded_color & 0xFFFFFF00) == 0)))
         {
             if (y >= 0)
-                mlx_put_pixel(cube->image, i, y, color);
+                mlx_put_pixel(cube->image, i, y, shaded_color);
         }
         // if (y >= 0)
         //     mlx_put_pixel(cube->image, i, y, color);
         y++;
     }
 }
+
+// Add this function to your code
+void draw_textured_floor(t_cub *cube)
+{
+    // Player's direction
+    double dir_x = cos(cube->player->rotat_angle);
+    double dir_y = sin(cube->player->rotat_angle);
+
+    // Plane vector perpendicular to the direction vector
+    double plane_x = -dir_y;
+    double plane_y = dir_x;
+
+    for (int y = HEIGHT / 2 + 1; y < HEIGHT; y++)
+    {
+        // Current y position compared to the center of the screen (the horizon)
+        int p = y - (HEIGHT / 2 + cube->player->player_z + cube->player->jump_var);
+
+        // Vertical position of the camera.
+        double pos_z = 0.5 * HEIGHT;
+
+        // Horizontal distance from the camera to the floor for the current row.
+        // 0.5 is the z position exactly in the middle between floor and ceiling.
+        double row_distance = pos_z / p;
+
+        // calculate the real world step vector we have to add for each x (parallel to camera plane)
+        // adding step_x each time to real_floor_x and step_y to real_floor_y gives the real world coordinates of the floor for each screen coordinate
+        double step_x = row_distance * (dir_x + plane_x) / WIDTH;
+        double step_y = row_distance * (dir_y + plane_y) / WIDTH;
+
+        // real world coordinates of the leftmost column. This will be updated as we step to the right.
+        double floor_x = cube->player->player_x + row_distance * (dir_x - plane_x);
+        double floor_y = cube->player->player_y + row_distance * (dir_y - plane_y);
+
+        for(int x = 0; x < WIDTH; ++x)
+        {
+            // the cell coord is simply got from the integer parts of floor_x and floor_y
+            int cell_x = (int)(floor_x);
+            int cell_y = (int)(floor_y);
+
+            // get the texture coordinate from the fractional part
+            int tx = (int)(cube->texture[0]->width * (floor_x - cell_x)) & (cube->texture[0]->width - 1);
+            int ty = (int)(cube->texture[0]->height * (floor_y - cell_y)) & (cube->texture[0]->height - 1);
+
+            floor_x += step_x;
+            floor_y += step_y;
+
+            // choose texture and draw the pixel
+            uint32_t color = get_pixel_color(cube->texture[0], tx, ty);
+            mlx_put_pixel(cube->image, x, y, color);
+        }
+    }
+}
+
+
 
 void draw_lines_3D(t_cub* cube)
 {
@@ -365,11 +429,12 @@ void draw_lines_3D(t_cub* cube)
 
     // Draw sky and floor
     ft_draw_sky_floor(cube);
+    // draw_textured_floor(cube);
     // end Draw sky and floor
 
     // Draw wall texture
     i = 0;
-    while (i < WIDTH)
+    while (i <= WIDTH)
     {
         t_vars vars = draw_line(cube, angle, 0);
 
@@ -652,7 +717,7 @@ void loop_fun(void* param)
     draw_lines_3D(cube);
 
     draw_per(cube);
-    heal_bar(cube);
+    // heal_bar(cube);
     draw_shots(cube);
     ft_draw_player(cube, WIDTH / 2, HEIGHT / 2);
     if(xpos != WIDTH / 2 && ypos != HEIGHT / 2 && cube->player->start == 0)
@@ -665,6 +730,8 @@ void loop_fun(void* param)
     else
         mlx_set_cursor_mode(cube->mlx, MLX_MOUSE_NORMAL);
     if (mlx_image_to_window(cube->mlx, cube->gun_img[0], WIDTH/ 2, HEIGHT - cube->gun[0]->height) < 0)
+        ft_error();
+    if (mlx_image_to_window(cube->mlx, cube->img[4], 20, 20) < 0)
         ft_error();
 }
 // // end hooks

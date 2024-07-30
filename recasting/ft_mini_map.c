@@ -36,7 +36,7 @@ void ft_draw_map_background(t_cub *cube, int minimap_size, double xx, double yy)
 							mlx_put_pixel(cube->image, screen_x, screen_y, create_rgba(0, 0, 0, 1));
 					}
 			}
-			
+
 			x++;
 		}
 		y++;
@@ -164,7 +164,7 @@ void ft_draw_border(t_cub *cube, int minimap_size, double xx, double yy)
 							mlx_put_pixel(cube->image, screen_x, screen_y, create_rgba(255, 0, 0, 255));
 					}
 			}
-			
+
 			x++;
 		}
 		y++;
