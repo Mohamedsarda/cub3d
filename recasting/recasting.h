@@ -66,6 +66,7 @@ typedef struct s_player
 	double rotat_angle;
 	double rotation_speed;
 	double move_speed;
+	double is_moving_up;
 }	t_player;
 
 typedef struct s_texture {
@@ -122,6 +123,19 @@ typedef struct s_vars
 	double wallTopPixel;
 }	t_vars;
 
+typedef struct s_minimap_vars
+{
+	double world_x;
+	double world_y;
+	int	map_x;
+	int	map_y;
+	int	color;
+	int	screen_x;
+	int	screen_y;
+	int	dx;
+	int	dy;
+}	t_minimap_vars;
+
 typedef struct s_cub
 {
 	char **map;
@@ -131,8 +145,11 @@ typedef struct s_cub
 	t_player *player;
 	mlx_texture_t* texture[4];
 	mlx_image_t* img[4];
+	mlx_texture_t* gun[4];
+	mlx_image_t* gun_img[4];
 	char	**colors;
 	double		is;
+	t_minimap_vars map_data;
 	// t_texture texture[4];
 	t_data	*data;
 } t_cub;
@@ -143,5 +160,15 @@ void    ft_fractol_init(t_cub *cube);
 void loop_fun(void* param);
 void my_keyhook(mlx_key_data_t keydata, void* param);
 // end hooks
+//minimap
+void	draw_per(t_cub *cube);
+int create_rgba(int r, int g, int b, int a);
+
+//raycasting
+void DDA(t_cub *cube, double X0, double Y0, double X1, double Y1);
+int has_wall(t_cub *cube, double x1, double y1, int is);
+t_vars draw_line(t_cub *cube, double angle, int is);
+void draw_lines(t_cub *cube, int is);
+double normalizeAngle(double angle);
 
 #endif
