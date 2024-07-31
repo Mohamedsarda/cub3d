@@ -78,6 +78,7 @@ int main()
 	cube.data = data;
 	cube.data->height = cube.data->map_row * tile_size;
 	cube.data->width = cube.data->map_cols * tile_size;
+	cube.doortype = 0;
     ft_fractol_init(&cube);
 
 	mlx_key_hook(cube.mlx, &my_keyhook, &cube);

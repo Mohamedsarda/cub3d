@@ -116,15 +116,15 @@ void ft_fractol_init(t_cub *cube)
 
     //door
     ft_load_doors(cube, 0, "./Doors/tile000.png");
-    // ft_load_doors(cube, 1, "./Doors/tile001.png");
-    // ft_load_doors(cube, 2, "./Doors/tile002.png");
-    // ft_load_doors(cube, 3, "./Doors/tile003.png");
-    // ft_load_doors(cube, 4, "./Doors/tile004.png");
-    // ft_load_doors(cube, 4, "./Doors/tile004.png");
-    // ft_load_doors(cube, 5, "./Doors/tile005.png");
-    // ft_load_doors(cube, 6, "./Doors/tile006.png");
-    // ft_load_doors(cube, 7, "./Doors/tile007.png");
-    // ft_load_doors(cube, 8, "./Doors/tile008.png");
+    ft_load_doors(cube, 1, "./Doors/tile001.png");
+    ft_load_doors(cube, 2, "./Doors/tile002.png");
+    ft_load_doors(cube, 3, "./Doors/tile003.png");
+    ft_load_doors(cube, 4, "./Doors/tile004.png");
+    ft_load_doors(cube, 4, "./Doors/tile004.png");
+    ft_load_doors(cube, 5, "./Doors/tile005.png");
+    ft_load_doors(cube, 6, "./Doors/tile006.png");
+    ft_load_doors(cube, 7, "./Doors/tile007.png");
+    ft_load_doors(cube, 8, "./Doors/tile008.png");
 
     char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea, "./iloveimg-resized/tile001-removebg-preview.png"};
     while (i < 5)
@@ -173,6 +173,48 @@ void	draw_all_black(t_cub *cube)
 // end all_black
 
 // draw_player
+
+typedef struct s_pos
+{
+    int x;
+    int y;
+}   t_pos;
+
+t_pos ft_is_a_door(double x, double y, t_cub *cube)
+{
+    (void)x;
+    (void)y;
+    t_pos p;
+
+    p.x = -1;
+    while (++p.x < cube->data->map_cols)
+    {
+        p.y = -1;
+        while (++p.y < cube->data->map_row)
+        {
+            if (cube->data->map[p.x][p.y] == 'D')
+                return (p);
+        }
+    }
+    // double left = x - ((double)cube->player->radius);
+    // double up = y - ((double)cube->player->radius);
+    // double right = x + ((double)cube->player->radius);
+    // double down = y + ((double)cube->player->radius);
+
+    // if(left < 0 || right > cube->data->map_cols * tile_size || up < 0 || down > cube->data->map_row * tile_size)
+    //     return (0);
+
+    // int  t_left = floor(left / tile_size);
+    // int  t_up = floor(up / tile_size);
+    // int  t_right = floor(right / tile_size);
+    // int  t_down = floor(down / tile_size);
+
+    // if (cube->data->map[t_up][t_left] == 'D' || cube->data->map[t_down][t_right] == 'D'
+    //     || cube->data->map[t_up][t_right] == 'D' || cube->data->map[t_down][t_left] == 'D')
+    //     return (0);
+    return (p);
+}
+
 int is_it_a_wall(double x, double y, t_cub *cube)
 {
     double left = x - ((double)cube->player->radius);
@@ -454,7 +496,7 @@ void draw_lines_3D(t_cub* cube)
             else
                 textureNum = 1; // South
         }
-        ft_get_texture(cube, vars, textureNum, i, 0);
+        ft_get_texture(cube, vars, textureNum, i, cube->doortype);
         angle += FOV_ANGLE / WIDTH;
         i++;
     }
@@ -553,7 +595,7 @@ void my_keyhook(mlx_key_data_t keydata, void* param)
 
         if (keydata.key == MLX_KEY_TAB)
             cube->player->tab = 0;
-        
+
         if (keydata.key == MLX_KEY_T)
             cube->player->right_left = 0;
 
@@ -590,6 +632,8 @@ void handle_mouse(t_cub *cube)
 
 void update_player(t_cub *cube)
 {
+    static int door;
+    static int last_step;
     if (cube->player->jump == 1)
         cube->player->jump_var = -100;
     else if (cube->player->jump == -1)
@@ -621,7 +665,31 @@ void update_player(t_cub *cube)
             new_player_x += (double)cube->player->strafe_direction * (move_speed / 1.5) * cos(cube->player->rotat_angle + M_PI / 2);
             new_player_y += (double)cube->player->strafe_direction * (move_speed / 1.5) * sin(cube->player->rotat_angle + M_PI / 2);
         }
-
+        t_pos pos = ft_is_a_door(new_player_x, new_player_y, cube);
+        // printf("[%d %d] %d %d\n",(int)floor(cube->player->player_x / tile_size), (int)floor(cube->player->player_y / tile_size) ,pos.x, pos.y);
+        if (floor(cube->player->player_x / tile_size) > (pos.y - 6))
+        {
+            if (door != 8 && last_step != floor(cube->player->player_x / tile_size))
+            {
+                last_step = floor(cube->player->player_x / tile_size);
+                door += 2;
+            }
+        }
+        else
+        {
+            if (door != 0)
+            {
+                last_step = 0;
+                door--;
+            }
+        }
+        // {
+        //     cube->doortype += 1;
+        // }
+        // if (ft_is_a_door(new_player_x, new_player_y, cube))
+        // {
+        //     printf("%f, %f\n", new_player_x - cube->player->player_x, new_player_y - cube->player->player_y);
+        // }
         // Check for wall collision before updating player position
         if (is_it_a_wall(new_player_x, new_player_y, cube)) {
             // No collision, update both x and y
@@ -639,6 +707,7 @@ void update_player(t_cub *cube)
             }
         }
     }
+    cube->doortype = door;
 }
 
 // heal
