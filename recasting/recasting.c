@@ -126,8 +126,8 @@ void ft_fractol_init(t_cub *cube)
     ft_load_doors(cube, 7, "./Doors/tile007.png");
     ft_load_doors(cube, 8, "./Doors/tile008.png");
 
-    char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea, "./iloveimg-resized/tile001-removebg-preview.png"};
-    while (i < 5)
+    char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea, "./Health/tile000.png", "./Health/tile001.png", "./Health/tile002.png", "./Health/tile003.png", "./Health/tile004.png"};
+    while (i < 9)
     {
         cube->texture[i] = mlx_load_png(texture_files[i]);
         if (!cube->texture[i])
@@ -138,6 +138,10 @@ void ft_fractol_init(t_cub *cube)
         i++;
     }
     cube->player = init_player(cube);
+    if (mlx_image_to_window(cube->mlx, cube->gun_img[0], WIDTH/ 2, HEIGHT - cube->gun[0]->height) < 0)
+        ft_error();
+    if (mlx_image_to_window(cube->mlx, cube->img[4], 20, 20) < 0)
+        ft_error();
 }
 
 void    draw_cube(t_cub *cube, int x, int y, int color)
@@ -187,31 +191,16 @@ t_pos ft_is_a_door(double x, double y, t_cub *cube)
     t_pos p;
 
     p.x = -1;
+    p.y = -1;
     while (++p.x < cube->data->map_cols)
     {
         p.y = -1;
         while (++p.y < cube->data->map_row)
         {
-            if (cube->data->map[p.x][p.y] == 'D')
+            if (cube->data->map[p.x][p.y] || cube->data->map[p.x][p.y] == 'D')
                 return (p);
         }
     }
-    // double left = x - ((double)cube->player->radius);
-    // double up = y - ((double)cube->player->radius);
-    // double right = x + ((double)cube->player->radius);
-    // double down = y + ((double)cube->player->radius);
-
-    // if(left < 0 || right > cube->data->map_cols * tile_size || up < 0 || down > cube->data->map_row * tile_size)
-    //     return (0);
-
-    // int  t_left = floor(left / tile_size);
-    // int  t_up = floor(up / tile_size);
-    // int  t_right = floor(right / tile_size);
-    // int  t_down = floor(down / tile_size);
-
-    // if (cube->data->map[t_up][t_left] == 'D' || cube->data->map[t_down][t_right] == 'D'
-    //     || cube->data->map[t_up][t_right] == 'D' || cube->data->map[t_down][t_left] == 'D')
-    //     return (0);
     return (p);
 }
 
@@ -667,20 +656,23 @@ void update_player(t_cub *cube)
         }
         t_pos pos = ft_is_a_door(new_player_x, new_player_y, cube);
         // printf("[%d %d] %d %d\n",(int)floor(cube->player->player_x / tile_size), (int)floor(cube->player->player_y / tile_size) ,pos.x, pos.y);
-        if (floor(cube->player->player_x / tile_size) > (pos.y - 6))
+        if (pos.x > 0 && pos.y  > 0)
         {
-            if (door != 8 && last_step != floor(cube->player->player_x / tile_size))
+            if (floor(cube->player->player_x / tile_size) > (pos.y - 6))
             {
-                last_step = floor(cube->player->player_x / tile_size);
-                door += 2;
+                if (door != 8 && last_step != floor(cube->player->player_x / tile_size))
+                {
+                    last_step = floor(cube->player->player_x / tile_size);
+                    door += 2;
+                }
             }
-        }
-        else
-        {
-            if (door != 0)
+            else
             {
-                last_step = 0;
-                door--;
+                if (door != 0)
+                {
+                    last_step = 0;
+                    door--;
+                }
             }
         }
         // {
@@ -777,13 +769,13 @@ void loop_fun(void* param)
     mlx_get_mouse_pos(cube->mlx, &xpos, &ypos);
 
 
-    draw_all_black(cube);
+    // draw_all_black(cube);
     // draw_map(cube);
     draw_lines_3D(cube);
 
     draw_per(cube);
     // heal_bar(cube);
-    draw_shots(cube);
+    // draw_shots(cube);
     ft_draw_player(cube, WIDTH / 2, HEIGHT / 2);
     if(xpos != WIDTH / 2 && ypos != HEIGHT / 2 && cube->player->start == 0)
     {
@@ -794,9 +786,5 @@ void loop_fun(void* param)
         handle_mouse(cube);
     else
         mlx_set_cursor_mode(cube->mlx, MLX_MOUSE_NORMAL);
-    if (mlx_image_to_window(cube->mlx, cube->gun_img[0], WIDTH/ 2, HEIGHT - cube->gun[0]->height) < 0)
-        ft_error();
-    if (mlx_image_to_window(cube->mlx, cube->img[4], 20, 20) < 0)
-        ft_error();
 }
 // // end hooks
