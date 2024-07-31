@@ -77,6 +77,7 @@ t_player *init_player(t_cub *cube)
     player->middle = 0;
     player->mouse = 0;
     player->stop_mouse = 0;
+    player->right_left = 0;
     return (player);
 }
 
@@ -115,17 +116,17 @@ void ft_fractol_init(t_cub *cube)
 
     //door
     ft_load_doors(cube, 0, "./Doors/tile000.png");
-    ft_load_doors(cube, 1, "./Doors/tile001.png");
-    ft_load_doors(cube, 2, "./Doors/tile002.png");
-    ft_load_doors(cube, 3, "./Doors/tile003.png");
-    ft_load_doors(cube, 4, "./Doors/tile004.png");
-    ft_load_doors(cube, 4, "./Doors/tile004.png");
-    ft_load_doors(cube, 5, "./Doors/tile005.png");
-    ft_load_doors(cube, 6, "./Doors/tile006.png");
-    ft_load_doors(cube, 7, "./Doors/tile007.png");
-    ft_load_doors(cube, 8, "./Doors/tile008.png");
+    // ft_load_doors(cube, 1, "./Doors/tile001.png");
+    // ft_load_doors(cube, 2, "./Doors/tile002.png");
+    // ft_load_doors(cube, 3, "./Doors/tile003.png");
+    // ft_load_doors(cube, 4, "./Doors/tile004.png");
+    // ft_load_doors(cube, 4, "./Doors/tile004.png");
+    // ft_load_doors(cube, 5, "./Doors/tile005.png");
+    // ft_load_doors(cube, 6, "./Doors/tile006.png");
+    // ft_load_doors(cube, 7, "./Doors/tile007.png");
+    // ft_load_doors(cube, 8, "./Doors/tile008.png");
 
-    char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea, "./iloveimg-resized/tile000.png"};
+    char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea, "./iloveimg-resized/tile001-removebg-preview.png"};
     while (i < 5)
     {
         cube->texture[i] = mlx_load_png(texture_files[i]);
@@ -136,8 +137,6 @@ void ft_fractol_init(t_cub *cube)
             ft_error();
         i++;
     }
-
-
     cube->player = init_player(cube);
 }
 
@@ -378,39 +377,29 @@ void draw_textured_floor(t_cub *cube)
 
     for (int y = HEIGHT / 2 + 1; y < HEIGHT; y++)
     {
-        // Current y position compared to the center of the screen (the horizon)
         int p = y - (HEIGHT / 2 + cube->player->player_z + cube->player->jump_var);
 
-        // Vertical position of the camera.
         double pos_z = 0.5 * HEIGHT;
 
-        // Horizontal distance from the camera to the floor for the current row.
-        // 0.5 is the z position exactly in the middle between floor and ceiling.
         double row_distance = pos_z / p;
 
-        // calculate the real world step vector we have to add for each x (parallel to camera plane)
-        // adding step_x each time to real_floor_x and step_y to real_floor_y gives the real world coordinates of the floor for each screen coordinate
         double step_x = row_distance * (dir_x + plane_x) / WIDTH;
         double step_y = row_distance * (dir_y + plane_y) / WIDTH;
 
-        // real world coordinates of the leftmost column. This will be updated as we step to the right.
         double floor_x = cube->player->player_x + row_distance * (dir_x - plane_x);
         double floor_y = cube->player->player_y + row_distance * (dir_y - plane_y);
 
         for(int x = 0; x < WIDTH; ++x)
         {
-            // the cell coord is simply got from the integer parts of floor_x and floor_y
             int cell_x = (int)(floor_x);
             int cell_y = (int)(floor_y);
 
-            // get the texture coordinate from the fractional part
             int tx = (int)(cube->texture[0]->width * (floor_x - cell_x)) & (cube->texture[0]->width - 1);
             int ty = (int)(cube->texture[0]->height * (floor_y - cell_y)) & (cube->texture[0]->height - 1);
 
             floor_x += step_x;
             floor_y += step_y;
 
-            // choose texture and draw the pixel
             uint32_t color = get_pixel_color(cube->texture[0], tx, ty);
             mlx_put_pixel(cube->image, x, y, color);
         }
@@ -482,6 +471,9 @@ void my_keyhook(mlx_key_data_t keydata, void* param)
 
         // if (keydata.key == MLX_KEY_RIGHT_SHIFT)
         //     cube->player->stop_mouse = 1;
+
+        if (keydata.key == MLX_KEY_T)
+            cube->player->right_left = 1;
 
         if (keydata.key == MLX_KEY_RIGHT_SHIFT)
             cube->player->mouse = 1;
@@ -561,6 +553,10 @@ void my_keyhook(mlx_key_data_t keydata, void* param)
 
         if (keydata.key == MLX_KEY_TAB)
             cube->player->tab = 0;
+        
+        if (keydata.key == MLX_KEY_T)
+            cube->player->right_left = 0;
+
     }
 
 }
