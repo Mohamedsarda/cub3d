@@ -186,12 +186,12 @@ t_pos ft_is_a_door(double x, double y, t_cub *cube)
 
 	p.x = -1;
 	p.y = -1;
-	while (++p.x < cube->data->map_cols)
+	while (++p.x < cube->data->map_row)
 	{
 		p.y = -1;
 		while (++p.y < cube->data->map_row)
 		{
-			if (cube->data->map[p.x][p.y] || cube->data->map[p.x][p.y] == 'D')
+			if (p.x <= cube->data->map_cols && cube->data->map[p.x][p.y] == 'D')
 				return (p);
 		}
 	}
@@ -347,48 +347,34 @@ void ft_draw_sky_floor(t_cub *cube)
 
 void ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i, int door)
 {
-	mlx_texture_t* texture;
-	texture = cube->texture[textureNum];
-	if (vars.door)
-		texture = cube->doors[door];
+    mlx_texture_t* texture = vars.door ? cube->doors[door] : cube->texture[textureNum];
 
-	// Calculate texture coordinates
-	double texturePosX = fmod(vars.wallHitX, tile_size) / tile_size;
-	if (vars.wasHitVert)
-		texturePosX = fmod(vars.wallHitY, tile_size) / tile_size;
-	// Flip the texture horizontally
+    double texturePosX = vars.wasHitVert ?
+        fmod(vars.wallHitY, tile_size) / tile_size :
+        fmod(vars.wallHitX, tile_size) / tile_size;
     texturePosX = 1.0 - texturePosX;
 
-	int textureX = (int)(texturePosX * texture->width);
-	double texturePos = vars.textureOffsetY * vars.textureStep;
+    int textureX = (int)(texturePosX * texture->width);
+    double texturePos = vars.textureOffsetY * vars.textureStep;
+    double shade = fmax(0.3, 1.0 - (vars.distance / 1000.0));
 
-	int y = vars.wallTopPixel;
-	double shade = 1.0 - (vars.distance / 1000.0); // Adjust 1000.0 to change shading intensity
-	if (shade < 0.3) shade = 0.3;
+    for (int y = vars.wallTopPixel; y < vars.wallBottomPixel && y < HEIGHT; y++)
+    {
+        int textureY = (int)(texturePos * texture->height) % texture->height;
+        texturePos += vars.textureStep;
 
-	while (y < vars.wallBottomPixel)
-	{
-		int textureY = (int)(texturePos * texture->height) % texture->height;
-		texturePos += vars.textureStep;
+        uint32_t color = get_pixel_color(texture, textureX, textureY);
 
-		uint32_t color = get_pixel_color(texture, textureX, textureY);
+        uint8_t r = ((color >> 24) & 0xFF) * shade;
+        uint8_t g = ((color >> 16) & 0xFF) * shade;
+        uint8_t b = ((color >> 8) & 0xFF) * shade;
+        uint32_t shaded_color = (r << 24) | (g << 16) | (b << 8) | (color & 0xFF);
 
-		// Apply shading
-		uint8_t r = ((color >> 24) & 0xFF) * shade;
-		uint8_t g = ((color >> 16) & 0xFF) * shade;
-		uint8_t b = ((color >> 8) & 0xFF) * shade;
-		uint8_t a = color & 0xFF;
-
-		uint32_t shaded_color = (r << 24) | (g << 16) | (b << 8) | a;
-
-		// Skip pixel if it's transparent or black for doors
-		if (!(vars.door && ((shaded_color & 0xFFFFFF00) == 0)))
-		{
-			if (y >= 0 && y < HEIGHT)
-				mlx_put_pixel(cube->image, i, y, shaded_color);
-		}
-		y++;
-	}
+        if (!(vars.door && ((shaded_color & 0xFFFFFF00) == 0)) && y >= 0)
+        {
+            mlx_put_pixel(cube->image, i, y, shaded_color);
+        }
+    }
 }
 
 // Add this function to your code
@@ -435,51 +421,32 @@ void draw_textured_floor(t_cub *cube)
 
 void draw_lines_3D(t_cub* cube)
 {
-	double angle;
-	int i;
-	double distanceProjPlane = ((double)WIDTH / 2.0) / tan(FOV_ANGLE / 2);
+    double distanceProjPlane = (WIDTH / 2.0) / tan(FOV_ANGLE / 2);
+    double angle = cube->player->rotat_angle - FOV_ANGLE / 2.0;
+    double angleStep = FOV_ANGLE / WIDTH;
 
-	angle = cube->player->rotat_angle - FOV_ANGLE / 2.0;
+    ft_draw_sky_floor(cube);
 
-	// Draw sky and floor
-	ft_draw_sky_floor(cube);
+    for (int i = 0; i < WIDTH; i++)
+    {
+        t_vars vars = draw_line(cube, angle, 0);
 
-	// Draw wall texture
-	i = 0;
-	while (i < WIDTH)
-	{
-		t_vars vars = draw_line(cube, angle, 0);
+        double wallDistance = vars.distance * cos(angle - cube->player->rotat_angle);
+        double wallStripHeight = (tile_size / wallDistance) * distanceProjPlane;
 
-		double wallDistance = vars.distance * cos(angle - cube->player->rotat_angle);
-		double projectedWallHeight = (tile_size / wallDistance) * distanceProjPlane;
+        vars.wallTopPixel = (HEIGHT / 2.0) - (wallStripHeight / 2.0) - cube->player->player_z - cube->player->jump_var;
+        vars.wallBottomPixel = fmin((HEIGHT / 2.0) + (wallStripHeight / 2.0) - cube->player->player_z - cube->player->jump_var, HEIGHT);
 
-		double wallStripHeight = projectedWallHeight;
-		vars.wallTopPixel = ((double)HEIGHT / 2) - (wallStripHeight / 2) - cube->player->player_z - cube->player->jump_var;
-		vars.wallBottomPixel = ((double)HEIGHT / 2) + (wallStripHeight / 2) - cube->player->player_z - cube->player->jump_var;
-		vars.wallBottomPixel = fmin(vars.wallBottomPixel, (double)HEIGHT);
+        vars.textureStep = 1.0 / wallStripHeight;
+        vars.textureOffsetY = 0;
 
-		vars.textureStep = 1.0 / wallStripHeight;
-		vars.textureOffsetY = 0;
+        int textureNum = vars.wasHitVert ?
+            (vars.isRayFacingLeft ? 2 : 3) :
+            (vars.isRayFacingUp ? 0 : 1);
 
-		int textureNum = 0;
-		if (vars.wasHitVert)
-		{
-			if (vars.isRayFacingLeft)
-				textureNum = 2; // West
-			else
-				textureNum = 3; // East
-		}
-		else
-		{
-			if (vars.isRayFacingUp)
-				textureNum = 0; // North
-			else
-				textureNum = 1; // South
-		}
-		ft_get_texture(cube, vars, textureNum, i, cube->doortype);
-		angle += FOV_ANGLE / WIDTH;
-		i++;
-	}
+        ft_get_texture(cube, vars, textureNum, i, cube->doortype);
+        angle += angleStep;
+    }
 }
 
 // hooks
@@ -666,13 +633,6 @@ void update_player(t_cub *cube)
 				}
 			}
 		}
-		// {
-		//     cube->doortype += 1;
-		// }
-		// if (ft_is_a_door(new_player_x, new_player_y, cube))
-		// {
-		//     printf("%f, %f\n", new_player_x - cube->player->player_x, new_player_y - cube->player->player_y);
-		// }
 		// Check for wall collision before updating player position
 		if (is_it_a_wall(new_player_x, new_player_y, cube)) {
 			// No collision, update both x and y
@@ -751,31 +711,27 @@ void    draw_shots(t_cub *cube)
 }
 // end shots
 
-
 void loop_fun(void* param)
 {
-	t_cub* cube = (t_cub*)param;
-	update_player(cube);
-	int32_t xpos, ypos;
-	mlx_get_mouse_pos(cube->mlx, &xpos, &ypos);
+    t_cub* cube = (t_cub*)param;
+    update_player(cube);
 
+    draw_lines_3D(cube);
+    draw_per(cube);
+    ft_draw_player(cube, WIDTH / 2, HEIGHT / 2);
 
-	// draw_all_black(cube);
-	// draw_map(cube);
-	draw_lines_3D(cube);
+    // Mouse handling
+    int32_t xpos, ypos;
+    mlx_get_mouse_pos(cube->mlx, &xpos, &ypos);
 
-	draw_per(cube);
-	// heal_bar(cube);
-	// draw_shots(cube);
-	ft_draw_player(cube, WIDTH / 2, HEIGHT / 2);
-	if(xpos != WIDTH / 2 && ypos != HEIGHT / 2 && cube->player->start == 0)
-	{
-		mlx_set_mouse_pos(cube->mlx, WIDTH / 2, HEIGHT / 2);
-		cube->player->start = 1;
-	}
-	else if(!mlx_is_key_down(cube->mlx, MLX_KEY_RIGHT_SHIFT))
-		handle_mouse(cube);
-	else
-		mlx_set_cursor_mode(cube->mlx, MLX_MOUSE_NORMAL);
+    if (xpos != WIDTH / 2 && ypos != HEIGHT / 2 && cube->player->start == 0)
+    {
+        mlx_set_mouse_pos(cube->mlx, WIDTH / 2, HEIGHT / 2);
+        cube->player->start = 1;
+    }
+    else if (!mlx_is_key_down(cube->mlx, MLX_KEY_RIGHT_SHIFT))
+        handle_mouse(cube);
+    else
+        mlx_set_cursor_mode(cube->mlx, MLX_MOUSE_NORMAL);
 }
 // // end hooks
