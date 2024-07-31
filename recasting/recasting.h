@@ -159,6 +159,7 @@ typedef struct s_cub
 	mlx_image_t* door_img[9];
 	char	**colors;
 	double		is;
+	int	doortype;
 	t_minimap_vars map_data;
 	// t_texture texture[4];
 	t_data	*data;

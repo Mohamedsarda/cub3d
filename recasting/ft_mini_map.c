@@ -133,6 +133,7 @@ void    ft_draw_player_indecator(t_cub *cube, int minimap_player_x, int minimap_
 			minimap_player_y += sy;
 		}
 	}
+	// printf("%d %d\n", minimap_player_x, minimap_player_y);
 }
 
 void ft_draw_border(t_cub *cube, int minimap_size, double xx, double yy)
