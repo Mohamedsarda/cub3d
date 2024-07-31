@@ -36,7 +36,7 @@ void ft_draw_map_background(t_cub *cube, int minimap_size, double xx, double yy)
 							mlx_put_pixel(cube->image, screen_x, screen_y, create_rgba(0, 0, 0, 1));
 					}
 			}
-			
+
 			x++;
 		}
 		y++;
@@ -133,6 +133,7 @@ void    ft_draw_player_indecator(t_cub *cube, int minimap_player_x, int minimap_
 			minimap_player_y += sy;
 		}
 	}
+	// printf("%d %d\n", minimap_player_x, minimap_player_y);
 }
 
 void ft_draw_border(t_cub *cube, int minimap_size, double xx, double yy)
@@ -164,7 +165,7 @@ void ft_draw_border(t_cub *cube, int minimap_size, double xx, double yy)
 							mlx_put_pixel(cube->image, screen_x, screen_y, create_rgba(255, 0, 0, 255));
 					}
 			}
-			
+
 			x++;
 		}
 		y++;
@@ -175,22 +176,17 @@ void draw_minimap(t_cub *cube)
 	int minimap_size;
 	int minimap_start_x;
 	int minimap_start_y;
+	minimap_start_y = 10;
 	if(cube->player->tab == 0)
 	{
 		minimap_size = 200;
-
-		minimap_start_x = 10;
-		minimap_start_y = cube->image->height - minimap_size - 10;
+		minimap_start_x = WIDTH / 1.12;
 	}
 	else
 	{
 		minimap_size = 500;
-
 		minimap_start_x = WIDTH / 1.35;
-		minimap_start_y = 10;
-
 	}
-
 	ft_draw_map_background(cube, minimap_size, minimap_start_x, minimap_start_y);
 	ft_draw_minimap_to_screen(cube, minimap_size, minimap_start_x, minimap_start_y);
 	int minimap_player_x = minimap_start_x + (minimap_size / 2);
