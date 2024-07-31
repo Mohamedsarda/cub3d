@@ -73,6 +73,7 @@ typedef struct s_player
 	int middle;
 	int mouse;
 	int stop_mouse;
+	int right_left;
 }	t_player;
 
 typedef struct s_texture {
@@ -150,14 +151,15 @@ typedef struct s_cub
 	mlx_image_t* image;
 	mlx_t* mlx;
 	t_player *player;
-	mlx_texture_t* texture[4];
-	mlx_image_t* img[4];
+	mlx_texture_t* texture[9];
+	mlx_image_t* img[9];
 	mlx_texture_t* gun[4];
 	mlx_image_t* gun_img[4];
 	mlx_texture_t* doors[9];
 	mlx_image_t* door_img[9];
 	char	**colors;
 	double		is;
+	int	doortype;
 	t_minimap_vars map_data;
 	// t_texture texture[4];
 	t_data	*data;
