@@ -423,38 +423,33 @@ void ft_draw_sky_floor(t_cub *cube)
 
 void    ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i)
 {
-    mlx_texture_t* texture;
-    texture = cube->texture[textureNum];
-    int textureX;
-    if (vars.wasHitVert)
-        textureX = (int)vars.wallHitY % tile_size;
-    else
-        textureX = (int)vars.wallHitX % tile_size;
+    mlx_texture_t* texture = cube->texture[textureNum];
 
+    double texturePosX = vars.wasHitVert ?
+        fmod(vars.wallHitY, tile_size) / tile_size :
+        fmod(vars.wallHitX, tile_size) / tile_size;
+    texturePosX = 1.0 - texturePosX;
+
+    int textureX = (int)(texturePosX * texture->width);
     double texturePos = vars.textureOffsetY * vars.textureStep;
+    double shade = fmax(0.3, 1.0 - (vars.distance / 1000.0));
 
-    // int x = i * rayWidth;
-    int y = vars.wallTopPixel;
-    double shade = 1.0 - (vars.distance / 1000.0); // Adjust 1000.0 to change shading intensity
-    if (shade < 0.3) shade = 0.3;
-    while (y < vars.wallBottomPixel)
+    for (int y = vars.wallTopPixel; y < vars.wallBottomPixel && y < HEIGHT; y++)
     {
-        int textureY = (int)texturePos % texture->height;
+        int textureY = (int)(texturePos * texture->height) % texture->height;
         texturePos += vars.textureStep;
 
         uint32_t color = get_pixel_color(texture, textureX, textureY);
-        // Skip pixel if it's transparent or black
+
         uint8_t r = ((color >> 24) & 0xFF) * shade;
         uint8_t g = ((color >> 16) & 0xFF) * shade;
         uint8_t b = ((color >> 8) & 0xFF) * shade;
-        uint8_t a = color & 0xFF;
+        uint32_t shaded_color = (r << 24) | (g << 16) | (b << 8) | (color & 0xFF);
 
-        uint32_t shaded_color = (r << 24) | (g << 16) | (b << 8) | a;
-
-        // Skip pixel if it's transparent or black
-        if (y >= 0)
+        if (!(vars.door && ((shaded_color & 0xFFFFFF00) == 0)) && y >= 0)
+        {
             mlx_put_pixel(cube->image, i, y, shaded_color);
-        y++;
+        }
     }
 }
 
@@ -504,51 +499,31 @@ void draw_textured_floor(t_cub *cube)
 
 void draw_lines_3D(t_cub* cube)
 {
-    double angle;
-    int i;
-    double distanceProjPlane = ((double)WIDTH / 2.0) / tan(FOV_ANGLE / 2);
+    double distanceProjPlane = (WIDTH / 2.0) / tan(FOV_ANGLE / 2);
+    double angle = cube->player->rotat_angle - FOV_ANGLE / 2.0;
+    double angleStep = FOV_ANGLE / WIDTH;
 
-    angle = cube->player->rotat_angle - FOV_ANGLE / 2.0;
-
-    // Draw sky and floor
     ft_draw_sky_floor(cube);
 
-    // Draw wall texture
-    i = 0;
-    while (i <= WIDTH)
+    for (int i = 0; i < WIDTH; i++)
     {
         t_vars vars = draw_line(cube, angle, 0);
 
         double wallDistance = vars.distance * cos(angle - cube->player->rotat_angle);
-        double projectedWallHeight = (tile_size / wallDistance) * distanceProjPlane;
+        double wallStripHeight = (tile_size / wallDistance) * distanceProjPlane;
 
-        double wallStripHeight = projectedWallHeight;
-        vars.wallTopPixel = ((double)HEIGHT / 2) - (wallStripHeight / 2) - cube->player->player_z - cube->player->jump_var;
-        // wallTopPixel += 20;
-        vars.wallBottomPixel = ((double)HEIGHT / 2) + (wallStripHeight / 2) - cube->player->player_z - cube->player->jump_var;
-        vars.wallBottomPixel = vars.wallBottomPixel > (double)HEIGHT ? (double)HEIGHT : vars.wallBottomPixel;
+        vars.wallTopPixel = (HEIGHT / 2.0) - (wallStripHeight / 2.0) - cube->player->player_z - cube->player->jump_var;
+        vars.wallBottomPixel = fmin((HEIGHT / 2.0) + (wallStripHeight / 2.0) - cube->player->player_z - cube->player->jump_var, HEIGHT);
 
-        vars.textureStep = (double)cube->texture[0]->height / wallStripHeight;
+        vars.textureStep = 1.0 / wallStripHeight;
         vars.textureOffsetY = 0;
 
-        int textureNum = 0;
-        if (vars.wasHitVert)
-        {
-            if (vars.isRayFacingLeft)
-                textureNum = 2; // West
-            else
-                textureNum = 3; // East
-        }
-        else
-        {
-            if (vars.isRayFacingUp)
-                textureNum = 0; // North
-            else
-                textureNum = 1; // South
-        }
+        int textureNum = vars.wasHitVert ?
+            (vars.isRayFacingLeft ? 2 : 3) :
+            (vars.isRayFacingUp ? 0 : 1);
+
         ft_get_texture(cube, vars, textureNum, i);
-        angle += FOV_ANGLE / WIDTH;
-        i++;
+        angle += angleStep;
     }
 }
 
