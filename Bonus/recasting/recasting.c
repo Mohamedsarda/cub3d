@@ -107,7 +107,7 @@ void ft_fractol_init(t_cub *cube)
 
     // Load and display textures
     int i = 0;
-    cube->gun[0] = mlx_load_png("../call-of-duty-wiki-call-of-duty-modern-warfare-machine-gun-weapon-weaponry-armory-transparent-png-1324476.png");
+    cube->gun[0] = mlx_load_png("../Textures/png/call-of-duty-wiki-call-of-duty-modern-warfare-machine-gun-weapon-weaponry-armory-transparent-png-1324476.png");
     if (!cube->gun[0])
         ft_error();
     cube->gun_img[0] = mlx_texture_to_image(cube->mlx, cube->gun[0]);

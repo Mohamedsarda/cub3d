@@ -1,19 +1,19 @@
-NO ../rocks.png
+NO ../Textures/png/rocks.png
 
-SO ../wa64.png
-
-
+SO ../Textures/png/wa64.png
 
 
 
 
 
-WE 					 ../Ground_02.png
+
+
+WE 					 ../Textures/png/Ground_02.png
 
 C   135,206,250
 
 
- EA ../Ground_01.png
+ EA ../Textures/png/Ground_01.png
 
 F           50,50,50
 
