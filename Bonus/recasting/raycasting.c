@@ -28,13 +28,16 @@ void ft_draw_hero(t_cub *cube, t_vars *vars)
     while (vars->nextHorzTouchX > 0 && vars->nextHorzTouchX < cube->data->map_cols * tile_size &&
            vars->nextHorzTouchY > 0 && vars->nextHorzTouchY < cube->data->map_row * tile_size)
            {
-        if (has_wall(cube, vars->nextHorzTouchX, vars->nextHorzTouchY, a))
+        int wall = has_wall(cube, vars->nextHorzTouchX, vars->nextHorzTouchY, a);
+        if (wall == 1)
         {
             vars->foundHorzWallHit = 1;
             vars->horzWallHitX = vars->nextHorzTouchX;
             vars->horzWallHitY = vars->nextHorzTouchY;
+            vars->door = 0;
             break;
-        } else {
+        }
+        else {
             vars->nextHorzTouchX += vars->xstep;
             vars->nextHorzTouchY += vars->ystep;
         }
@@ -73,13 +76,16 @@ void ft_draw_ver(t_cub *cube, t_vars *vars)
     while (vars->nextVertTouchX > 0 && vars->nextVertTouchX < cube->data->map_cols * tile_size &&
            vars->nextVertTouchY > 0 && vars->nextVertTouchY < cube->data->map_row * tile_size)
            {
-        if (has_wall(cube, vars->nextVertTouchX, vars->nextVertTouchY, a))
+        int wall = has_wall(cube, vars->nextVertTouchX, vars->nextVertTouchY, a);
+        if (wall == 1)
         {
             vars->foundVertWallHit = 1;
             vars->vertWallHitX = vars->nextVertTouchX;
             vars->vertWallHitY = vars->nextVertTouchY;
+            vars->door = 0;
             break;
-        } else {
+        }
+        else {
             vars->nextVertTouchX += vars->xstep;
             vars->nextVertTouchY += vars->ystep;
         }
@@ -104,6 +110,7 @@ t_vars draw_line(t_cub *cube, double angle, int is)
     vars.foundHorzWallHit = 0;
     vars.horzWallHitX = 0;
     vars.horzWallHitY = 0;
+    vars.door = 0;
 
     ft_draw_hero(cube, &vars);
     ft_draw_ver(cube, &vars);
@@ -132,13 +139,10 @@ t_vars draw_line(t_cub *cube, double angle, int is)
         vars.distance = vars.horzHitDistance;
         vars.wasHitVert = 0;
     }
-
     int x = floor(vars.wallHitX / tile_size);
     int y = floor(vars.wallHitY / tile_size);
-    vars.door = 0;
     if (cube->data->map[y][x] == 'D')
         vars.door = 1;
-
     if (is == 1)
         DDA(cube, cube->player->player_x, cube->player->player_y, vars.wallHitX, vars.wallHitY);
 
