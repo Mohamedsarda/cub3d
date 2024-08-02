@@ -149,6 +149,15 @@ typedef struct s_minimap_vars
 	int	dy;
 }	t_minimap_vars;
 
+typedef struct s_sprite {
+    double x;
+    double y;
+    mlx_image_t **images;
+    int num_images;
+    int current_image;
+    double animation_time;
+} t_sprite;
+
 typedef struct s_cub
 {
 	char **map;
@@ -158,14 +167,19 @@ typedef struct s_cub
 	t_player *player;
 	mlx_texture_t* texture[9];
 	mlx_image_t* img[9];
-	mlx_texture_t* gun[4];
-	mlx_image_t* gun_img[4];
+	mlx_texture_t* gun[181];
+	mlx_image_t* gun_img[181];
 	mlx_texture_t* doors[9];
 	mlx_image_t* door_img[9];
 	char	**colors;
 	double		is;
+	int		y_press;
+	int		t_press;
+	int		right_press;
+	int current_gun_index;
 	int	doortype;
 	t_minimap_vars map_data;
+	t_sprite *sprite;
 	// t_texture texture[4];
 	t_data	*data;
 } t_cub;
@@ -188,4 +202,5 @@ void draw_lines(t_cub *cube, int is);
 double normalizeAngle(double angle);
 
 void    ft_draw_player(t_cub *cube, int minimap_player_x, int minimap_player_y);
+void my_mousehook(mouse_key_t button, action_t action, modifier_key_t mods, void *param);
 #endif
