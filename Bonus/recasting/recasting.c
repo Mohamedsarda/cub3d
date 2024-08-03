@@ -185,13 +185,13 @@ void ft_fractol_init(t_cub *cube)
 	// Load and display textures
 	int i = 0;
 	// cube->gun[0] = mlx_load_png("../Textures/png/call-of-duty-wiki-call-of-duty-modern-warfare-machine-gun-weapon-weaponry-armory-transparent-png-1324476.png");
-	char **guns = (char **)ft_calloc(sizeof(char *) * 183);
+	char **guns = (char **)ft_calloc(sizeof(char *) * 320);
 	if (!guns)
 		return ;
 	char *tmp;
 	char *str;
 	char *num;
-	while (i < 182)
+	while (i < 319)
 	{
 		tmp = ft_strdup("../Textures/png/guns/");
 		num = ft_itoa(i);
@@ -203,7 +203,7 @@ void ft_fractol_init(t_cub *cube)
 	}
 	guns[i] = NULL;
 	i = 0;
-	while (i < 44)
+	while (i < 159)
 	{
 
 		cube->gun[i] = mlx_load_png(guns[i]);
@@ -215,7 +215,7 @@ void ft_fractol_init(t_cub *cube)
 		i++;
 	}
 	int k = 0;
-	while (k < 135)
+	while (k < 159)
 	{
 		cube->gun_r[k] = mlx_load_png(guns[i]);
 		if (!cube->gun_r[k])
@@ -233,11 +233,22 @@ void ft_fractol_init(t_cub *cube)
 	ft_load_doors(cube, 2, "../Textures/png/Portal/2.png");
 	ft_load_doors(cube, 3, "../Textures/png/Portal/3.png");
 	ft_load_doors(cube, 4, "../Textures/png/Portal/4.png");
-	ft_load_doors(cube, 4, "../Textures/png/Portal/5.png");
-	ft_load_doors(cube, 5, "../Textures/png/Portal/6.png");
-	ft_load_doors(cube, 6, "../Textures/png/Portal/7.png");
-	ft_load_doors(cube, 7, "../Textures/png/Portal/8.png");
-	ft_load_doors(cube, 8, "../Textures/png/Portal/9.png");
+	ft_load_doors(cube, 5, "../Textures/png/Portal/5.png");
+	ft_load_doors(cube, 6, "../Textures/png/Portal/6.png");
+	ft_load_doors(cube, 7, "../Textures/png/Portal/7.png");
+	ft_load_doors(cube, 8, "../Textures/png/Portal/8.png");
+	ft_load_doors(cube, 9, "../Textures/png/Portal/9.png");
+	ft_load_doors(cube, 10, "../Textures/png/Portal/10.png");
+	ft_load_doors(cube, 11, "../Textures/png/Portal/11.png");
+	ft_load_doors(cube, 12, "../Textures/png/Portal/12.png");
+	ft_load_doors(cube, 13, "../Textures/png/Portal/13.png");
+	ft_load_doors(cube, 14, "../Textures/png/Portal/14.png");
+	ft_load_doors(cube, 15, "../Textures/png/Portal/15.png");
+	ft_load_doors(cube, 17, "../Textures/png/Portal/16.png");
+	ft_load_doors(cube, 17, "../Textures/png/Portal/17.png");
+	ft_load_doors(cube, 18, "../Textures/png/Portal/18.png");
+	ft_load_doors(cube, 19, "../Textures/png/Portal/19.png");
+	ft_load_doors(cube, 20, "../Textures/png/Portal/20.png");
 	char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea,\
 	"../Textures/Health/tile000.png", "../Textures/Health/tile001.png", "../Textures/Health/tile002.png",\
 	"../Textures/Health/tile003.png", "../Textures/Health/tile004.png"};
@@ -398,7 +409,7 @@ int has_wall(t_cub *cube, double x1, double y1, int is)
     if (cube->data->map[y][x] == '1')
         return 1;
     if (cube->data->map[y][x] == 'D' || cube->data->map[y][x] == 'T')
-        return 2;
+        return 1;
     return 0;
 }
 
@@ -643,7 +654,7 @@ void draw_lines_3D(t_cub* cube, int door)
 		int textureNum = vars.wasHitVert ?
 			(vars.isRayFacingLeft ? 2 : 3) :
 			(vars.isRayFacingUp ? 0 : 1);
-        ft_get_texture(cube, vars, textureNum, i, (door / 3));
+        ft_get_texture(cube, vars, textureNum, i, (door / 2));
         angle += angleStep;
     }
 }
@@ -684,8 +695,8 @@ void my_keyhook(mlx_key_data_t keydata, void* param)
 			cube->player->tab = 1;
 		 if (keydata.key == MLX_KEY_Y)
         {
-            if (cube->current_gun_index == 44)
-                cube->current_gun_index = 12;
+            if (cube->current_gun_index == 159)
+                cube->current_gun_index = 0;
             cube->t_press = 0;
             cube->y_press = 1;
         }
@@ -824,7 +835,7 @@ void update_run_on_right_click(t_cub *cube)
 
     if (cube->right_press)
     {
-        if ((current_time - last_gun_change_time) > 0.12)
+        if ((current_time - last_gun_change_time) > 0.04)
         {
             if (cube->gun_r_img[cube->cur_g_right_clikc])
             {
@@ -833,7 +844,7 @@ void update_run_on_right_click(t_cub *cube)
             }
 
             cube->cur_g_right_clikc++;
-            if (cube->cur_g_right_clikc >= 130)
+            if (cube->cur_g_right_clikc >= 159)
                 cube->cur_g_right_clikc = 0;
 			// printf("%d\n", cube->cur_g_right_clikc);
             last_gun_change_time = current_time;
@@ -849,7 +860,7 @@ void update_player(t_cub *cube)
 	static double last_gun_change_time = 0;
     double current_time = mlx_get_time();
 
-    if (cube->y_press && (current_time - last_gun_change_time) > 0.12)
+    if (cube->y_press && (current_time - last_gun_change_time) > 0.04)
     {
         if (cube->gun_img[cube->current_gun_index])
         {
@@ -857,7 +868,7 @@ void update_player(t_cub *cube)
             cube->gun_img[cube->current_gun_index] = NULL;
         }
         cube->current_gun_index++;
-        if (cube->current_gun_index >= 44)
+        if (cube->current_gun_index >= 159)
             cube->current_gun_index = 0;  // Loop back to initial gun index
         last_gun_change_time = current_time;
     }
@@ -981,7 +992,7 @@ void loop_fun(void* param)
     update_player(cube);
 
     draw_lines_3D(cube, door);
-	if (door == 8)
+	if (door == 19)
 		door = 0;
 	door++;
     draw_per(cube);

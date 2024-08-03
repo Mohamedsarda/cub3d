@@ -37,14 +37,14 @@ void ft_draw_hero(t_cub *cube, t_vars *vars)
             // vars->door = 0;
             break;
         }
-        else if (wall == 2)
-        {
-            vars->foundHorzWallHit = 1;
-            vars->horzWallHitX = vars->nextHorzTouchX;
-            vars->horzWallHitY = vars->nextHorzTouchY;
-            vars->door = 1;
-            break ;
-        }
+        // else if (wall == 2)
+        // {
+        //     vars->foundHorzWallHit = 1;
+        //     vars->horzWallHitX = vars->nextHorzTouchX;
+        //     vars->horzWallHitY = vars->nextHorzTouchY;
+        //     vars->door = 1;
+        //     break ;
+        // }
         else {
             vars->nextHorzTouchX += vars->xstep;
             vars->nextHorzTouchY += vars->ystep;
@@ -93,14 +93,14 @@ void ft_draw_ver(t_cub *cube, t_vars *vars)
             // vars->door = 0;
             break;
         }
-        else if (wall == 2)
-        {
-            vars->foundVertWallHit = 1;
-            vars->vertWallHitX = vars->nextVertTouchX;
-            vars->vertWallHitY = vars->nextVertTouchY;
-            vars->door = 1;
-            break;
-        }
+        // else if (wall == 2)
+        // {
+        //     vars->foundVertWallHit = 1;
+        //     vars->vertWallHitX = vars->nextVertTouchX;
+        //     vars->vertWallHitY = vars->nextVertTouchY;
+        //     vars->door = 1;
+        //     break;
+        // }
         else {
             vars->nextVertTouchX += vars->xstep;
             vars->nextVertTouchY += vars->ystep;
@@ -155,10 +155,10 @@ t_vars draw_line(t_cub *cube, double angle, int is)
         vars.distance = vars.horzHitDistance;
         vars.wasHitVert = 0;
     }
-    // int x = floor(vars.wallHitX / tile_size);
-    // int y = floor(vars.wallHitY / tile_size);
-    // if (cube->data->map[y][x] == 'D')
-    //     vars.door = 1;
+    int x = floor(vars.wallHitX / tile_size);
+    int y = floor(vars.wallHitY / tile_size);
+    if (cube->data->map[y][x] == 'D')
+        vars.door = 1;
     if (is == 1)
         DDA(cube, cube->player->player_x, cube->player->player_y, vars.wallHitX, vars.wallHitY);
 
