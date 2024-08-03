@@ -1,18 +1,18 @@
-NO ../Textures/png/wall.png
+NO ../Textures/png/wa64.png
 
-SO ../Textures/png/wall.png
-
-
+SO ../Textures/png/wa64.png
 
 
 
 
 
-WE 					 ../Textures/png/wall.png
+
+
+WE 					 ../Textures/png/wa64.png
 C   20,20,20
 
 
- EA ../Textures/png/wall.png
+ EA ../Textures/png/wa64.png
 
 F           50,50,50
 
