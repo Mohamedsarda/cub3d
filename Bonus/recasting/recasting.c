@@ -184,17 +184,17 @@ void ft_fractol_init(t_cub *cube)
 		ft_error();
 
 	// Load and display textures
-	int i = 0;
 	// cube->gun[0] = mlx_load_png("../Textures/png/call-of-duty-wiki-call-of-duty-modern-warfare-machine-gun-weapon-weaponry-armory-transparent-png-1324476.png");
-	char **guns = (char **)ft_calloc(sizeof(char *) * 320);
+	char **guns = (char **)ft_calloc(sizeof(char *) * 64);
 	if (!guns)
 		return ;
 	char *tmp;
 	char *str;
 	char *num;
-	while (i < 319)
+	int i = 0;
+	while (i <= 62)
 	{
-		tmp = ft_strdup("../Textures/png/guns/");
+		tmp = ft_strdup("../Textures/png/guns_2/");
 		num = ft_itoa(i);
 		str = ft_strjoin(tmp, num);
 		str = ft_strjoin(str, ".png");
@@ -204,7 +204,7 @@ void ft_fractol_init(t_cub *cube)
 	}
 	guns[i] = NULL;
 	i = 0;
-	while (i < 159)
+	while (i <= Y_CLICK)
 	{
 
 		cube->gun[i] = mlx_load_png(guns[i]);
@@ -216,7 +216,7 @@ void ft_fractol_init(t_cub *cube)
 		i++;
 	}
 	int k = 0;
-	while (k < 159)
+	while (guns[i])
 	{
 		cube->gun_r[k] = mlx_load_png(guns[i]);
 		if (!cube->gun_r[k])
@@ -227,6 +227,7 @@ void ft_fractol_init(t_cub *cube)
 		k++;
 		i++;
 	}
+    free_double_arr(guns);
 	i = 0;
 	//door
 	ft_load_doors(cube, 0, "../Textures/png/Portal/0.png");
@@ -615,7 +616,6 @@ void update_t_press(t_cub *cube)
             mlx_delete_image(cube->mlx, cube->gun_img[prev_gun_index]);
             cube->gun_img[prev_gun_index] = NULL;
         }
-
         if (!cube->gun_img[0])
         {
             cube->gun_img[0] = mlx_texture_to_image(cube->mlx, cube->gun[0]);
@@ -696,7 +696,7 @@ void my_keyhook(mlx_key_data_t keydata, void* param)
 			cube->player->tab = 1;
 		 if (keydata.key == MLX_KEY_Y)
         {
-            if (cube->current_gun_index == 159)
+            if (cube->current_gun_index == Y_CLICK)
                 cube->current_gun_index = 0;
             cube->t_press = 0;
             cube->y_press = 1;
@@ -836,7 +836,7 @@ void update_run_on_right_click(t_cub *cube)
 
     if (cube->right_press)
     {
-        if ((current_time - last_gun_change_time) > 0.04)
+        if ((current_time - last_gun_change_time) > 0.15)
         {
             if (cube->gun_r_img[cube->cur_g_right_clikc])
             {
@@ -845,15 +845,13 @@ void update_run_on_right_click(t_cub *cube)
             }
 
             cube->cur_g_right_clikc++;
-            if (cube->cur_g_right_clikc >= 159)
+            if (cube->cur_g_right_clikc >= R_CLICK)
                 cube->cur_g_right_clikc = 0;
-			// printf("%d\n", cube->cur_g_right_clikc);
             last_gun_change_time = current_time;
-            // printf("Right-click active: %d\n", cube->cur_g_right_clikc);
         }
     }
     else
-		cube->cur_g_right_clikc = 50;
+        cube->cur_g_right_clikc = 0;
 }
 
 void update_player(t_cub *cube)
@@ -861,7 +859,7 @@ void update_player(t_cub *cube)
 	static double last_gun_change_time = 0;
     double current_time = mlx_get_time();
 
-    if (cube->y_press && (current_time - last_gun_change_time) > 0.04)
+    if (cube->y_press && (current_time - last_gun_change_time) > 0.15)
     {
         if (cube->gun_img[cube->current_gun_index])
         {
@@ -869,7 +867,7 @@ void update_player(t_cub *cube)
             cube->gun_img[cube->current_gun_index] = NULL;
         }
         cube->current_gun_index++;
-        if (cube->current_gun_index >= 159)
+        if (cube->current_gun_index >= Y_CLICK)
             cube->current_gun_index = 0;  // Loop back to initial gun index
         last_gun_change_time = current_time;
     }
