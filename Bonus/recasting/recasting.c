@@ -79,6 +79,7 @@ t_player *init_player(t_cub *cube)
 	player->stop_mouse = 0;
 	player->right_left = 0;
 	cube->current_gun_index = 0;
+	cube->cur_g_right_clikc = 100;
 	cube->y_press = 0;
 	cube->t_press = 0;
 	cube->right_press = 0;
@@ -852,7 +853,7 @@ void update_run_on_right_click(t_cub *cube)
         }
     }
     else
-		cube->cur_g_right_clikc = 0;
+		cube->cur_g_right_clikc = 50;
 }
 
 void update_player(t_cub *cube)
