@@ -39,6 +39,8 @@
 #define GREEN       0x98FB98
 #define BLUE        0x0000FF
 #define GRAY        0xC0C0C0
+#define R_CLICK 22
+#define Y_CLICK 40
 
 typedef struct s_img
 {
@@ -167,10 +169,10 @@ typedef struct s_cub
 	t_player *player;
 	mlx_texture_t* texture[9];
 	mlx_image_t* img[9];
-	mlx_texture_t* gun[159];
-	mlx_image_t* gun_img[159];
-	mlx_texture_t* gun_r[159];
-	mlx_image_t* gun_r_img[159];
+	mlx_texture_t* gun[Y_CLICK];
+	mlx_image_t* gun_img[Y_CLICK];
+	mlx_texture_t* gun_r[R_CLICK];
+	mlx_image_t* gun_r_img[R_CLICK];
 	mlx_texture_t* doors[20];
 	mlx_image_t* door_img[20];
 	char	**colors;
