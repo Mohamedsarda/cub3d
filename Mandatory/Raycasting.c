@@ -541,7 +541,6 @@ void my_keyhook(mlx_key_data_t keydata, void* param)
 
         // if (keydata.key == MLX_KEY_T)
         //     cube->player->right_left = 1;
-
         if (keydata.key == MLX_KEY_RIGHT)
             cube->player->turn_direction = 1;
         if (keydata.key == MLX_KEY_LEFT)
@@ -655,7 +654,7 @@ void loop_fun(void* param)
         mlx_set_mouse_pos(cube->mlx, WIDTH / 2, HEIGHT / 2);
         cube->player->start = 1;
     }
-    else if(!mlx_is_key_down(cube->mlx, MLX_KEY_RIGHT_SHIFT))
+    else if(cube->player->shift == 1)
         handle_mouse(cube);
     else
         mlx_set_cursor_mode(cube->mlx, MLX_MOUSE_NORMAL);

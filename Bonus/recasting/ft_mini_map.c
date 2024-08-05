@@ -20,7 +20,7 @@ void ft_draw_map_background(t_cub *cube, int minimap_size, double xx, double yy)
 
 			dx = x;
 			dy = y;
-			if(cube->player->tab == 0)
+			if(cube->player->tab == 1)
 			{
 				if (dx * dx + dy * dy <= (minimap_size / 2) * (minimap_size / 2))
 					mlx_put_pixel(cube->image, screen_x, screen_y, create_rgba(0, 0, 0, 1));
@@ -68,7 +68,7 @@ void    ft_draw_minimap_to_screen(t_cub *cube, int minimap_size, int minimap_sta
 				cube->map_data.screen_y = minimap_start_y + (minimap_size / 2) + y;
 				cube->map_data.dx = x;
 				cube->map_data.dy = y;
-				if(cube->player->tab == 0)
+				if(cube->player->tab == 1)
 				{
 					if (cube->map_data.dx * cube->map_data.dx + cube->map_data.dy * cube->map_data.dy <= (minimap_size / 2) * (minimap_size / 2))
 						mlx_put_pixel(cube->image, cube->map_data.screen_x, cube->map_data.screen_y, cube->map_data.color);
@@ -155,13 +155,14 @@ void ft_draw_border(t_cub *cube, int minimap_size, double xx, double yy)
 
 			dx = x;
 			dy = y;
-			if(cube->player->tab == 1)
+			if(cube->player->tab != 1)
 			{
 				if (dx >= -(minimap_size / 2) && dx <= (minimap_size / 2) &&
 					dy >= -(minimap_size / 2) && dy <= (minimap_size / 2))
 					{
-            			if(y == -(minimap_size / 2) || x == -(minimap_size / 2) || x == (minimap_size / 2) || y == (minimap_size / 2))
-							mlx_put_pixel(cube->image, screen_x, screen_y, create_rgba(255, 0, 0, 255));
+            			if(y == -(minimap_size / 2) || x == -(minimap_size / 2) || x == (minimap_size / 2) || y == (minimap_size / 2)
+							|| y == -(minimap_size / 2) + 1 || x == -(minimap_size / 2) + 1 || x == (minimap_size / 2) - 1|| y == (minimap_size / 2) - 1)
+							mlx_put_pixel(cube->image, screen_x, screen_y, create_rgba(0, 0, 0, 255));
 					}
 			}
 
@@ -170,13 +171,14 @@ void ft_draw_border(t_cub *cube, int minimap_size, double xx, double yy)
 		y++;
 	}
 }
+
 void draw_minimap(t_cub *cube)
 {
 	int minimap_size;
 	int minimap_start_x;
 	int minimap_start_y;
 	minimap_start_y = 10;
-	if(cube->player->tab == 0)
+	if(cube->player->tab == 1)
 	{
 		minimap_size = 200;
 		minimap_start_x = WIDTH / 1.12;
@@ -195,7 +197,6 @@ void draw_minimap(t_cub *cube)
 	ft_draw_border(cube, minimap_size, minimap_start_x, minimap_start_y);
 }
 //end draw_player
-
 
 void	handle_pixel2(int x, int y, t_cub *cube)
 {
