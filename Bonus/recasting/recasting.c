@@ -227,6 +227,7 @@ void ft_fractol_init(t_cub *cube)
 		k++;
 		i++;
 	}
+    pthread_mutex_init(&cube->lock, NULL);
     free_double_arr(guns);
 	i = 0;
 	//door
@@ -615,19 +616,18 @@ void update_t_press(t_cub *cube)
     }
 }
 
-void draw_lines_3D(t_cub* cube, int door)
+void *draw_lines_3D(void *tmp)
 {
+    t_cub *cube = (t_cub *)tmp;
     double distanceProjPlane = (WIDTH / 2.0) / tan(FOV_ANGLE / 2);
-    double angle = cube->player->rotat_angle - FOV_ANGLE / 2.0;
+    cube->angle_0 = cube->player->rotat_angle - FOV_ANGLE / 2.0;
     double angleStep = FOV_ANGLE / WIDTH;
 
-    ft_draw_sky_floor(cube);
-
-    for (int i = 0; i < WIDTH; i++)
+    for (int i = 0; i < WIDTH / 2; i++)
     {
-        t_vars vars = draw_line(cube, angle, 0);
+        t_vars vars = draw_line(cube, cube->angle_0, 0);
 		// printf("%d | %d\n", vars.door, vars.wasHitVert);
-        double wallDistance = vars.distance * cos(angle - cube->player->rotat_angle);
+        double wallDistance = vars.distance * cos(cube->angle_0 - cube->player->rotat_angle);
         double wallStripHeight = (tile_size / wallDistance) * distanceProjPlane;
 
         vars.wallTopPixel = (HEIGHT / 2.0) - (wallStripHeight / 2.0) - cube->player->player_z - cube->player->jump_var;
@@ -639,9 +639,44 @@ void draw_lines_3D(t_cub* cube, int door)
 		int textureNum = vars.wasHitVert ?
 			(vars.isRayFacingLeft ? 2 : 3) :
 			(vars.isRayFacingUp ? 0 : 1);
-        ft_get_texture(cube, vars, textureNum, i, (door / 2));
-        angle += angleStep;
+        ft_get_texture(cube, vars, textureNum, i, (cube->doortype / 2));
+        cube->angle_0 += angleStep;
     }
+    return NULL;
+}
+
+void *draw_lines_3D_1(void *tmp)
+{
+    t_cub *cube = (t_cub *)tmp;
+    double distanceProjPlane = (WIDTH / 2.0) / tan(FOV_ANGLE / 2);
+    double angleStep = FOV_ANGLE / WIDTH;
+    cube->angle_1 = cube->player->rotat_angle;
+
+    // for (int i = 0; i < WIDTH / 2; i++)
+    // {
+    //     cube->angle_1 += angleStep;
+    // }
+
+    for (int i = (WIDTH / 2); i < WIDTH; i++)
+    {
+        t_vars vars = draw_line(cube, cube->angle_1, 0);
+		// printf("%d | %d\n", vars.door, vars.wasHitVert);
+        double wallDistance = vars.distance * cos(cube->angle_1 - cube->player->rotat_angle);
+        double wallStripHeight = (tile_size / wallDistance) * distanceProjPlane;
+
+        vars.wallTopPixel = (HEIGHT / 2.0) - (wallStripHeight / 2.0) - cube->player->player_z - cube->player->jump_var;
+        vars.wallBottomPixel = fmin((HEIGHT / 2.0) + (wallStripHeight / 2.0) - cube->player->player_z - cube->player->jump_var, HEIGHT);
+
+        vars.textureStep = 1.0 / wallStripHeight;
+        vars.textureOffsetY = 0;
+
+		int textureNum = vars.wasHitVert ?
+			(vars.isRayFacingLeft ? 2 : 3) :
+			(vars.isRayFacingUp ? 0 : 1);
+        ft_get_texture(cube, vars, textureNum, i, (cube->doortype / 2));
+        cube->angle_1 += angleStep;
+    }
+    return NULL;
 }
 
 void my_mousehook(mouse_key_t button, action_t action, modifier_key_t mods, void *param)
@@ -749,7 +784,7 @@ void my_keyhook(mlx_key_data_t keydata, void* param)
 
 		if (keydata.key == MLX_KEY_D || keydata.key == MLX_KEY_A)
 			cube->player->strafe_direction = 0;
-		// keydata.key == MLX_KEY_SPACE || 
+		// keydata.key == MLX_KEY_SPACE ||
 		if(keydata.key == MLX_KEY_LEFT_CONTROL || keydata.key == MLX_KEY_LEFT_SHIFT)
 			cube->player->jump = 0;
 		if(keydata.key == MLX_KEY_F)
@@ -974,14 +1009,20 @@ void    draw_shots(t_cub *cube)
 void loop_fun(void* param)
 {
     t_cub* cube = (t_cub*)param;
-	static int door;
+    pthread_t threads[2];
+
 
     update_player(cube);
+    ft_draw_sky_floor(cube);
+    pthread_create(&threads[0], NULL, &draw_lines_3D, (void *)cube);
+    pthread_create(&threads[1], NULL, &draw_lines_3D_1, (void *)cube);
+    pthread_join(threads[0], NULL);
+    pthread_join(threads[1], NULL);
 
-    draw_lines_3D(cube, door);
-	if (door == 19)
-		door = 0;
-	door++;
+    // draw_lines_3D(cube, door);
+	if (cube->doortype == 19)
+		cube->doortype = 0;
+	cube->doortype++;
     draw_per(cube);
 	update_run_on_right_click(cube);
     update_y_press(cube);
