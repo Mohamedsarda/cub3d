@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <pthread.h>
 // #include "mlx.h"
 #include "./parsing.h"
 #include "../MLX42/include/MLX42/MLX42.h"
@@ -186,6 +187,9 @@ typedef struct s_cub
 	int	doortype;
 	t_minimap_vars map_data;
 	t_sprite *sprite;
+    double angle_0;
+    double angle_1;
+    pthread_mutex_t lock;
 	// t_texture texture[4];
 	t_data	*data;
 } t_cub;
