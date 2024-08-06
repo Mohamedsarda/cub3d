@@ -40,8 +40,17 @@
 #define GREEN       0x98FB98
 #define BLUE        0x0000FF
 #define GRAY        0xC0C0C0
-#define R_CLICK 22
-#define Y_CLICK 40
+#define R_CLICK 76
+#define Y_CLICK 105
+
+typedef struct s_doors
+{
+	int x;
+	int y;
+	struct s_doors *next; 
+}	t_doors;
+
+
 
 typedef struct s_img
 {
@@ -162,6 +171,12 @@ typedef struct s_sprite {
     double animation_time;
 } t_sprite;
 
+typedef struct s_threads
+{
+    int id;
+    pthread_t thread;
+}   t_threads;
+
 typedef struct s_cub
 {
 	char **map;
@@ -190,7 +205,7 @@ typedef struct s_cub
     double angle_0;
     double angle_1;
     pthread_mutex_t lock;
-	// t_texture texture[4];
+	t_threads threads[4];
 	t_data	*data;
 } t_cub;
 

@@ -9,7 +9,7 @@ int has_wall(t_cub *cube, double x1, double y1, int is)
     int x = floor(x1 / tile_size);
     int y = floor(y1 / tile_size);
 
-    if (cube->data->map[y][x] == '1' || cube->data->map[y][x] == 'D')
+    if (cube->data->map[y][x] == '1' || cube->data->map[y][x] == 'D' || cube->data->map[y][x] == 'O')
         return 1;
     return 0;
 }

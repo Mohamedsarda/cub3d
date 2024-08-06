@@ -33,6 +33,11 @@ int ft_get_color_data(t_init *init, t_data *data, int type)
 
 
 	colors = ft_split(init->colors[type], ' ', '\t');
+	i = 0;
+	while (colors[i])
+		i++;
+	if (i != 2)
+		return (free_double_arr(colors), -1);
 	if (!colors)
 		return (-1);
 	if (ft_strlen(colors[0]) != 1)
@@ -265,8 +270,9 @@ void ft_open_files(t_data *data)
 int ft_get_data(t_init *init, t_data *data)
 {
 	ft_open_files(data);
-	ft_get_color_data(init, data, 0);
-	ft_get_color_data(init, data, 1);
+	if (ft_get_color_data(init, data, 0) == -1
+		|| ft_get_color_data(init, data, 1) == -1)
+		return (-1);
 	free_double_arr(init->colors);
 	ft_check_color(data);
 	ft_change_map(init, data);
