@@ -587,6 +587,8 @@ void update_y_press(t_cub *cube)
             ft_error();
 
         prev_gun_index = cube->current_gun_index;
+        if (cube->current_gun_index == Y_CLICK - 1)
+            cube->y_press = 0;
     }
 }
 
@@ -854,7 +856,7 @@ void update_run_on_right_click(t_cub *cube)
 
     if (cube->right_press)
     {
-        if ((current_time - last_gun_change_time) > 0.15)
+        if ((current_time - last_gun_change_time) > 0.12)
         {
             if (cube->gun_r_img[cube->cur_g_right_clikc])
             {
@@ -877,7 +879,7 @@ void update_player(t_cub *cube)
 	static double last_gun_change_time = 0;
     double current_time = mlx_get_time();
 
-    if (cube->y_press && (current_time - last_gun_change_time) > 0.15)
+    if (cube->y_press && (current_time - last_gun_change_time) > 0.12)
     {
         if (cube->gun_img[cube->current_gun_index])
         {
@@ -1026,7 +1028,6 @@ void loop_fun(void* param)
     draw_per(cube);
 	update_run_on_right_click(cube);
     update_y_press(cube);
-    update_t_press(cube);
 	draw_gun_right_click(cube);
 	// draw_gun(cube);
 	// draw_lines(cube, 1);
