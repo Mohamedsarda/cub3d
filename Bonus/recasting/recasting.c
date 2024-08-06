@@ -56,7 +56,7 @@ t_player *init_player(t_cub *cube)
 		malloc_error();
 	ft_get_player_pos(player, cube);
 	player->radius = 10;
-	player->move_speed = 10;
+	player->move_speed = 4;
 	if (cube->data->p == 'W')
 		player->rotat_angle = deg2rad(180);  // Initialize in radians
 	else if (cube->data->p == 'S')
@@ -185,16 +185,16 @@ void ft_fractol_init(t_cub *cube)
 
 	// Load and display textures
 	// cube->gun[0] = mlx_load_png("../Textures/png/call-of-duty-wiki-call-of-duty-modern-warfare-machine-gun-weapon-weaponry-armory-transparent-png-1324476.png");
-	char **guns = (char **)ft_calloc(sizeof(char *) * 64);
+	char **guns = (char **)ft_calloc(sizeof(char *) * (Y_CLICK + R_CLICK + 1));
 	if (!guns)
 		return ;
 	char *tmp;
 	char *str;
 	char *num;
 	int i = 0;
-	while (i <= 62)
+	while (i < 181)
 	{
-		tmp = ft_strdup("../Textures/png/guns_2/");
+		tmp = ft_strdup("../Textures/png/guns_0/");
 		num = ft_itoa(i);
 		str = ft_strjoin(tmp, num);
 		str = ft_strjoin(str, ".png");
@@ -231,6 +231,16 @@ void ft_fractol_init(t_cub *cube)
     free_double_arr(guns);
 	i = 0;
 	//door
+	// ft_load_doors(cube, 0, "../Textures/Doors/tile000.png");
+	// ft_load_doors(cube, 1, "../Textures/Doors/tile001.png");
+	// ft_load_doors(cube, 2, "../Textures/Doors/tile002.png");
+	// ft_load_doors(cube, 3, "../Textures/Doors/tile003.png");
+	// ft_load_doors(cube, 4, "../Textures/Doors/tile004.png");
+	// ft_load_doors(cube, 5, "../Textures/Doors/tile005.png");
+	// ft_load_doors(cube, 6, "../Textures/Doors/tile006.png");
+	// ft_load_doors(cube, 7, "../Textures/Doors/tile007.png");
+	// ft_load_doors(cube, 8, "../Textures/Doors/tile008.png");
+
 	ft_load_doors(cube, 0, "../Textures/png/Portal/0.png");
 	ft_load_doors(cube, 1, "../Textures/png/Portal/1.png");
 	ft_load_doors(cube, 2, "../Textures/png/Portal/2.png");
@@ -474,7 +484,7 @@ void ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i, int door)
     mlx_texture_t* texture = NULL;
 
 	if (vars.door == 1)
-        texture = cube->doors[door];
+		texture = cube->doors[door];
     else if (vars.door == 0)
         texture = cube->texture[textureNum];
 
@@ -588,7 +598,10 @@ void update_y_press(t_cub *cube)
 
         prev_gun_index = cube->current_gun_index;
         if (cube->current_gun_index == Y_CLICK - 1)
+		{
+			mlx_delete_image(cube->mlx, cube->gun_img[prev_gun_index]);	
             cube->y_press = 0;
+		}
     }
 }
 
@@ -622,8 +635,8 @@ void *draw_lines_3D(void *tmp)
 {
     t_cub *cube = (t_cub *)tmp;
     double distanceProjPlane = (WIDTH / 2.0) / tan(FOV_ANGLE / 2);
-    cube->angle_0 = cube->player->rotat_angle - FOV_ANGLE / 2.0;
     double angleStep = FOV_ANGLE / WIDTH;
+    cube->angle_0 = cube->player->rotat_angle - FOV_ANGLE / 2.0;
 
     for (int i = 0; i < WIDTH / 2; i++)
     {
@@ -856,7 +869,7 @@ void update_run_on_right_click(t_cub *cube)
 
     if (cube->right_press)
     {
-        if ((current_time - last_gun_change_time) > 0.12)
+        if ((current_time - last_gun_change_time) > 0.15)
         {
             if (cube->gun_r_img[cube->cur_g_right_clikc])
             {
@@ -879,7 +892,7 @@ void update_player(t_cub *cube)
 	static double last_gun_change_time = 0;
     double current_time = mlx_get_time();
 
-    if (cube->y_press && (current_time - last_gun_change_time) > 0.12)
+    if (cube->y_press && (current_time - last_gun_change_time) > 0.15)
     {
         if (cube->gun_img[cube->current_gun_index])
         {
@@ -1007,19 +1020,21 @@ void    draw_shots(t_cub *cube)
 	}
 }
 // end shots
+//
+
 
 void loop_fun(void* param)
 {
     t_cub* cube = (t_cub*)param;
-    pthread_t threads[2];
-
 
     update_player(cube);
     ft_draw_sky_floor(cube);
-    pthread_create(&threads[0], NULL, &draw_lines_3D, (void *)cube);
-    pthread_create(&threads[1], NULL, &draw_lines_3D_1, (void *)cube);
-    pthread_join(threads[0], NULL);
-    pthread_join(threads[1], NULL);
+	cube->threads[0].id = 0;
+	cube->threads[1].id = 1;
+    pthread_create(&cube->threads[0].thread, NULL, &draw_lines_3D, (void *)cube);
+    pthread_create(&cube->threads[1].thread, NULL, &draw_lines_3D_1, (void *)cube);
+    pthread_join(cube->threads[0].thread, NULL);
+    pthread_join(cube->threads[1].thread, NULL);
 
     // draw_lines_3D(cube, door);
 	if (cube->doortype == 19)
@@ -1029,9 +1044,6 @@ void loop_fun(void* param)
 	update_run_on_right_click(cube);
     update_y_press(cube);
 	draw_gun_right_click(cube);
-	// draw_gun(cube);
-	// draw_lines(cube, 1);
-    // ft_draw_player(cube, WIDTH / 2, HEIGHT / 2);
 
     // Mouse handling
     int32_t xpos, ypos;
