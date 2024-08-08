@@ -64,7 +64,7 @@ import numpy as np
 from PIL import Image
 import os
 
-def remove_green_screen(input_video, output_folder, skip_frames=4):
+def remove_green_screen(input_video, output_folder, skip_frames=5):
     os.makedirs(output_folder, exist_ok=True)
 
     # Open the video file
@@ -125,6 +125,6 @@ def remove_green_screen(input_video, output_folder, skip_frames=4):
 
     print(f"Processed {frame_count} frames. Output saved in {output_folder}")
 
-input_video = './Textures/png/MW2 M4 Inspect and Reload Green screen.mp4'
-output_folder = './Guns_2'
+input_video = './Textures/png/Green Screen – CoD_  Modern Warfare_warzone  M4A1 Assault Rifle [High quality].mp4'
+output_folder = './guns_2.0'
 remove_green_screen(input_video, output_folder)

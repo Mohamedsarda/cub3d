@@ -2,13 +2,13 @@ from PIL import Image
 import os
 
 # Define the path to the folder containing the images
-folder_path = './Textures/png/guns_2/'
+folder_path = './Textures/png/guns_0/'
 
 # Define the scale factor for resizing (e.g., 2 will double the size)
 scale_factor = 1.5
 
 # Loop through each image file
-for i in range(63):
+for i in range(181):
     # Construct the file name
     file_name = f"{i}.png"
     file_path = os.path.join(folder_path, file_name)
