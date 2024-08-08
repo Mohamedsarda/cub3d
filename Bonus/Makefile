@@ -1,11 +1,12 @@
 CC		= cc
-CFLAGS	=   -pthread  -Wall -Wextra -Werror  -Wunreachable-code -Ofast# -g  -fsanitize=address
+CFLAGS	=   -pthread  -Wall -Wextra -Werror  -Wunreachable-code -Ofast -g  -fsanitize=address
 RM		= rm -rf
 SRCS	= main.c 	./Parsing/parsing.c	\
 		  ./Parsing/init/ft_get_init.c		./Parsing/init/ft_reading_init.c\
 		  ./Parsing/utils/file_1.c	./Parsing/utils/ft_split.c	./Parsing/utils/get_next_line.c	./Parsing/utils/get_next_line_utils.c\
 		  ./Parsing/error/error_1.c \
-		  recasting/recasting.c recasting/ft_mini_map.c recasting/raycasting.c
+		  recasting/recasting.c recasting/ft_mini_map.c recasting/raycasting.c\
+		  ./linked/struct_doors.c
 
 OBJS	= $(SRCS:.c=.o)
 NAME	= cub3D_bonus
