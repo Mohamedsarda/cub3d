@@ -9,6 +9,8 @@ t_doors	*ft_lstnew_doors(int x, int y)
 		return (NULL);
 	stack_2->x = x;
 	stack_2->y = y;
+	stack_2->distance = 0;
+	stack_2->state = 0;
 	stack_2->next = NULL;
 	return (stack_2);
 }
