@@ -31,13 +31,21 @@ void ft_get_player_pos(t_player *player , t_cub *cube)
 {
 	int x;
 	int y;
+	t_doors *head;
+	t_doors *new;
 
 	y = -1;
+	head = NULL;
 	while (++y < cube->data->map_row)
 	{
 		x = -1;
 		while (++x < cube->data->map_cols)
 		{
+			if (cube->data->map[y][x] == 'D' || cube->data->map[y][x] == 'O')
+			{
+				new = ft_lstnew_doors(x, y);
+				ft_lstaddback_doors(&head, new);
+			}
 			if (cube->data->map[y][x] == cube->data->p)
 			{
 				player->player_x = (x * tile_size) + (tile_size / 2);
@@ -45,6 +53,7 @@ void ft_get_player_pos(t_player *player , t_cub *cube)
 			}
 		}
 	}
+	cube->doors_locations = head;
 }
 
 t_player *init_player(t_cub *cube)
@@ -227,45 +236,12 @@ void ft_fractol_init(t_cub *cube)
 		k++;
 		i++;
 	}
-    pthread_mutex_init(&cube->lock, NULL);
     free_double_arr(guns);
 	i = 0;
 	//door
-	// ft_load_doors(cube, 0, "../Textures/Doors/tile000.png");
-	// ft_load_doors(cube, 1, "../Textures/Doors/tile001.png");
-	// ft_load_doors(cube, 2, "../Textures/Doors/tile002.png");
-	// ft_load_doors(cube, 3, "../Textures/Doors/tile003.png");
-	// ft_load_doors(cube, 4, "../Textures/Doors/tile004.png");
-	// ft_load_doors(cube, 5, "../Textures/Doors/tile005.png");
-	// ft_load_doors(cube, 6, "../Textures/Doors/tile006.png");
-	// ft_load_doors(cube, 7, "../Textures/Doors/tile007.png");
-	// ft_load_doors(cube, 8, "../Textures/Doors/tile008.png");
-
-	ft_load_doors(cube, 0, "../Textures/png/Portal/0.png");
-	ft_load_doors(cube, 1, "../Textures/png/Portal/1.png");
-	ft_load_doors(cube, 2, "../Textures/png/Portal/2.png");
-	ft_load_doors(cube, 3, "../Textures/png/Portal/3.png");
-	ft_load_doors(cube, 4, "../Textures/png/Portal/4.png");
-	ft_load_doors(cube, 5, "../Textures/png/Portal/5.png");
-	ft_load_doors(cube, 6, "../Textures/png/Portal/6.png");
-	ft_load_doors(cube, 7, "../Textures/png/Portal/7.png");
-	ft_load_doors(cube, 8, "../Textures/png/Portal/8.png");
-	ft_load_doors(cube, 9, "../Textures/png/Portal/9.png");
-	ft_load_doors(cube, 10, "../Textures/png/Portal/10.png");
-	ft_load_doors(cube, 11, "../Textures/png/Portal/11.png");
-	ft_load_doors(cube, 12, "../Textures/png/Portal/12.png");
-	ft_load_doors(cube, 13, "../Textures/png/Portal/13.png");
-	ft_load_doors(cube, 14, "../Textures/png/Portal/14.png");
-	ft_load_doors(cube, 15, "../Textures/png/Portal/15.png");
-	ft_load_doors(cube, 17, "../Textures/png/Portal/16.png");
-	ft_load_doors(cube, 17, "../Textures/png/Portal/17.png");
-	ft_load_doors(cube, 18, "../Textures/png/Portal/18.png");
-	ft_load_doors(cube, 19, "../Textures/png/Portal/19.png");
-	ft_load_doors(cube, 20, "../Textures/png/Portal/20.png");
-	char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea,\
-	"../Textures/Health/tile000.png", "../Textures/Health/tile001.png", "../Textures/Health/tile002.png",\
-	"../Textures/Health/tile003.png", "../Textures/Health/tile004.png"};
-	while (i < 9)
+	ft_load_doors(cube, 0, "../Textures/Doors/tile000.png");
+	char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea};
+	while (i < 4)
 	{
 		cube->texture[i] = mlx_load_png(texture_files[i]);
 		if (!cube->texture[i])
@@ -479,14 +455,55 @@ uint32_t ft_shaded_color(uint32_t color, double shade)
 	return (r << 24) | (g << 16) | (b << 8) | (color & 0xFF);
 }
 
+
+t_doors *ft_get_smallest_dist(t_doors *head)
+{
+	t_doors *low;
+
+	low = head;
+	while (head)
+	{
+		if (head->next && head->next->distance < low->distance)
+			low = head->next;
+		head = head->next;
+	}
+	return (low);
+}
+
 void ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i, int door)
 {
     mlx_texture_t* texture = NULL;
+    t_doors *low = ft_get_smallest_dist(cube->doors_locations);
+    double fx = vars.wallHitX;
+    double fy = vars.wallHitY;
+    if (vars.isRayFacingLeft)
+        fx--;
+    if (vars.isRayFacingUp)
+        fy--;
+    int x = floor(fx / tile_size);
+    int y = floor(fy / tile_size);
 
-	if (vars.door == 1)
-		texture = cube->doors[door];
-    else if (vars.door == 0)
-        texture = cube->texture[textureNum];
+    if (vars.door)
+    {
+        if (low->distance <= 3 && low->x == x && low->y == y)
+        {
+			if (cube->data->map[low->y][low->x] == 'D')
+				cube->data->map[low->y][low->x] = 'T';
+            return;
+        }
+        else
+		{
+			if (cube->data->map[low->y][low->x] != 'D')
+				cube->data->map[low->y][low->x] = 'D';
+            texture = cube->doors[0];
+		}
+    }
+    else
+    {
+		if (cube->data->map[low->y][low->x] != 'D')
+			cube->data->map[low->y][low->x] = 'D';
+		texture = cube->texture[textureNum];
+	}
 
     double texturePosX = vars.wasHitVert ?
         fmod(vars.wallHitY, tile_size) / tile_size :
@@ -502,8 +519,8 @@ void ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i, int door)
         int textureY = (int)(texturePos * texture->height) % texture->height;
         texturePos += vars.textureStep;
         uint32_t color = get_pixel_color(texture, textureX, textureY);
-        if (!(vars.door && ((ft_shaded_color(color, shade) & 0xFFFFFF00) == 0)) && y >= 0)
-			mlx_put_pixel(cube->image, i, y, ft_shaded_color(color, shade));
+        if (!(door && ((ft_shaded_color(color, shade) & 0xFFFFFF00) == 0)) && y >= 0)
+            mlx_put_pixel(cube->image, i, y, ft_shaded_color(color, shade));
     }
 }
 
@@ -887,6 +904,13 @@ void update_run_on_right_click(t_cub *cube)
         cube->cur_g_right_clikc = 0;
 }
 
+int calculateDistance(int x1, int y1, int x2, int y2) {
+    int deltaX = x2 - x1;
+    int deltaY = y2 - y1;
+    return sqrt(deltaX * deltaX + deltaY * deltaY);
+}
+
+
 void update_player(t_cub *cube)
 {
 	static double last_gun_change_time = 0;
@@ -960,7 +984,21 @@ void update_player(t_cub *cube)
 			}
 		}
 	}
-	// cube->doortype = (int)(door / 3);
+	// check if player is near a door
+	t_doors *tmp = cube->doors_locations;
+	int x = floor(cube->player->player_x / tile_size);
+	int y = floor(cube->player->player_y / tile_size);
+	while (tmp)
+	{
+		tmp->distance = calculateDistance(x, y, tmp->x, tmp->y);
+		tmp = tmp->next;
+	}
+	// t_doors *low = ft_get_smallest_dist(cube->doors_locations);
+	// if (low->distance == 3 && low->state != 16)
+	// 	low->state++;
+	// cube->doortype = low->state;
+	// printf("%d %d\n", low->state, cube->doortype);
+	// printf("dist : %d pos x : %d pos y : %d\n", low->distance, low->x, low->y);
 }
 
 // heal
@@ -1037,9 +1075,9 @@ void loop_fun(void* param)
     pthread_join(cube->threads[1].thread, NULL);
 
     // draw_lines_3D(cube, door);
-	if (cube->doortype == 19)
-		cube->doortype = 0;
-	cube->doortype++;
+	// if (cube->doortype == 19)
+	// 	cube->doortype = 0;
+	// cube->doortype++;
     draw_per(cube);
 	update_run_on_right_click(cube);
     update_y_press(cube);

@@ -6,23 +6,6 @@ void ffqwe()
 	system("leaks app");
 }
 
-void	ft_get_doors_pos(t_cub *cube)
-{
-	int x;
-	int y;
-
-	y = -1;
-	while (++y < cube->data->map_row)
-	{
-		x = -1;
-		while (++x < cube->data->map_cols)
-		{
-			if (cube->data->map[y][x] == 'D' || cube->data->map[y][x] == 'O')
-				printf("%d %d\n", x, y);
-		}
-	}
-}
-
 int main()
 {
 	// atexit(ffqwe);
@@ -70,7 +53,6 @@ int main()
 	cube.data->width = cube.data->map_cols * tile_size;
 	cube.doortype = 0;
     ft_fractol_init(&cube);
-	ft_get_doors_pos(&cube);
 
 	mlx_key_hook(cube.mlx, &my_keyhook, &cube);
 	mlx_mouse_hook(cube.mlx, &my_mousehook, &cube);
