@@ -94,6 +94,7 @@ typedef struct s_player
 	int stop_mouse;
 	int right_left;
 	int shift;
+	int open;
 }	t_player;
 
 typedef struct s_texture {
