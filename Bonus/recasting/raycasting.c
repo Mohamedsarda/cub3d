@@ -53,12 +53,6 @@ void ft_draw_hero(t_cub *cube, t_vars *vars)
             vars->door = 0;
             break;
         }
-        // else if (wall == 2 && vars->horzDoorHitX == 0 && vars->horzDoorHitY == 0)
-        // {
-        //     vars->foundHorzDoorHit = 1;
-        //     vars->horzDoorHitX = vars->nextHorzTouchX;
-        //     vars->horzDoorHitY = vars->nextHorzTouchY;
-        // }
         else
         {
             vars->nextHorzTouchX += vars->xstep;
@@ -108,12 +102,6 @@ void ft_draw_ver(t_cub *cube, t_vars *vars)
             vars->door = 0;
             break;
         }
-        // else if (wall == 2 && vars->vertDoorHitX == 0 && vars->vertDoorHitY == 0)
-        // {
-        //     vars->foundVertDoorHit = 1;
-        //     vars->vertDoorHitX = vars->nextVertTouchX;
-        //     vars->vertDoorHitY = vars->nextVertTouchY;
-        // }
         else
         {
             vars->nextVertTouchX += vars->xstep;
@@ -129,6 +117,7 @@ double distanceBetweenPoints(double x1,double y1,double x2,double y2)
 
 t_vars draw_line(t_cub *cube, double angle, int is)
 {
+    (void)is;
     t_vars vars;
     vars.angle = normalizeAngle(angle);
 
@@ -170,30 +159,6 @@ t_vars draw_line(t_cub *cube, double angle, int is)
         vars.wasHitVert = 0;
     }
     
-    // //door
-    // if (vars.foundHorzDoorHit)
-    //     vars.horzHitDistance_Door = distanceBetweenPoints(cube->player->player_x, cube->player->player_y, vars.horzDoorHitX, vars.horzDoorHitY);
-    // if (vars.foundVertDoorHit)
-    //     vars.vertHitDistance_Door = distanceBetweenPoints(cube->player->player_x, cube->player->player_y, vars.vertDoorHitX, vars.vertDoorHitY);
-
-    // vars.DoorHitX = vars.vertDoorHitX;
-    // vars.DoorHitY = vars.vertDoorHitY;
-    // vars.distance_Door = vars.vertHitDistance_Door;
-
-    // if (vars.vertHitDistance_Door < vars.horzHitDistance_Door)
-    // {
-    //     vars.DoorHitX = vars.vertDoorHitX;
-    //     vars.DoorHitY = vars.vertDoorHitY;
-    //     vars.distance_Door = vars.vertHitDistance_Door;
-    //     vars.wasHitVert_Door = 1;
-    // } else {
-    //     vars.DoorHitX = vars.horzDoorHitX;
-    //     vars.DoorHitY = vars.horzDoorHitY;
-    //     vars.distance_Door = vars.horzHitDistance_Door;
-    //     vars.wasHitVert_Door = 0;
-    // }
-    // if (vars.distance_Door != 0)
-    //     printf("%f\n", vars.distance_Door);
     double fx = vars.wallHitX;
     double fy = vars.wallHitY;
     if (vars.isRayFacingLeft)
@@ -204,8 +169,6 @@ t_vars draw_line(t_cub *cube, double angle, int is)
     int y = floor(fy / tile_size);
     if (cube->data->map[y][x] == 'D')
         vars.door = 1;
-    if (is == 1)
-        DDA(cube, cube->player->player_x, cube->player->player_y, vars.wallHitX, vars.wallHitY);
 
     return vars;
 }
