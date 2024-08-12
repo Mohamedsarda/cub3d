@@ -92,6 +92,7 @@ t_player *init_player(t_cub *cube)
 	cube->y_press = 0;
 	cube->t_press = 0;
     player->shift = 1;
+    player->open = 1;
 	cube->right_press = 0;
 	return (player);
 }
@@ -330,6 +331,9 @@ int is_it_a_wall(double x, double y, t_cub *cube)
 	if (cube->data->map[t_up][t_left] == '1' || cube->data->map[t_down][t_right] == '1'
 		|| cube->data->map[t_up][t_right] == '1' || cube->data->map[t_down][t_left] == '1')
 		return (0);
+	if ((cube->data->map[t_up][t_left] == 'D' || cube->data->map[t_down][t_right] == 'D'
+		|| cube->data->map[t_up][t_right] == 'D' || cube->data->map[t_down][t_left] == 'D') && cube->player->open == 1)
+		return (0);
 	return (1);
 }
 
@@ -473,37 +477,10 @@ t_doors *ft_get_smallest_dist(t_doors *head)
 void ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i, int door)
 {
     mlx_texture_t* texture = NULL;
-    t_doors *low = ft_get_smallest_dist(cube->doors_locations);
-    double fx = vars.wallHitX;
-    double fy = vars.wallHitY;
-    if (vars.isRayFacingLeft)
-        fx--;
-    if (vars.isRayFacingUp)
-        fy--;
-    int x = floor(fx / tile_size);
-    int y = floor(fy / tile_size);
-
     if (vars.door)
-    {
-        if (low->distance <= 3 && low->x == x && low->y == y)
-        {
-			if (cube->data->map[low->y][low->x] == 'D')
-				cube->data->map[low->y][low->x] = 'T';
-            return;
-        }
-        else
-		{
-			if (cube->data->map[low->y][low->x] != 'D')
-				cube->data->map[low->y][low->x] = 'D';
-            texture = cube->doors[0];
-		}
-    }
+		texture = cube->doors[0];
     else
-    {
-		if (cube->data->map[low->y][low->x] != 'D')
-			cube->data->map[low->y][low->x] = 'D';
 		texture = cube->texture[textureNum];
-	}
 
     double texturePosX = vars.wasHitVert ?
         fmod(vars.wallHitY, tile_size) / tile_size :
@@ -658,7 +635,91 @@ void *draw_lines_3D(void *tmp)
     for (int i = 0; i < WIDTH / 2; i++)
     {
         t_vars vars = draw_line(cube, cube->angle_0, 0);
-		// printf("%d | %d\n", vars.door, vars.wasHitVert);
+		double fx = cube->player->player_x;
+		double fy = cube->player->player_y;
+		if (vars.isRayFacingLeft)
+			fx--;
+		if (vars.isRayFacingUp)
+			fy--;
+		int x = floor(fx / tile_size);
+		int y = floor(fy / tile_size);
+		if(y != 0 && cube->data->map[y - 1][x] == 'D' && cube->player->open == -1)
+		{
+			cube->data->map[y - 1][x] = 'T';
+			vars = draw_line(cube, cube->angle_0, 0);
+		}
+		if(y != cube->data->map_row && cube->data->map[y + 1][x] == 'D' && cube->player->open == -1)
+		{
+			cube->data->map[y + 1][x] = 'T';
+			vars = draw_line(cube, cube->angle_0, 0);
+		}
+		if(x != 0 && cube->data->map[y][x - 1] == 'D' && cube->player->open == -1)
+		{
+			cube->data->map[y][x - 1] = 'T';
+			vars = draw_line(cube, cube->angle_0, 0);
+		}
+		if(x != cube->data->map_cols && cube->data->map[y][x + 1] == 'D' && cube->player->open == -1)
+		{
+			cube->data->map[y][x + 1] = 'T';
+			vars = draw_line(cube, cube->angle_0, 0);
+		}
+
+		if(y != 1 && cube->data->map[y - 2][x] == 'T')
+		{
+			// cube->player->open *= -1;
+			cube->data->map[y - 2][x] = 'D';
+			vars = draw_line(cube, cube->angle_0, 0);
+		}
+		if(y != cube->data->map_row - 2 && cube->data->map[y + 2][x] == 'T')
+		{
+			// cube->player->open *= -1;
+			cube->data->map[y + 2][x] = 'D';
+			vars = draw_line(cube, cube->angle_0, 0);
+		}
+		if(x != 1 && cube->data->map[y][x - 2] == 'T')
+		{
+			// cube->player->open *= -1;
+			cube->data->map[y][x - 2] = 'D';
+			vars = draw_line(cube, cube->angle_0, 0);
+		}
+		if(x != cube->data->map_cols  - 2 && cube->data->map[y][x + 2] == 'T')
+		{
+			// cube->player->open *= -1;
+			cube->data->map[y][x + 2] = 'D';
+			vars = draw_line(cube, cube->angle_0, 0);
+		}
+
+		if(y != 1 && cube->data->map[y - 1][x - 1] == 'T')
+		{
+			// cube->player->open *= -1;
+			cube->data->map[y - 1][x - 1] = 'D';
+			vars = draw_line(cube, cube->angle_0, 0);
+		}
+		if(y != cube->data->map_row - 2 && cube->data->map[y + 1][x + 1] == 'T')
+		{
+			// cube->player->open *= -1;
+			cube->data->map[y + 1][x + 1] = 'D';
+			vars = draw_line(cube, cube->angle_0, 0);
+		}
+		if(x != 1 && cube->data->map[y + 1][x - 1] == 'T')
+		{
+			// cube->player->open *= -1;
+			cube->data->map[y + 1][x - 1] = 'D';
+			vars = draw_line(cube, cube->angle_0, 0);
+		}
+		if(x != cube->data->map_cols  - 2 && cube->data->map[y - 1][x + 1] == 'T')
+		{
+			// cube->player->open *= -1;
+			cube->data->map[y - 1][x + 1] = 'D';
+			vars = draw_line(cube, cube->angle_0, 0);
+		}
+		// if(y != 0 && y != cube->data->map_row && x != 0 && x != cube->data->map_cols && (cube->data->map[y - 2][x] == 'T' || cube->data->map[y + 2][x] == 'T' || cube->data->map[y][x - 2] == 'T' || cube->data->map[y][x + 2] == 'T'  || cube->player->open == -1))
+		// {
+		// 	cube->player->open *= -1;
+		// 	cube->data->map[y][x + 1] = 'D';
+		// 	vars = draw_line(cube, cube->angle_0, 0);
+		// 	puts("+++");
+		// }
         double wallDistance = vars.distance * cos(cube->angle_0 - cube->player->rotat_angle);
         double wallStripHeight = (tile_size / wallDistance) * distanceProjPlane;
 
@@ -693,6 +754,84 @@ void *draw_lines_3D_1(void *tmp)
     {
         t_vars vars = draw_line(cube, cube->angle_1, 0);
 		// printf("%d | %d\n", vars.door, vars.wasHitVert);
+		double fx = cube->player->player_x;
+		double fy = cube->player->player_y;
+		if (vars.isRayFacingLeft)
+			fx--;
+		if (vars.isRayFacingUp)
+			fy--;
+		int x = floor(fx / tile_size);
+		int y = floor(fy / tile_size);
+		printf(" ++++ %d | %d || %d %d \n", x, y, cube->data->map_cols, cube->data->map_row);
+		if(y != 0 && cube->data->map[y - 1][x] == 'D' && cube->player->open == -1)
+		{
+			cube->data->map[y - 1][x] = 'T';
+			vars = draw_line(cube, cube->angle_1, 0);
+		}
+		if(y != cube->data->map_row && cube->data->map[y + 1][x] == 'D' && cube->player->open == -1)
+		{
+			cube->data->map[y + 1][x] = 'T';
+			vars = draw_line(cube, cube->angle_1, 0);
+		}
+		if(x != 0 && cube->data->map[y][x - 1] == 'D' && cube->player->open == -1)
+		{
+			cube->data->map[y][x - 1] = 'T';
+			vars = draw_line(cube, cube->angle_1, 0);
+		}
+		if(x != cube->data->map_cols && cube->data->map[y][x + 1] == 'D' && cube->player->open == -1)
+		{
+			cube->data->map[y][x + 1] = 'T';
+			vars = draw_line(cube, cube->angle_1, 0);
+		}
+		if(y != 1 && cube->data->map[y - 2][x] == 'T')
+		{
+			// cube->player->open *= -1;
+			cube->data->map[y - 2][x] = 'D';
+			vars = draw_line(cube, cube->angle_1, 0);
+		}
+		if(y != cube->data->map_row - 2 && cube->data->map[y + 2][x] == 'T')
+		{
+			// cube->player->open *= -1;
+			cube->data->map[y + 2][x] = 'D';
+			vars = draw_line(cube, cube->angle_1, 0);
+		}
+		if(x != 1 && cube->data->map[y][x - 2] == 'T')
+		{
+			// cube->player->open *= -1;
+			cube->data->map[y][x - 2] = 'D';
+			vars = draw_line(cube, cube->angle_1, 0);
+		}
+		if(x != cube->data->map_cols  - 2 && cube->data->map[y][x + 2] == 'T')
+		{
+			// cube->player->open *= -1;
+			cube->data->map[y][x + 2] = 'D';
+			vars = draw_line(cube, cube->angle_1, 0);
+		}
+		
+		if(y != 1 && cube->data->map[y - 1][x - 1] == 'T')
+		{
+			// cube->player->open *= -1;
+			cube->data->map[y - 1][x - 1] = 'D';
+			vars = draw_line(cube, cube->angle_1, 0);
+		}
+		if(y != cube->data->map_row - 2 && cube->data->map[y + 1][x + 1] == 'T')
+		{
+			// cube->player->open *= -1;
+			cube->data->map[y + 1][x + 1] = 'D';
+			vars = draw_line(cube, cube->angle_1, 0);
+		}
+		if(x != 1 && cube->data->map[y + 1][x - 1] == 'T')
+		{
+			// cube->player->open *= -1;
+			cube->data->map[y + 1][x - 1] = 'D';
+			vars = draw_line(cube, cube->angle_1, 0);
+		}
+		if(x != cube->data->map_cols  - 2 && cube->data->map[y - 1][x + 1] == 'T')
+		{
+			// cube->player->open *= -1;
+			cube->data->map[y - 1][x + 1] = 'D';
+			vars = draw_line(cube, cube->angle_1, 0);
+		}
         double wallDistance = vars.distance * cos(cube->angle_1 - cube->player->rotat_angle);
         double wallStripHeight = (tile_size / wallDistance) * distanceProjPlane;
 
@@ -803,6 +942,8 @@ void my_keyhook(mlx_key_data_t keydata, void* param)
 
 	if(keydata.action == MLX_RELEASE)
 	{
+		if (keydata.key == MLX_KEY_O)
+			cube->player->open *= -1;
 		if (keydata.key == MLX_KEY_W)
 			cube->player->walk_direction = 0;
 		if (keydata.key == MLX_KEY_DOWN)
