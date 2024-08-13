@@ -35,7 +35,9 @@ int ft_get_color_data(t_init *init, t_data *data, int type)
 	colors = ft_split(init->colors[type], ' ', '\t');
 	if (!colors)
 		return (-1);
-	if (ft_strlen(colors[0]) != 1)
+	i = -1;
+	while (colors[++i])
+	if (i == 2 || ft_strlen(colors[0]) != 1)
 		return (free_double_arr(colors), ft_check_color_print(data), -1);
 	tmp = &data->floor;
 	if (type == 1)
