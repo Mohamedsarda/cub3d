@@ -91,6 +91,8 @@ int	ft_check_char(char c, int is)
 		return (c == 'N' || c == 'E' || c == 'W' || c == 'S');
 	if (is == 3)
 		return (c == '1' || c == '0' || c == 'N' || c == 'E' || c == 'W' || c == 'S' || c == 'D');
+	if (is == 4)
+		return (c == 'D');
 	return (c == '0' || c == 'N' || c == 'E' || c == 'W' || c == 'S' || c == 'D');
 }
 
@@ -132,6 +134,29 @@ int	ft_count_map_words(char **map)
 	}
 	return (counter);
 }
+int	ft_count_map_door(char **map)
+{
+	int	i = 0;
+	int	j = 0;
+
+	while (map[i])
+	{
+		j = 0;
+		while (map[i][j])
+		{
+			if (ft_check_char(map[i][j], 4))
+			{
+				if((map[i + 1][j] == '1' && map[i - 1][j] == '1') || (map[i][j + 1] == '1' && map[i][j - 1] == '1'))
+				{}
+				else
+					return (-1);
+			}
+			j++;
+		}
+		i++;
+	}
+	return (1);
+}
 
 int	my_ft_strlen(char *str)
 {
@@ -167,6 +192,8 @@ int	ft_map_check_words(char **map)
 	}
 	if (ft_count_map_words(map) != 1)
 			return (-1);
+	if (ft_count_map_door(map) == -1)
+		return (-1);
 	return (1);
 }
 
