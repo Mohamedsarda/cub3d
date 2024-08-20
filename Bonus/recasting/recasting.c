@@ -762,7 +762,7 @@ void *draw_lines_3D_1(void *tmp)
 			fy--;
 		int x = floor(fx / tile_size);
 		int y = floor(fy / tile_size);
-		printf(" ++++ %d | %d || %d %d \n", x, y, cube->data->map_cols, cube->data->map_row);
+		// printf(" ++++ %d | %d || %d %d \n", x, y, cube->data->map_cols, cube->data->map_row);
 		if(y != 0 && cube->data->map[y - 1][x] == 'D' && cube->player->open == -1)
 		{
 			cube->data->map[y - 1][x] = 'T';
@@ -1201,29 +1201,41 @@ void    draw_shots(t_cub *cube)
 // end shots
 //
 
+#include <time.h>
+
+#define TARGET_FPS 90
+#define FRAME_TARGET_TIME (1000 / TARGET_FPS)
 
 void loop_fun(void* param)
 {
     t_cub* cube = (t_cub*)param;
+	static clock_t previous_frame_time = 0;
+    clock_t current_time = clock();
+    double delta_time = (current_time - previous_frame_time) / (double)CLOCKS_PER_SEC;
 
-    update_player(cube);
-    ft_draw_sky_floor(cube);
-	cube->threads[0].id = 0;
-	cube->threads[1].id = 1;
-    pthread_create(&cube->threads[0].thread, NULL, &draw_lines_3D, (void *)cube);
-    pthread_create(&cube->threads[1].thread, NULL, &draw_lines_3D_1, (void *)cube);
-    pthread_join(cube->threads[0].thread, NULL);
-    pthread_join(cube->threads[1].thread, NULL);
+    if (delta_time >= 1.0 / TARGET_FPS)
+    {
+		update_player(cube);
+		ft_draw_sky_floor(cube);
+		cube->threads[0].id = 0;
+		cube->threads[1].id = 1;
+		pthread_create(&cube->threads[0].thread, NULL, &draw_lines_3D, (void *)cube);
+		pthread_create(&cube->threads[1].thread, NULL, &draw_lines_3D_1, (void *)cube);
+		pthread_join(cube->threads[0].thread, NULL);
+		pthread_join(cube->threads[1].thread, NULL);
 
-    // draw_lines_3D(cube, door);
-	// if (cube->doortype == 19)
-	// 	cube->doortype = 0;
-	// cube->doortype++;
-    draw_per(cube);
-	update_run_on_right_click(cube);
-    update_y_press(cube);
-	draw_gun_right_click(cube);
-
+		draw_per(cube);
+		update_run_on_right_click(cube);
+		update_y_press(cube);
+		draw_gun_right_click(cube);
+		previous_frame_time = current_time;
+    }
+	clock_t frame_time = clock() - current_time;
+    if (frame_time < FRAME_TARGET_TIME)
+    {
+        struct timespec rem, req = {0, (FRAME_TARGET_TIME - frame_time) * 1000000};
+        nanosleep(&req, &rem);
+    }
     // Mouse handling
     int32_t xpos, ypos;
     mlx_get_mouse_pos(cube->mlx, &xpos, &ypos);
