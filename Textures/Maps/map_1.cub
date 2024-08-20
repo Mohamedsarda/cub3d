@@ -1,14 +1,13 @@
-    C    20,20,0 
+C    20,20,0               
 
-                        SO              ../Textures/png/wall.png  
-
+SO              ../Textures/png/wall.png  
 
 
 
 WE					 ../Textures/png/wall.png
 
 
- EA ../Textures/png/wall.png
+EA ../Textures/png/wall.png
 NO  ../Textures/png/wall.png
 
 F          50,50,50 
