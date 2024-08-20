@@ -146,25 +146,25 @@ int	my_ft_strlen(char *str)
 	return (j);
 }
 
-int	ft_map_check_words(char **map)
+int    ft_map_check_words(char **map)
 {
-	int	i = 0;
-	int	j = 0;
+    int    i = 0;
+    int    j = 0;
 
-	while (map[i])
-	{
-		j = 0;
-		while (map[i][j])
-		{
-			if (!ft_check_char(map[i][j], 1))
-				return (-1);
-			j++;
-		}
-		i++;
-	}
-	if (ft_count_map_words(map) != 1)
-			return (-1);
-	return (1);
+    while (map[i])
+    {
+        j = 0;
+        while (map[i][j])
+        {
+            if (!ft_check_char(map[i][j], 1))
+                return (-1);
+            j++;
+        }
+        i++;
+    }
+    if (ft_count_map_words(map) != 1)
+            return (-1);
+    return (1);
 }
 
 int	check_only_space(char *str)

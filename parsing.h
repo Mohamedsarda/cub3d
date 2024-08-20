@@ -46,6 +46,8 @@ typedef struct  s_data
 }   t_data;
 
 
+int    ft_check_char(char c, int is);
+
 //get next line
 int		ft_strchr(char *s, int c);
 char	*ft_strdup(char *s1);
