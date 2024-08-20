@@ -33,10 +33,14 @@ void my_mousehook(mouse_key_t button, action_t action, modifier_key_t mods, void
 	// }
 }
 
-int main()
+int main(int c, char **dst)
 {
 	// atexit(ffqwe);
-	int fd = open("../textures/Maps/map_1.cub", O_RDONLY);
+	if (c != 2)
+		return (ft_putstr_fd("To Play the game u need to provide a map\n", 2), 1);
+	int fd = open(dst[1], O_RDONLY);
+	if (fd <= 0)
+		return (ft_putstr_fd("The Path Provided to the map is wrong\n", 2), 1);
 	char *tmp;
 
 	if (fd == -1 || fd == -1)
@@ -52,6 +56,20 @@ int main()
 	while (1)
 	{
 		tmp = get_next_line(fd);
+		if (tmp && (ft_strncmp(tmp, " ", ft_strlen(tmp)) != 0 || ft_strncmp(tmp, "\t", ft_strlen(tmp)) != 0))
+		{
+			if (ft_strncmp(tmp, "1", 1) 
+				&& ft_strncmp(tmp, "C ", 2) != 0
+				&& ft_strncmp(tmp, "F ", 2) != 0
+				&& ft_strncmp(tmp, "EA ", 2) != 0
+				&& ft_strncmp(tmp, "WE ", 2) != 0
+				&& ft_strncmp(tmp, "SO ", 2) != 0
+				&& ft_strncmp(tmp, "NO ", 2) != 0)
+			{
+				printf("Please Remove Empty Lines From The File You Have One In this line %d\n", i + 1);
+				return (1);
+			}
+		}
 		if (!tmp)
 			break ;
 		free(tmp);
@@ -59,7 +77,9 @@ int main()
 	}
 	init->file_lines = i;
 	close(fd);
-	fd = open("../textures/Maps/map_1.cub", O_RDONLY);
+	fd = open(dst[1], O_RDONLY);
+	if (fd <= 0)
+		return (ft_putstr_fd("The Path Provided to the map is wrong\n", 2), 1);
 	init->file = (char **)ft_calloc((i + 1) * sizeof(t_init *));
 	i = 0;
 	while (1)
