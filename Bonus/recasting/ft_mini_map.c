@@ -63,7 +63,7 @@ void	init_wh_if(t_cub *cube, int is, int x, int y)
 	}
 }
 
-void	init_wh_if(t_cub *cube)
+void	check_put_pxl(t_cub *cube)
 {
 	int	a;
 	int	b;
