@@ -9,9 +9,7 @@ int has_wall(t_cub *cube, double x1, double y1, int is)
     int x = floor(x1 / tile_size);
     int y = floor(y1 / tile_size);
 
-    if (cube->data->map[y][x] == '1')
-        return 1;
-    if(cube->data->map[y][x] == 'D' || cube->data->map[y][x] == 'O')
+    if (cube->data->map[y][x] == '1' || cube->data->map[y][x] == 'D' || cube->data->map[y][x] == 'O')
         return 1;
     return 0;
 }
@@ -115,6 +113,33 @@ double distanceBetweenPoints(double x1,double y1,double x2,double y2)
     return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 }
 
+void    ft_get_close_wall(t_cub *cube, t_vars *vars)
+{
+    vars->horzHitDistance = __INT_MAX__;
+    vars->vertHitDistance = __INT_MAX__;
+    if (vars->foundHorzWallHit)
+        vars->horzHitDistance = distanceBetweenPoints(cube->player->player_x, cube->player->player_y, vars->horzWallHitX, vars->horzWallHitY);
+    if (vars->foundVertWallHit)
+        vars->vertHitDistance = distanceBetweenPoints(cube->player->player_x, cube->player->player_y, vars->vertWallHitX, vars->vertWallHitY);
+    vars->wallHitX = vars->vertWallHitX;
+    vars->wallHitY = vars->vertWallHitY;
+    vars->distance = vars->vertHitDistance;
+    if (vars->vertHitDistance < vars->horzHitDistance)
+    {
+        vars->wallHitX = vars->vertWallHitX;
+        vars->wallHitY = vars->vertWallHitY;
+        vars->distance = vars->vertHitDistance;
+        vars->wasHitVert = 1;
+    }
+    else
+    {
+        vars->wallHitX = vars->horzWallHitX;
+        vars->wallHitY = vars->horzWallHitY;
+        vars->distance = vars->horzHitDistance;
+        vars->wasHitVert = 0;
+    }
+}
+
 t_vars draw_line(t_cub *cube, double angle, int is)
 {
     (void)is;
@@ -133,32 +158,8 @@ t_vars draw_line(t_cub *cube, double angle, int is)
 
     ft_draw_hero(cube, &vars);
     ft_draw_ver(cube, &vars);
-    vars.horzHitDistance = __INT_MAX__;
-    vars.vertHitDistance = __INT_MAX__;
+    ft_get_close_wall(cube, &vars);
 
-    if (vars.foundHorzWallHit)
-        vars.horzHitDistance = distanceBetweenPoints(cube->player->player_x, cube->player->player_y, vars.horzWallHitX, vars.horzWallHitY);
-    if (vars.foundVertWallHit)
-        vars.vertHitDistance = distanceBetweenPoints(cube->player->player_x, cube->player->player_y, vars.vertWallHitX, vars.vertWallHitY);
-
-    vars.wallHitX = vars.vertWallHitX;
-    vars.wallHitY = vars.vertWallHitY;
-    vars.distance = vars.vertHitDistance;
-    //
-
-    if (vars.vertHitDistance < vars.horzHitDistance)
-    {
-        vars.wallHitX = vars.vertWallHitX;
-        vars.wallHitY = vars.vertWallHitY;
-        vars.distance = vars.vertHitDistance;
-        vars.wasHitVert = 1;
-    } else {
-        vars.wallHitX = vars.horzWallHitX;
-        vars.wallHitY = vars.horzWallHitY;
-        vars.distance = vars.horzHitDistance;
-        vars.wasHitVert = 0;
-    }
-    
     double fx = vars.wallHitX;
     double fy = vars.wallHitY;
     if (vars.isRayFacingLeft)
@@ -169,7 +170,6 @@ t_vars draw_line(t_cub *cube, double angle, int is)
     int y = floor(fy / tile_size);
     if (cube->data->map[y][x] == 'D')
         vars.door = 1;
-
     return vars;
 }
 

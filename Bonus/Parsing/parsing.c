@@ -109,15 +109,15 @@ int    ft_count_map_door(char **map)
 
 int    ft_check_char(char c, int is)
 {
-    if (is == 1)
-        return (c == '1' || c == '0' || c == 'N' || c == 'E' || c == 'W' || c == 'S' || c == 'D' || c == '$' || c == '\t');
-    if (is == 2)
-        return (c == 'N' || c == 'E' || c == 'W' || c == 'S');
-    if (is == 3)
-        return (c == '1' || c == '0' || c == 'N' || c == 'E' || c == 'W' || c == 'S' || c == 'D');
-    if (is == 4)
-        return (c == 'D');
-    return (c == '0' || c == 'N' || c == 'E' || c == 'W' || c == 'S' || c == 'D');
+	if (is == 1)
+		return (c == '1' || c == '0' || c == 'N' || c == 'E' || c == 'W' || c == 'S' || c == 'D' || c == '$' || c == '\t');
+	if (is == 2)
+		return (c == 'N' || c == 'E' || c == 'W' || c == 'S');
+	if (is == 3)
+		return (c == '1' || c == '0' || c == 'N' || c == 'E' || c == 'W' || c == 'S' || c == 'D');
+	if (is == 4)
+		return (c == 'D');
+	return (c == '0' || c == 'N' || c == 'E' || c == 'W' || c == 'S' || c == 'D');
 }
 
 int	ft_get_player(t_data *data)
