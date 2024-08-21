@@ -66,7 +66,7 @@ int main(int c, char **dst)
 				&& ft_strncmp(tmp, "SO ", 2) != 0
 				&& ft_strncmp(tmp, "NO ", 2) != 0)
 			{
-				printf("Please Remove Empty Lines From The File You Have One In this line %d\n", i + 1);
+				printf("Please Remove This unnecessary Line From The File, It's on this line %d\n", i + 1);
 				return (1);
 			}
 		}
