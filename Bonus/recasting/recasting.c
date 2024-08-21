@@ -65,7 +65,7 @@ t_player *init_player(t_cub *cube)
 		malloc_error();
 	ft_get_player_pos(player, cube);
 	player->radius = 10;
-	player->move_speed = 4;
+	player->move_speed = 0;
 	if (cube->data->p == 'W')
 		player->rotat_angle = deg2rad(180);  // Initialize in radians
 	else if (cube->data->p == 'S')
@@ -187,77 +187,82 @@ void    ft_load_doors(t_cub *cube, int i, char *path)
 
 void ft_fractol_init(t_cub *cube)
 {
-   cube->mlx = mlx_init(WIDTH, HEIGHT, "42Balls", true);
-	if (!cube->mlx)
-		ft_error();
-	cube->image = mlx_new_image(cube->mlx, WIDTH, HEIGHT);
-	if (!cube->image || (mlx_image_to_window(cube->mlx, cube->image, 0, 0) < 0))
-		ft_error();
+    cube->mlx = mlx_init(WIDTH, HEIGHT, "42Balls", true);
+    if (!cube->mlx)
+        ft_error();
+    cube->image = mlx_new_image(cube->mlx, WIDTH, HEIGHT);
+    if (!cube->image || (mlx_image_to_window(cube->mlx, cube->image, 0, 0) < 0))
+        ft_error();
 
-	// Load and display textures
-	// cube->gun[0] = mlx_load_png("../Textures/png/call-of-duty-wiki-call-of-duty-modern-warfare-machine-gun-weapon-weaponry-armory-transparent-png-1324476.png");
-	char **guns = (char **)ft_calloc(sizeof(char *) * (Y_CLICK + R_CLICK + 1));
-	if (!guns)
-		return ;
-	char *tmp;
-	char *str;
-	char *num;
-	int i = 0;
-	while (i < 181)
-	{
-		tmp = ft_strdup("../Textures/png/guns_0/");
-		num = ft_itoa(i);
-		str = ft_strjoin(tmp, num);
-		str = ft_strjoin(str, ".png");
-		guns[i] = str;
-		i++;
-		free(num);
-	}
-	guns[i] = NULL;
-	i = 0;
-	while (i <= Y_CLICK)
-	{
+    // Load and display textures
+    char **guns = (char **)ft_calloc(sizeof(char *) * (Y_CLICK + R_CLICK + 1));
+    if (!guns)
+        return;
 
-		cube->gun[i] = mlx_load_png(guns[i]);
-		if (!cube->gun[i])
-			ft_error();
-		cube->gun_img[i] = mlx_texture_to_image(cube->mlx, cube->gun[i]);
-		if (!cube->gun_img[i])
-			ft_error();
-		i++;
-	}
-	int k = 0;
-	while (guns[i])
-	{
-		cube->gun_r[k] = mlx_load_png(guns[i]);
-		if (!cube->gun_r[k])
-			ft_error();
-		cube->gun_r_img[k] = mlx_texture_to_image(cube->mlx, cube->gun_r[k]);
-		if (!cube->gun_r_img[k])
-			ft_error();
-		k++;
-		i++;
-	}
-	free_double_arr(guns);
-	i = 0;
-	//door
-	ft_load_doors(cube, 0, "../Textures/Doors/tile000.png");
-	char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea};
-	while (i < 4)
-	{
-		cube->texture[i] = mlx_load_png(texture_files[i]);
-		if (!cube->texture[i])
-			ft_error();
-		cube->img[i] = mlx_texture_to_image(cube->mlx, cube->texture[i]);
-		if (!cube->img[i])
-			ft_error();
-		i++;
-	}
-	cube->player = init_player(cube);
-	// if (mlx_image_to_window(cube->mlx, cube->gun_img[0], WIDTH/ 2, HEIGHT - cube->gun[0]->height) < 0)
-	// 	ft_error();
-	// if (mlx_image_to_window(cube->mlx, cube->img[4], 20 , HEIGHT - cube->img[4]->height - 20) < 0)
-	// 	ft_error();
+    // Load gun texture file paths
+    int i = 0;
+    while (i < Y_CLICK + R_CLICK)
+    {
+        char *tmp = ft_strdup("../Textures/png/guns_0/");
+        char *num = ft_itoa(i);
+        char *str = ft_strjoin(tmp, num);
+        str = ft_strjoin(str, ".png");
+        guns[i] = str;
+        i++;
+        free(num);
+    }
+    guns[i] = NULL;
+
+    // Load gun textures
+    i = 0;
+    while (i < Y_CLICK)
+    {
+        cube->gun[i] = mlx_load_png(guns[i]);
+        if (!cube->gun[i])
+            ft_error();
+        if (i < 2)
+		{
+			cube->gun_img[i] = mlx_texture_to_image(cube->mlx, cube->gun[i]);
+			if (!cube->gun_img[i])
+				ft_error();
+		}
+        i++;
+    }
+
+    int k = 0;
+    while (guns[i])
+    {
+        cube->gun_r[k] = mlx_load_png(guns[i]);
+        if (!cube->gun_r[k])
+            ft_error();
+		if (k < 2)
+        {
+			cube->gun_r_img[k] = mlx_texture_to_image(cube->mlx, cube->gun_r[k]);
+			if (!cube->gun_r_img[k])
+				ft_error();
+		}
+        k++;
+        i++;
+    }
+
+    free_double_arr(guns);
+
+    // Load other textures
+    ft_load_doors(cube, 0, "../Textures/Doors/tile000.png");
+    char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea};
+    i = 0;
+    while (i < 4)
+    {
+        cube->texture[i] = mlx_load_png(texture_files[i]);
+        if (!cube->texture[i])
+            ft_error();
+        cube->img[i] = mlx_texture_to_image(cube->mlx, cube->texture[i]);
+        if (!cube->img[i])
+            ft_error();
+        i++;
+    }
+
+    cube->player = init_player(cube);
 }
 
 void    draw_cube(t_cub *cube, int x, int y, int color)
@@ -880,8 +885,6 @@ void	ft_realse(t_cub *cube, mlx_key_data_t keydata)
 		cube->player->minimap *= -1;
 	if (keydata.key == MLX_KEY_TAB)
 		cube->player->tab = 0;
-	if (keydata.key == MLX_KEY_T)
-		cube->player->right_left = 0;
 }
 
 void	ft_press(t_cub *cube, mlx_key_data_t keydata)
@@ -904,8 +907,6 @@ void	ft_press(t_cub *cube, mlx_key_data_t keydata)
 		cube->player->strafe_direction = -1;
 	if (keydata.key == MLX_KEY_TAB)
 		cube->player->right_left = 1;
-	if (keydata.key == MLX_KEY_T)
-		cube->player->right_left = 1;
 	if (keydata.key == MLX_KEY_RIGHT_SHIFT)
 		cube->player->mouse = 1;
 	if (keydata.key == MLX_KEY_LEFT_SHIFT)
@@ -920,11 +921,6 @@ void	ft_press_1(t_cub *cube, mlx_key_data_t keydata)
 			cube->current_gun_index = 0;
 		cube->t_press = 0;
 		cube->y_press = 1;
-	}
-	if (keydata.key == MLX_KEY_T)
-	{
-		cube->y_press = 0;
-		cube->t_press = 1;
 	}
 	if (keydata.key == MLX_KEY_ESCAPE)
 	{
@@ -949,7 +945,7 @@ void my_keyhook(mlx_key_data_t keydata, void* param)
 	if (keydata.action == MLX_RELEASE)
 	{
 		ft_realse(cube, keydata);
-		if (keydata.key == MLX_KEY_Y || keydata.key == MLX_KEY_T)
+		if (keydata.key == MLX_KEY_Y)
 		{
 			cube->t_press = 0;
 			if (cube->gun_img[cube->current_gun_index])
@@ -1004,7 +1000,7 @@ void update_run_on_right_click(t_cub *cube)
 			}
 
 			cube->cur_g_right_clikc++;
-			if (cube->cur_g_right_clikc >= R_CLICK)
+			if (cube->cur_g_right_clikc > 1)
 				cube->cur_g_right_clikc = 0;
 			last_gun_change_time = current_time;
 		}
@@ -1043,6 +1039,7 @@ void update_player(t_cub *cube)
 		last_gun_change_time = current_time;
 	}
 	// inti_jump(cube);
+	// printf("%f\n", cube->player->jump);
 	if (cube->player->jump == 1)
 		cube->player->jump_var = -100;
 	else if (cube->player->jump == -1)
@@ -1052,7 +1049,7 @@ void update_player(t_cub *cube)
 	}
 	else if (cube->player->jump == 0)
 	{
-		cube->player->move_speed = 4;
+		cube->player->move_speed = 3;
 		cube->player->jump_var = 0;
 	}
 	else if (cube->player->jump == 2)
@@ -1164,7 +1161,7 @@ void    draw_shots(t_cub *cube)
 
 #include <time.h>
 
-#define TARGET_FPS 90
+#define TARGET_FPS 60
 #define FRAME_TARGET_TIME (1000 / TARGET_FPS)
 
 void loop_fun(void* param)
