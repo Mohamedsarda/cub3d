@@ -93,13 +93,11 @@ typedef struct s_player
 	int		shift;
 	int		open;
 	int		minimap;
-
-
-	int	minimap_size;
-	int	minimap_start_x;
-	int	minimap_start_y;
-	int	minimap_player_x;
-	int	minimap_player_y;
+	int		minimap_size;
+	int		minimap_start_x;
+	int		minimap_start_y;
+	int		minimap_player_x;
+	int		minimap_player_y;
 }	t_player;
 
 typedef struct s_texture
