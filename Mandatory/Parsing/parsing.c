@@ -35,7 +35,9 @@ int ft_get_color_data(t_init *init, t_data *data, int type)
 	colors = ft_split(init->colors[type], ' ', '\t');
 	if (!colors)
 		return (-1);
-	if (ft_strlen(colors[0]) != 1)
+	i = -1;
+	while (colors[++i])
+	if (i == 2 || ft_strlen(colors[0]) != 1)
 		return (free_double_arr(colors), ft_check_color_print(data), -1);
 	tmp = &data->floor;
 	if (type == 1)
@@ -144,25 +146,25 @@ int	my_ft_strlen(char *str)
 	return (j);
 }
 
-int	ft_map_check_words(char **map)
+int    ft_map_check_words(char **map)
 {
-	int	i = 0;
-	int	j = 0;
+    int    i = 0;
+    int    j = 0;
 
-	while (map[i])
-	{
-		j = 0;
-		while (map[i][j])
-		{
-			if (!ft_check_char(map[i][j], 1))
-				return (-1);
-			j++;
-		}
-		i++;
-	}
-	if (ft_count_map_words(map) != 1)
-			return (-1);
-	return (1);
+    while (map[i])
+    {
+        j = 0;
+        while (map[i][j])
+        {
+            if (!ft_check_char(map[i][j], 1))
+                return (-1);
+            j++;
+        }
+        i++;
+    }
+    if (ft_count_map_words(map) != 1)
+            return (-1);
+    return (1);
 }
 
 int	check_only_space(char *str)
