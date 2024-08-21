@@ -83,7 +83,31 @@ void	ft_check_color(t_data *data)
 		ft_check_color_print(data);
 }
 
-int	ft_check_char(char c, int is)
+int    ft_count_map_door(char **map)
+{
+    int    i = 0;
+    int    j = 0;
+
+    while (map[i])
+    {
+        j = 0;
+        while (map[i][j])
+        {
+            if (ft_check_char(map[i][j], 4))
+            {
+                if((map[i + 1][j] == '1' && map[i - 1][j] == '1') || (map[i][j + 1] == '1' && map[i][j - 1] == '1'))
+                {}
+                else
+                    return (-1);
+            }
+            j++;
+        }
+        i++;
+    }
+    return (1);
+}
+
+int    ft_check_char(char c, int is)
 {
 	if (is == 1)
 		return (c == '1' || c == '0' || c == 'N' || c == 'E' || c == 'W' || c == 'S' || c == 'D' || c == '$' || c == '\t');
@@ -134,29 +158,6 @@ int	ft_count_map_words(char **map)
 	}
 	return (counter);
 }
-int	ft_count_map_door(char **map)
-{
-	int	i = 0;
-	int	j = 0;
-
-	while (map[i])
-	{
-		j = 0;
-		while (map[i][j])
-		{
-			if (ft_check_char(map[i][j], 4))
-			{
-				if((map[i + 1][j] == '1' && map[i - 1][j] == '1') || (map[i][j + 1] == '1' && map[i][j - 1] == '1'))
-				{}
-				else
-					return (-1);
-			}
-			j++;
-		}
-		i++;
-	}
-	return (1);
-}
 
 int	my_ft_strlen(char *str)
 {
@@ -174,27 +175,27 @@ int	my_ft_strlen(char *str)
 	return (j);
 }
 
-int	ft_map_check_words(char **map)
+int    ft_map_check_words(char **map)
 {
-	int	i = 0;
-	int	j = 0;
+    int    i = 0;
+    int    j = 0;
 
-	while (map[i])
-	{
-		j = 0;
-		while (map[i][j])
-		{
-			if (!ft_check_char(map[i][j], 1))
-				return (-1);
-			j++;
-		}
-		i++;
-	}
-	if (ft_count_map_words(map) != 1)
-			return (-1);
-	if (ft_count_map_door(map) == -1)
-		return (-1);
-	return (1);
+    while (map[i])
+    {
+        j = 0;
+        while (map[i][j])
+        {
+            if (!ft_check_char(map[i][j], 1))
+                return (-1);
+            j++;
+        }
+        i++;
+    }
+    if (ft_count_map_words(map) != 1)
+            return (-1);
+    if (ft_count_map_door(map) == -1)
+        return (-1);
+    return (1);
 }
 
 int	check_only_space(char *str)
