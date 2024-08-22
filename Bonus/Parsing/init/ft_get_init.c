@@ -36,7 +36,7 @@ int	ft_check_2_cords_init(char **cords, t_data *data)
 			&& ft_strncmp("EA", tmp[0], ft_strlen(tmp[0])) != 0
 			&& ft_strncmp("WE", tmp[0], ft_strlen(tmp[0])) != 0
 			&& ft_strncmp("SO", tmp[0], ft_strlen(tmp[0])) != 0)
-			return (-1);
+			return (free_double_arr(tmp), -1);
 		j = 0;
 		while (tmp[j])
 			j++;
