@@ -1,17 +1,18 @@
 #include "../../../parsing.h"
 
-int ft_count_arrgs_in_file(t_init *init, char *key)
+int	ft_count_arrgs_in_file(t_init *init, char *key)
 {
-	int i;
-	int j;
-	int count;
+	int	i;
+	int	j;
+	int	count;
 
 	i = 0;
 	count = 0;
 	while (init->file[i])
 	{
 		j = 0;
-		while (init->file[i][j] && (init->file[i][j] == ' ' || init->file[i][j] == '\t'))
+		while (init->file[i][j] && (init->file[i][j] == ' '
+				|| init->file[i][j] == '\t'))
 			j++;
 		if (ft_strncmp(init->file[i] + j, key, ft_strlen(key)) == 0)
 			count++;
@@ -20,41 +21,38 @@ int ft_count_arrgs_in_file(t_init *init, char *key)
 	return (count);
 }
 
+void	ft_load_cords(t_data *data, char *cur, int i)
+{
+	if (i == 0)
+		data->no = cur;
+	else if (i == 1)
+		data->so = cur;
+	else if (i == 2)
+		data->we = cur;
+	else if (i == 3)
+		data->ea = cur;
+	else
+		free(cur);
+}
+
 int	ft_check_2_cords_init(char **cords, t_data *data)
 {
-    int i = 0;
-    int j = 0;
+	int		i;
+	int		j;
 	char	**tmp;
-	char	*cur;
 
-	while (cords[i])
+	i = -1;
+	while (cords[++i])
 	{
 		tmp = ft_split(cords[i], ' ', '\t');
 		if (!tmp)
 			return (-1);
-		if (tmp[0] && ft_strncmp("NO", tmp[0], ft_strlen(tmp[0])) != 0 
-			&& ft_strncmp("EA", tmp[0], ft_strlen(tmp[0])) != 0
-			&& ft_strncmp("WE", tmp[0], ft_strlen(tmp[0])) != 0
-			&& ft_strncmp("SO", tmp[0], ft_strlen(tmp[0])) != 0)
-			return (free_double_arr(tmp), -1);
 		j = 0;
 		while (tmp[j])
 			j++;
 		if (j != 2)
 			return (free_double_arr(tmp), -1);
-		cur = ft_strdup(tmp[1]);
-		if (i == 0)
-			data->no = cur;
-		else if (i == 1)
-			data->so = cur;
-		else if (i == 2)
-			data->we = cur;
-		else if (i == 3)
-			data->ea = cur;
-		else
-			free(cur);
-		free_double_arr(tmp);
-		i++;
+		(ft_load_cords(data, ft_strdup(tmp[1]), i), free_double_arr(tmp));
 	}
-    return (1);
+	return (1);
 }
