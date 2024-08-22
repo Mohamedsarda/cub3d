@@ -173,7 +173,9 @@ void    ft_free_data(t_cub *cube)
     free(cube->data->so);
     free(cube->data->no);
     free(cube->data->we);
+    free(cube->data);
     free(cube->player);
+    // free(cube);
 }
 
 void	malloc_error(void)
