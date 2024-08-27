@@ -48,6 +48,9 @@ typedef struct  s_data
 
 // parsing
 int		ft_count_map_words(char **map);
+int		my_ft_strlen(char *str);
+int		ft_count_map_door(char **map);
+int		ft_get_color_data(t_init *init, t_data *data, int type);
 
 //get next line
 int		ft_strchr(char *s, int c);
