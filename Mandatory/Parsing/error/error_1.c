@@ -28,9 +28,6 @@ void	ft_print_cords_err(t_init *init)
 
 void	ft_check_file(t_init *init)
 {
-	int	i;
-
-	i = 0;
 	if (ft_count_arrgs_in_file(init, "NO") != 1
 		|| ft_count_arrgs_in_file(init, "SO") != 1
 		|| ft_count_arrgs_in_file(init, "WE") != 1

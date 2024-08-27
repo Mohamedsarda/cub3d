@@ -162,7 +162,25 @@ int	ft_count_map_words(char **map)
 	return (counter);
 }
 
-int    ft_map_check_words(char **map)
+int	my_ft_strlen(char *str)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	while (str[i])
+	{
+		if (str[i] == '\t')
+			j += 4;
+		else
+			j++;
+		i++;
+	}
+	return (j);
+}
+
+int	ft_map_check_words(char **map)
 {
 	int	i;
 	int	j;
@@ -204,6 +222,7 @@ int	ft_check_map(t_data *data)
 	int	j;
 	int	lines;
 
+	i = 0;
 	lines = 0;
 	while (data->map[lines])
 		lines++;
@@ -219,12 +238,12 @@ int	ft_check_map(t_data *data)
 			if (data->map[i][j] == '\t')
 				return (puts("tab"), -1);
 			if (ft_check_char(data->map[i][j], 0)
-						&& (data->map[i][j + 1] == '$'
-					|| (j != 0 && data->map[i][j - 1] == '$')
-					|| j == 0 || j == (ft_strlen(data->map[i]) - 1)))
+				&& (data->map[i][j + 1] == '$'
+				|| (j != 0 && data->map[i][j - 1] == '$')
+				|| j == 0 || j == (ft_strlen(data->map[i]) - 1)))
 				return (-1);
-			if (ft_check_char(data->map[i][j], 0) && ((i == (lines -1))
-				|| data->map[i + 1][j] == '$'
+			if (ft_check_char(data->map[i][j], 0)
+				&& ((i == (lines -1)) || data->map[i + 1][j] == '$'
 				|| (i != 0 && data->map[i - 1][j] == '$') || i == 0))
 				return (-1);
 			j++;
@@ -236,15 +255,11 @@ int	ft_check_map(t_data *data)
 
 void	ft_change_map(t_init *init, t_data *data)
 {
-	int	i;
-	int	j;
-	int	len;
-	int	tmp_len;
+	int	i = 0;
+	int	j = 0;
+	int len = 0;
+	int tmp_len = 0;
 
-	tmp_len = 0;
-	len = 0;
-	i = 0;
-	j = 0;
 	data->map = (char **)ft_calloc((init->file_lines + 1) * sizeof(char *));
 	if (!data->map)
 		return ;
@@ -287,13 +302,13 @@ void ft_open_files(t_data *data)
 		|| open(data->we, O_RDONLY) < 0
 		|| open(data->no, O_RDONLY) < 0 )
 	{
-		ft_putstr_fd("Error: Please Check ", 2);
-		ft_putstr_fd("The Paths Provided For The Textures\n", 2);
+		ft_putstr_fd("Error: Please Check The Paths ", 2);
+		ft_putstr_fd("Provided For The Textures\n", 2);
 		exit(1);
 	}
 }
 
-int ft_get_data(t_init *init, t_data *data)
+int	ft_get_data(t_init *init, t_data *data)
 {
 	ft_open_files(data);
 	if (ft_get_color_data(init, data, 0) == -1
