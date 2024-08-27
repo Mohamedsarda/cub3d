@@ -1,29 +1,21 @@
 #include "../../parsing.h"
 
-int	ft_get_color_data(t_init *init, t_data *data, int type)
+static int	validate_color_input(char **colors, t_data *data)
 {
-	char	**colors;
-	int		i;
-	int		j;
-	t_color	*tmp;
+	int	len;
 
-
-	colors = ft_split(init->colors[type], ' ', '\t');
-	if (!colors)
-		return (-1);
-	i = 0;
-	while (colors[i])
-		i++;
-	if (i != 2)
-		return (free_double_arr(colors), -1);
-	if (ft_strlen(colors[0]) != 1)
-		return (free_double_arr(colors), ft_check_color_print(data), -1);
-	tmp = &data->floor;
-	if (type == 1)
-		tmp = &data->sky;
-	if (ft_count_cammas(colors[1]) != 2
+	len = ft_strlen(colors[0]);
+	if (len != 1 || ft_count_cammas(colors[1]) != 2
 		|| colors[1][ft_strlen(colors[1]) - 1] == ',')
 		return (free_double_arr(colors), ft_check_color_print(data), -1);
+	return (0);
+}
+
+static int	process_color_data(char **colors, t_color *tmp, t_data *data)
+{
+	int	i;
+	int	j;
+
 	ft_count_num(&i, &j, colors);
 	if (i == j)
 	{
@@ -31,29 +23,25 @@ int	ft_get_color_data(t_init *init, t_data *data, int type)
 			return (free_double_arr(colors), -1);
 	}
 	else
-		return (free_double_arr(colors), ft_check_color_print(data), -1);
-	free_double_arr(colors);
-	return (1);
+		return (ft_check_color_print(data), -1);
+	return (0);
 }
 
-int	ft_get_player(t_data *data)
+int	ft_get_color_data(t_init *init, t_data *data, int type)
 {
-	int	i;
-	int	j;
+	char	**colors;
+	t_color	*tmp;
 
-	i = 0;
-	while (data->map[i])
-	{
-		j = 0;
-		while (data->map[i][j])
-		{
-			if (ft_check_char(data->map[i][j], 2))
-				return (data->p = data->map[i][j], 1);
-			j++;
-		}
-		i++;
-	}
-	return (0);
+	colors = ft_split(init->colors[type], ' ', '\t');
+	if (!colors || !colors[0] || validate_color_input(colors, data) == -1)
+		return (-1);
+	tmp = &data->floor;
+	if (type == 1)
+		tmp = &data->sky;
+	if (process_color_data(colors, tmp, data) == -1)
+		return (-1);
+	free_double_arr(colors);
+	return (1);
 }
 
 int	ft_count_map_words(char **map)
