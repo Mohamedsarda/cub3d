@@ -33,3 +33,23 @@ int	check_only_space(char *str)
 		return (0);
 	return (1);
 }
+
+int	ft_get_player(t_data *data)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (data->map[i])
+	{
+		j = 0;
+		while (data->map[i][j])
+		{
+			if (ft_check_char(data->map[i][j], 2))
+				return (data->p = data->map[i][j], 1);
+			j++;
+		}
+		i++;
+	}
+	return (0);
+}

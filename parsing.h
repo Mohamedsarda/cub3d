@@ -101,5 +101,7 @@ void	ft_change_map(t_init *init, t_data *data);
 void	ft_open_files(t_data *data);
 int		ft_map_check_words(char **map);
 int		check_only_space(char *str);
+int		ft_get_player(t_data *data);
+int		ft_check_map(t_data *data);
 
 #endif
