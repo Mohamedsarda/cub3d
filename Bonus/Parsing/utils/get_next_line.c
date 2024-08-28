@@ -23,7 +23,7 @@ char    *ft_read(char *line, int fd)
 	return (line);
 }
 
-char    *ft_line(char *line)
+char	*ft_line(char *line)
 {
 	int		i;
 	int		j;
@@ -34,8 +34,6 @@ char    *ft_line(char *line)
 		return (NULL);
 	while (line[i] && line[i] != '\n')
 		i++;
-	// if (line[i] == '\n')
-	// 	i++;
 	ptr = ft_calloc(i + 1);
 	if (!ptr)
 		return (NULL);
@@ -49,7 +47,7 @@ char    *ft_line(char *line)
 	return (ptr);
 }
 
-char    *ft_next(char *line)
+char	*ft_next(char *line)
 {
 	char	*ptr;
 	int		i;
@@ -73,7 +71,7 @@ char    *ft_next(char *line)
 	return (ptr);
 }
 
-char *get_next_line(int fd)
+char	*get_next_line(int fd)
 {
 	char		*line;
 	static char	*buffer;

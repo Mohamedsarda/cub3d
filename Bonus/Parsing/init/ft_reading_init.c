@@ -1,15 +1,16 @@
 #include "../../../parsing.h"
 
-static int ft_get_start_pos(t_init *init, char *c)
+static int	ft_get_start_pos(t_init *init, char *c)
 {
-	int i;
-	int j;
+	int	i;
+	int	j;
 
 	i = 0;
 	while (init->file[i])
 	{
 		j = 0;
-		while (init->file[i][j] && (init->file[i][j] == ' ' || init->file[i][j] == '\t'))
+		while (init->file[i][j] && (init->file[i][j] == ' '
+				|| init->file[i][j] == '\t'))
 			j++;
 		if (ft_strncmp(init->file[i] + j, c, ft_strlen(c)) == 0)
 			return (i);
@@ -18,10 +19,11 @@ static int ft_get_start_pos(t_init *init, char *c)
 	return (-1);
 }
 
-int ft_get_data_init(t_init *init, t_data *data)
+int	ft_get_data_init(t_init *init, t_data *data)
 {
-	int i;
-	int j;
+	int	i;
+	int	j;
+	int	map;
 
 	ft_check_file(init);
 	i = ft_get_start_pos(init, "1");
@@ -31,7 +33,7 @@ int ft_get_data_init(t_init *init, t_data *data)
 	if (i == -1)
 		return (-1);
 	j = 0;
-	int map = init->file_lines - i;
+	map = init->file_lines - i;
 	while (ft_strncmp(init->file[--init->file_lines], "\n", 1) == -10)
 		map--;
 	init->map = (char **)ft_calloc((map + 1) * sizeof(char *));
@@ -46,12 +48,12 @@ int ft_get_data_init(t_init *init, t_data *data)
 	return (1);
 }
 
-int ft_get_coordinats_init(t_init *init, t_data *data)
+int	ft_get_coordinats_init(t_init *init, t_data *data)
 {
-	int no;
-	int so;
-	int we;
-	int ea;
+	int	no;
+	int	so;
+	int	we;
+	int	ea;
 
 	no = ft_get_start_pos(init, "NO");
 	so = ft_get_start_pos(init, "SO");
@@ -59,7 +61,6 @@ int ft_get_coordinats_init(t_init *init, t_data *data)
 	ea = ft_get_start_pos(init, "EA");
 	if (no == -1 || so == -1 || we == -1 || ea == -1)
 		return (-1);
-	// i need to check if if there is only one NO and one SO ... #done
 	init->coordinats = (char **)ft_calloc(5 * sizeof(char *));
 	if (!init->coordinats)
 		return (-1);
@@ -74,16 +75,15 @@ int ft_get_coordinats_init(t_init *init, t_data *data)
 	return (1);
 }
 
-int ft_get_colors_init(t_init *init)
+int	ft_get_colors_init(t_init *init)
 {
-	int f;
-	int c;
+	int	f;
+	int	c;
 
 	f = ft_get_start_pos(init, "F");
 	c = ft_get_start_pos(init, "C");
 	if (c == -1 || f == -1)
 		return (-1);
-	// i need to count if F is only 1 or if C is only one ..... #done
 	init->colors = (char **)ft_calloc(3 * sizeof(char *));
 	if (!init->colors)
 		return (-1);
