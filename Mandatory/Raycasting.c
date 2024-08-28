@@ -1,8 +1,8 @@
 #include "../recasting.h"
 
-void ft_draw_hero(t_cub *cube, t_vars *vars)
+void	ft_draw_hero(t_cub *cube, t_vars *vars)
 {
-	int a;
+	int	a;
 
 	a = 0;
 	vars->y_intercept = floor(cube->player->player_y / tile_size) * tile_size;
@@ -161,7 +161,7 @@ void	draw_lines(t_cub *cube, int is)
 	}
 }
 
-static void ft_error(void)
+static void	ft_error(void)
 {
 	fprintf(stderr, "%s\n", mlx_strerror(mlx_errno));
 	exit(EXIT_FAILURE);
@@ -347,7 +347,7 @@ void DDA(t_cub *cube, double X0, double Y0, double X1, double Y1)
 	i = 0;
 	while (i <= steps)
 	{
-		mlx_put_pixel(cube->image, X , Y, create_rgba(250, 100, 100 , 255));
+		mlx_put_pixel(cube->image, X, Y, create_rgba(250, 100, 100, 255));
 		X += Xinc;
 		Y += Yinc;
 		i++;
@@ -378,160 +378,10 @@ double normalizeAngle(double angle)
 	return (angle);
 }
 
-uint32_t ft_rgb(uint8_t r, uint8_t g, uint8_t b)
-{
-	return ((r << 24) | (g << 16) | (b << 8) | 0xFF);
-}
-
-uint32_t get_pixel_color(mlx_texture_t* texture, int x, int y)
-{
-	int	index;
-
-	if (x < 0 || x >= (int)texture->width || y < 0 || y >= (int)texture->height)
-		return (0);
-	index = (y * texture->width + x) * 4;
-	uint8_t* pixels = texture->pixels;
-	uint8_t r = pixels[index];
-	uint8_t g = pixels[index + 1];
-	uint8_t b = pixels[index + 2];
-	uint8_t a = pixels[index + 3];
-	return ((r << 24) | (g << 16) | (b << 8) | a);
-}
-
-// 3d
-
-void ft_draw_sky_floor(t_cub *cube)
-{
-	int i, j;
-	int	sky_end_y;
-	int	floor_start_y;
-
-	sky_end_y = HEIGHT / 2 - cube->player->player_z - cube->player->jump_var;
-	floor_start_y = HEIGHT / 2 - cube->player->player_z - cube->player->jump_var;
-	if (sky_end_y < 0)
-		sky_end_y = 0;
-	if (floor_start_y >= HEIGHT)
-		floor_start_y = HEIGHT - 1;
-	i = 0;
-	while (i < WIDTH)
-	{
-		j = 0;
-		while (j < HEIGHT)
-		{
-			if (j < sky_end_y)
-				mlx_put_pixel(cube->image, i, j, create_rgba(cube->data->sky.r, cube->data->sky.g, cube->data->sky.b, 255));
-			else if (j >= floor_start_y)
-				mlx_put_pixel(cube->image, i, j, create_rgba(cube->data->floor.r, cube->data->floor.g, cube->data->floor.b, 255));
-			++j;
-		}
-		++i;
-	}
-}
-
-void    ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i)
-{
-	mlx_texture_t* texture = cube->texture[textureNum];
-
-	double texturePosX = vars.wasHitVert ?
-		fmod(vars.wallHitY, tile_size) / tile_size :
-		fmod(vars.wallHitX, tile_size) / tile_size;
-	texturePosX = 1.0 - texturePosX;
-
-	int textureX = (int)(texturePosX * texture->width);
-	double texturePos = vars.textureOffsetY * vars.textureStep;
-	double shade = fmax(0.3, 1.0 - (vars.distance / 1000.0));
-
-	for (int y = vars.wallTopPixel; y < vars.wallBottomPixel && y < HEIGHT; y++)
-	{
-		int textureY = (int)(texturePos * texture->height) % texture->height;
-		texturePos += vars.textureStep;
-		uint32_t color = get_pixel_color(texture, textureX, textureY);
-		uint8_t r = ((color >> 24) & 0xFF) * shade;
-		uint8_t g = ((color >> 16) & 0xFF) * shade;
-		uint8_t b = ((color >> 8) & 0xFF) * shade;
-		uint32_t shaded_color = (r << 24) | (g << 16) | (b << 8) | (color & 0xFF);
-		if (!(vars.door && ((shaded_color & 0xFFFFFF00) == 0)) && y >= 0)
-		{
-			mlx_put_pixel(cube->image, i, y, shaded_color);
-		}
-	}
-}
-
-// Add this function to your code
-void draw_textured_floor(t_cub *cube)
-{
-	double dir_x = cos(cube->player->rotat_angle);
-	double dir_y = sin(cube->player->rotat_angle);
-	double plane_x = -dir_y;
-	double plane_y = dir_x;
-
-	for (int y = HEIGHT / 2 + 1; y < HEIGHT; y++)
-	{
-		int p = y - (HEIGHT / 2 + cube->player->player_z + cube->player->jump_var);
-
-		double pos_z = 0.5 * HEIGHT;
-
-		double row_distance = pos_z / p;
-
-		double step_x = row_distance * (dir_x + plane_x) / WIDTH;
-		double step_y = row_distance * (dir_y + plane_y) / WIDTH;
-
-		double floor_x = cube->player->player_x + row_distance * (dir_x - plane_x);
-		double floor_y = cube->player->player_y + row_distance * (dir_y - plane_y);
-
-		for(int x = 0; x < WIDTH; ++x)
-		{
-			int cell_x = (int)(floor_x);
-			int cell_y = (int)(floor_y);
-
-			int tx = (int)(cube->texture[0]->width * (floor_x - cell_x)) & (cube->texture[0]->width - 1);
-			int ty = (int)(cube->texture[0]->height * (floor_y - cell_y)) & (cube->texture[0]->height - 1);
-
-			floor_x += step_x;
-			floor_y += step_y;
-
-			uint32_t color = get_pixel_color(cube->texture[0], tx, ty);
-			mlx_put_pixel(cube->image, x, y, color);
-		}
-	}
-}
-
-
-
-void draw_lines_3D(t_cub* cube)
-{
-	double distanceProjPlane = (WIDTH / 2.0) / tan(FOV_ANGLE / 2);
-	double angle = cube->player->rotat_angle - FOV_ANGLE / 2.0;
-	double angleStep = FOV_ANGLE / WIDTH;
-
-	ft_draw_sky_floor(cube);
-
-	for (int i = 0; i < WIDTH; i++)
-	{
-		t_vars vars = draw_line(cube, angle, 0);
-
-		double wallDistance = vars.distance * cos(angle - cube->player->rotat_angle);
-		double wallStripHeight = (tile_size / wallDistance) * distanceProjPlane;
-
-		vars.wallTopPixel = (HEIGHT / 2.0) - (wallStripHeight / 2.0) - cube->player->player_z - cube->player->jump_var;
-		vars.wallBottomPixel = fmin((HEIGHT / 2.0) + (wallStripHeight / 2.0) - cube->player->player_z - cube->player->jump_var, HEIGHT);
-
-		vars.textureStep = 1.0 / wallStripHeight;
-		vars.textureOffsetY = 0;
-
-		int textureNum = vars.wasHitVert ?
-			(vars.isRayFacingLeft ? 2 : 3) :
-			(vars.isRayFacingUp ? 0 : 1);
-
-		ft_get_texture(cube, vars, textureNum, i);
-		angle += angleStep;
-	}
-}
-
 // hooks
 void my_keyhook(mlx_key_data_t keydata, void* param)
 {
-	t_cub * cube = param;
+	t_cub	*cube = param;
 
 	(void)keydata;
 	(void)param;
@@ -639,10 +489,7 @@ void loop_fun(void* param)
 	cube = (t_cub *)param;
 	update_player(cube);
 	mlx_get_mouse_pos(cube->mlx, &xpos, &ypos);
-
-
-	draw_lines_3D(cube);
-
+	draw_lines_3d(cube);
 	if (xpos != WIDTH / 2 && ypos != HEIGHT / 2 && cube->player->start == 0)
 	{
 		mlx_set_mouse_pos(cube->mlx, WIDTH / 2, HEIGHT / 2);
