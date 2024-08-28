@@ -170,7 +170,7 @@ void	ft_fractol_init(t_cub *cube)
 	cube->player = init_player(cube);
 }
 
-void	my_keyhook(mlx_key_data_t keydata, void* param)
+void	my_keyhook(mlx_key_data_t keydata, void *param)
 {
 	t_cub	*cube;
 
@@ -221,37 +221,47 @@ void	my_keyhook(mlx_key_data_t keydata, void* param)
 
 void	handle_mouse(t_cub *cube)
 {
-	static int32_t prev_xpos = WIDTH / 2;
-	int32_t xpos, ypos;
-	double sensitivity = 0.001;
+	static int32_t	prev_xpos;
+	int32_t			xpos;
+	int32_t			ypos;
+	int32_t			delta_x;
 
+	prev_xpos = WIDTH / 2;
 	mlx_get_mouse_pos(cube->mlx, &xpos, &ypos);
 	if (xpos < 0 || xpos > WIDTH || ypos < 0 || ypos > HEIGHT)
 		return ;
-	int32_t delta_x = xpos - prev_xpos;
-	cube->player->rotat_angle += delta_x * sensitivity;
+	delta_x = xpos - prev_xpos;
+	cube->player->rotat_angle += delta_x * 0.001;
 	mlx_set_mouse_pos(cube->mlx, WIDTH / 2, HEIGHT / 2);
 	mlx_set_cursor_mode(cube->mlx, MLX_MOUSE_HIDDEN);
 }
 
 void	update_player(t_cub *cube)
 {
-	int move_speed = cube->player->move_speed;
+	int		move_speed;
 	double	new_player_x;
 	double	new_player_y;
+	double	movestep;
 
+	move_speed = cube->player->move_speed;
 	cube->player->rotat_angle = normalizeAngle(cube->player->rotat_angle);
-	cube->player->rotat_angle += (double)cube->player->turn_direction * cube->player->rotation_speed;
+	cube->player->rotat_angle += (double)cube->player->turn_direction
+		* cube->player->rotation_speed;
 	while (move_speed--)
 	{
-		double movestep = (double)cube->player->walk_direction * move_speed;
-		new_player_x = cube->player->player_x + movestep * cos(cube->player->rotat_angle);
-		new_player_y = cube->player->player_y + movestep * sin(cube->player->rotat_angle);
-
+		movestep = (double)cube->player->walk_direction * move_speed;
+		new_player_x = cube->player->player_x
+			+ movestep * cos(cube->player->rotat_angle);
+		new_player_y = cube->player->player_y
+			+ movestep * sin(cube->player->rotat_angle);
 		if (cube->player->strafe_direction != 0)
 		{
-			new_player_x += (double)cube->player->strafe_direction * (move_speed / 1.5) * cos(cube->player->rotat_angle + M_PI / 2);
-			new_player_y += (double)cube->player->strafe_direction * (move_speed / 1.5) * sin(cube->player->rotat_angle + M_PI / 2);
+			new_player_x += (double)cube->player->strafe_direction
+				* (move_speed / 1.5)
+				* cos(cube->player->rotat_angle + M_PI / 2);
+			new_player_y += (double)cube->player->strafe_direction
+				* (move_speed / 1.5)
+				* sin(cube->player->rotat_angle + M_PI / 2);
 		}
 		if (is_it_a_wall(new_player_x, new_player_y, cube))
 		{
