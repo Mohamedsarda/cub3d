@@ -31,6 +31,7 @@ void	ft_lstaddback_doors(t_doors **head, t_doors *node)
 		last = last->next;
 	last->next = node;
 }
+
 int	ft_doors_size(t_doors *head)
 {
 	int	i;
@@ -43,12 +44,14 @@ int	ft_doors_size(t_doors *head)
 	}
 	return (i);
 }
+
 void	ft_lstdel_doors(t_doors *lst)
 {
 	if (!lst)
 		return ;
 	free(lst);
 }
+
 void	ft_lstclear_doors(t_doors **lst)
 {
 	t_doors	*cur;

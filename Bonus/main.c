@@ -1,6 +1,9 @@
 #include "../recasting.h"
 #include "../parsing.h"
 
+#include "../recasting.h"
+#include "../parsing.h"
+
 void	ft_check_line(char *tmp, int i)
 {
 	if (ft_strncmp(tmp, "1", 1)
@@ -73,6 +76,7 @@ void	ft_cube_func(t_cub *cube)
 	cube->data->width = cube->data->map_cols * tile_size;
 	ft_fractol_init(cube);
 	mlx_key_hook(cube->mlx, &my_keyhook, cube);
+	mlx_mouse_hook(cube->mlx, &my_mousehook, cube);
 	mlx_loop_hook(cube->mlx, loop_fun, cube);
 	mlx_loop(cube->mlx);
 }

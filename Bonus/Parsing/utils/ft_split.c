@@ -56,7 +56,7 @@ static char	**ft_putword(char *str, char c, char p, char **dst)
 
 	i = 0;
 	len = 0;
-    words = ft_words_counter(str, c, p);
+	words = ft_words_counter(str, c, p);
 	while (i < words)
 	{
 		while (*str == c || *str == p)

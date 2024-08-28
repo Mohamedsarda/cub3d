@@ -3,9 +3,9 @@ CFLAGS	=   -pthread  -Wall -Wextra -Werror  -Wunreachable-code -Ofast #-g  -fsan
 RM		= rm -rf
 SRCS	= main.c 	./Parsing/parsing.c	\
 		  ./Parsing/init/ft_get_init.c		./Parsing/init/ft_reading_init.c\
-		  ./Parsing/utils/file_1.c	./Parsing/utils/ft_split.c	./Parsing/utils/get_next_line.c	./Parsing/utils/get_next_line_utils.c\
-		  ./Parsing/error/error_1.c \
-		  Raycasting.c
+		  ./Parsing/utils/file_1.c ./Parsing/utils/file_2.c	./Parsing/utils/ft_split.c	./Parsing/utils/get_next_line.c	./Parsing/utils/get_next_line_utils.c\
+		  ./Parsing/error/error_1.c ./Parsing/utils/ft_colors.c ./Parsing/utils/ft_map.c ./Parsing/utils/ft_map_1.c ./Parsing/utils/ft_map_2.c\
+		  Raycasting.c Wall.c SkyFloor.c Draw.c Extra.c Player.c isWall.c
 
 OBJS	= $(SRCS:.c=.o)
 NAME	= cub3D

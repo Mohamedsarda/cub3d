@@ -19,9 +19,7 @@
 //check 3D
 # define WIDTH 2000
 # define HEIGHT 1000
-
 # define tile_size 64
-
 # define FOV_ANGLE M_PI / 3
 # define WALL_STRIP_WIDTH 1
 # define NUM_RAYS WIDTH
@@ -50,6 +48,15 @@ typedef struct s_doors
 	int				state;
 	struct s_doors	*next;
 }	t_doors;
+
+typedef struct s_vars_3d
+{
+	double	distanceprojplane;
+	double	angle;
+	double	anglestep;
+	double	walldistance;
+	double	wallstripheight;
+}	t_vars_3d;
 
 typedef struct s_img
 {
@@ -186,6 +193,25 @@ typedef struct s_threads
 	pthread_t	thread;
 }		t_threads;
 
+typedef struct s_text_vars
+{
+	mlx_texture_t	*texture;
+	double			texture_pos_x;
+	double			texture_pos;
+	double			shade;
+	int				texture_x;
+	int				texture_y;
+}		t_text_vars;
+
+typedef struct s_pixel_vars
+{
+	uint8_t	*pixels;
+	uint8_t	r;
+	uint8_t	g;
+	uint8_t	b;
+	uint8_t	a;
+}		t_pixel_vars;
+
 typedef struct s_cub
 {
 	char			**map;
@@ -236,11 +262,43 @@ void	draw_lines(t_cub *cube, int is);
 double	normalizeAngle(double angle);
 
 void	ft_draw_player(t_cub *cube);
-void	my_mousehook(mouse_key_t button, action_t action, modifier_key_t mods, void *param);
+void	my_mousehook(mouse_key_t button, action_t action,
+			modifier_key_t mods, void *param);
 ///
 t_doors	*ft_lstnew_doors(int x, int y);
 void	ft_lstaddback_doors(t_doors **head, t_doors *node);
 int		ft_doors_size(t_doors *head);
 void	ft_lstdel_doors(t_doors *lst);
 void	ft_lstclear_doors(t_doors **lst);
+
+//wall 
+void	draw_lines_3d(t_cub *cube);
+uint32_t	get_pixel_color(mlx_texture_t *texture, int x, int y);
+
+// sky floor
+void	ft_draw_sky_floor_1(t_cub *cube, int i,
+			int sky_end_y, int floor_start_y);
+void	ft_draw_sky_floor(t_cub *cube);
+
+//Draw 
+void	draw_cube(t_cub *cube, int x, int y, int color);
+void	draw_all_black(t_cub *cube);
+
+// raycastin
+void	update_player(t_cub *cube);
+void	handle_mouse(t_cub *cube);
+
+//extra
+double	distance_between_points(double x1, double y1, double x2, double y2);
+void	ft_error(void);
+void	ft_free_data(t_cub *cube);
+void	malloc_error(void);
+double	deg2rad(double degrees);
+
+// iswall
+int		is_it_a_wall(double x, double y, t_cub *cube);
+
+// player
+t_player	*init_player(t_cub *cube);
+
 #endif
