@@ -2,24 +2,28 @@
 
 int	is_it_a_wall(double x, double y, t_cub *cube)
 {
-	double	left = x - ((double)cube->player->radius);
-	double	up = y - ((double)cube->player->radius);
-	double	right = x + ((double)cube->player->radius);
-	double	down = y + ((double)cube->player->radius);
+	double	left;
+	double	up;
+	double	right;
+	double	down;
 
+	left = x - ((double)cube->player->radius);
+	up = y - ((double)cube->player->radius);
+	right = x + ((double)cube->player->radius);
+	down = y + ((double)cube->player->radius);
 	if (left < 0 || right > cube->data->map_cols * tile_size
 		|| up < 0 || down > cube->data->map_row * tile_size)
 		return (0);
 
-	int  t_left = floor(left / tile_size);
-	int  t_up = floor(up / tile_size);
-	int  t_right = floor(right / tile_size);
-	int  t_down = floor(down / tile_size);
+	left = floor(left / tile_size);
+	up = floor(up / tile_size);
+	right = floor(right / tile_size);
+	down = floor(down / tile_size);
 
-	if (cube->data->map[t_up][t_left] == '1'
-		|| cube->data->map[t_down][t_right] == '1'
-		|| cube->data->map[t_up][t_right] == '1'
-		|| cube->data->map[t_down][t_left] == '1')
+	if (cube->data->map[(int)up][(int)left] == '1'
+		|| cube->data->map[(int)down][(int)right] == '1'
+		|| cube->data->map[(int)up][(int)right] == '1'
+		|| cube->data->map[(int)down][(int)left] == '1')
 		return (0);
 	return (1);
 }
