@@ -280,4 +280,25 @@ void	ft_draw_sky_floor_1(t_cub *cube, int i,
 			int sky_end_y, int floor_start_y);
 void	ft_draw_sky_floor(t_cub *cube);
 
+//Draw 
+void	draw_cube(t_cub *cube, int x, int y, int color);
+void	draw_all_black(t_cub *cube);
+
+// raycastin
+void	update_player(t_cub *cube);
+void	handle_mouse(t_cub *cube);
+
+//extra
+double	distance_between_points(double x1, double y1, double x2, double y2);
+void	ft_error(void);
+void	ft_free_data(t_cub *cube);
+void	malloc_error(void);
+double	deg2rad(double degrees);
+
+// iswall
+int		is_it_a_wall(double x, double y, t_cub *cube);
+
+// player
+t_player	*init_player(t_cub *cube);
+
 #endif
