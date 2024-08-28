@@ -120,12 +120,12 @@ typedef struct s_texture
 
 typedef struct s_vars
 {
-	int		isRayFacingDown;
-	int		isRayFacingUp;
-	int		isRayFacingRight;
-	int		isRayFacingLeft;
-	int		foundHorzWallHit;
-	int		foundVertWallHit;
+	int		israyfacingdown;
+	int		israyfacingup;
+	int		israyfacingright;
+	int		israyfacingleft;
+	int		foundhorzwallhit;
+	int		foundvertwallhit;
 
 	double	y_intercept;
 	double	x_intercept;
@@ -133,34 +133,34 @@ typedef struct s_vars
 	double	ystep;
 	double	xstep;
 
-	double	nextHorzTouchX;
-	double	nextHorzTouchY;
+	double	nexthorztouchx;
+	double	nexthorztouchy;
 
-	double	horzWallHitX;
-	double	horzWallHitY;
+	double	horzwallhitx;
+	double	horzwallhity;
 
-	double	vertWallHitX;
-	double	vertWallHitY;
+	double	vertwallhitx;
+	double	vertwallhity;
 
-	double	nextVertTouchX;
-	double	nextVertTouchY;
+	double	nextverttouchx;
+	double	nextverttouchy;
 
-	double	horzHitDistance;
-	double	vertHitDistance;
+	double	horzhitdistance;
+	double	verthitdistance;
 
-	double	wallHitX;
-	double	wallHitY;
+	double	wallhitx;
+	double	wallhity;
 
 	double	distance;
-	int		wasHitVert;
+	int		washitvert;
 
 	double	angle;
 
 	int		textureNum;
-	double	textureStep;
-	double	textureOffsetY;
-	double	wallBottomPixel;
-	double	wallTopPixel;
+	double	texturestep;
+	double	textureoffsety;
+	double	wallbottompixel;
+	double	walltoppixel;
 	int		door;
 }	t_vars;
 
