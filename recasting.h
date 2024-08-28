@@ -19,9 +19,7 @@
 //check 3D
 # define WIDTH 2000
 # define HEIGHT 1000
-
 # define tile_size 64
-
 # define FOV_ANGLE M_PI / 3
 # define WALL_STRIP_WIDTH 1
 # define NUM_RAYS WIDTH
@@ -236,7 +234,8 @@ void	draw_lines(t_cub *cube, int is);
 double	normalizeAngle(double angle);
 
 void	ft_draw_player(t_cub *cube);
-void	my_mousehook(mouse_key_t button, action_t action, modifier_key_t mods, void *param);
+void	my_mousehook(mouse_key_t button, action_t action,
+			modifier_key_t mods, void *param);
 ///
 t_doors	*ft_lstnew_doors(int x, int y);
 void	ft_lstaddback_doors(t_doors **head, t_doors *node);
