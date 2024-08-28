@@ -49,6 +49,15 @@ typedef struct s_doors
 	struct s_doors	*next;
 }	t_doors;
 
+typedef struct s_vars_3d
+{
+	double	distanceprojplane;
+	double	angle;
+	double	anglestep;
+	double	walldistance;
+	double	wallstripheight;
+}	t_vars_3d;
+
 typedef struct s_img
 {
 	void	*img_ptr;
@@ -184,6 +193,25 @@ typedef struct s_threads
 	pthread_t	thread;
 }		t_threads;
 
+typedef struct s_text_vars
+{
+	mlx_texture_t	*texture;
+	double			texture_pos_x;
+	double			texture_pos;
+	double			shade;
+	int				texture_x;
+	int				texture_y;
+}		t_text_vars;
+
+typedef struct s_pixel_vars
+{
+	uint8_t	*pixels;
+	uint8_t	r;
+	uint8_t	g;
+	uint8_t	b;
+	uint8_t	a;
+}		t_pixel_vars;
+
 typedef struct s_cub
 {
 	char			**map;
@@ -242,4 +270,14 @@ void	ft_lstaddback_doors(t_doors **head, t_doors *node);
 int		ft_doors_size(t_doors *head);
 void	ft_lstdel_doors(t_doors *lst);
 void	ft_lstclear_doors(t_doors **lst);
+
+//wall 
+void	draw_lines_3d(t_cub *cube);
+uint32_t	get_pixel_color(mlx_texture_t *texture, int x, int y);
+
+// sky floor
+void	ft_draw_sky_floor_1(t_cub *cube, int i,
+			int sky_end_y, int floor_start_y);
+void	ft_draw_sky_floor(t_cub *cube);
+
 #endif
