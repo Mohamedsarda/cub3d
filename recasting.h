@@ -301,4 +301,8 @@ int		is_it_a_wall(double x, double y, t_cub *cube);
 // player
 t_player	*init_player(t_cub *cube);
 
+// draw hero
+void	ft_draw_hero(t_cub *cube, t_vars *vars);
+void	ft_draw_ver(t_cub *cube, t_vars *vars);
+
 #endif
