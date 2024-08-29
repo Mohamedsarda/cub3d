@@ -259,7 +259,7 @@ void	DDA(t_cub *cube, double X0, double Y0, double X1, double Y1);
 int		has_wall(t_cub *cube, double x1, double y1, int is);
 t_vars	draw_line(t_cub *cube, double angle, int is);
 void	draw_lines(t_cub *cube, int is);
-double	normalizeAngle(double angle);
+double	normalize_angle(double angle);
 
 void	ft_draw_player(t_cub *cube);
 void	my_mousehook(mouse_key_t button, action_t action,
