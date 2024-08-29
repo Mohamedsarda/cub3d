@@ -1,5 +1,34 @@
 #include "../recasting.h"
 
+void	ft_fractol_init(t_cub *cube)
+{
+	int		i;
+	char	*texture_files[4];
+
+	i = 0;
+	texture_files[0] = cube->data->no;
+	texture_files[1] = cube->data->so;
+	texture_files[2] = cube->data->we;
+	texture_files[3] = cube->data->ea;
+	cube->mlx = mlx_init(WIDTH, HEIGHT, "42Balls", true);
+	if (!cube->mlx)
+		ft_error();
+	cube->image = mlx_new_image(cube->mlx, WIDTH, HEIGHT);
+	if (!cube->image || (mlx_image_to_window(cube->mlx, cube->image, 0, 0) < 0))
+		ft_error();
+	while (i < 4)
+	{
+		cube->texture[i] = mlx_load_png(texture_files[i]);
+		if (!cube->texture[i])
+			ft_error();
+		cube->img[i] = mlx_texture_to_image(cube->mlx, cube->texture[i]);
+		if (!cube->img[i])
+			ft_error();
+		i++;
+	}
+	cube->player = init_player(cube);
+}
+
 static void	ft_ver_calc(t_cub *cube, t_vars *vars)
 {
 	vars->foundvertwallhit = 0;

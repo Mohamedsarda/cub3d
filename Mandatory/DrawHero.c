@@ -1,5 +1,10 @@
 #include "../recasting.h"
 
+int	create_rgba(int r, int g, int b, int a)
+{
+	return ((r << 24) | (g << 16) | (b << 8) | a);
+}
+
 static void	ft_hero_calc(t_cub *cube, t_vars *vars)
 {
 	vars->y_intercept = floor(cube->player->player_y / tile_size) * tile_size;

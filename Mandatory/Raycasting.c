@@ -52,7 +52,8 @@ t_vars	draw_line(t_cub *cube, double angle, int is)
 	int		x;
 	int		y;
 
-	vars.angle = normalizeAngle(angle);
+	(void)is;
+	vars.angle = normalize_angle(angle);
 	ft_init_rays(&vars);
 	ft_draw_hero(cube, &vars);
 	ft_draw_ver(cube, &vars);
@@ -63,8 +64,5 @@ t_vars	draw_line(t_cub *cube, double angle, int is)
 	vars.door = 0;
 	if (cube->data->map[y][x] == 'D')
 		vars.door = 1;
-	if (is == 1)
-		DDA(cube, cube->player->player_x, cube->player->player_y,
-			vars.wallhitx, vars.wallhity);
 	return (vars);
 }

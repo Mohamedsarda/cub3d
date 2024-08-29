@@ -144,7 +144,7 @@ t_vars draw_line(t_cub *cube, double angle, int is)
 {
     (void)is;
     t_vars vars;
-    vars.angle = normalizeAngle(angle);
+    vars.angle = normalize_angle(angle);
 
     vars.israyfacingdown = vars.angle > 0 && vars.angle < M_PI;
     vars.israyfacingup = !vars.israyfacingdown;

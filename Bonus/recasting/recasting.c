@@ -400,7 +400,7 @@ void DDA(t_cub *cube, double X0, double Y0, double X1, double Y1)
 	}
 }
 
-double normalizeAngle(double angle)
+double normalize_angle(double angle)
 {
 	angle = fmod(angle, 2 * M_PI);
 	if (angle < 0)
@@ -1056,7 +1056,7 @@ void update_player(t_cub *cube)
 		cube->player->move_speed = 2;
 
 	int move_speed = cube->player->move_speed;
-	cube->player->rotat_angle = normalizeAngle(cube->player->rotat_angle);
+	cube->player->rotat_angle = normalize_angle(cube->player->rotat_angle);
 	cube->player->rotat_angle += (double)cube->player->turn_direction * cube->player->rotation_speed;
 
 	while (move_speed--)
