@@ -38,7 +38,7 @@ void	DDA(t_cub *cube, double X0, double Y0, double X1, double Y1)
 	i = 0;
 	while (i <= steps)
 	{
-		mlx_put_pixel(cube->image, X, Y, create_rgba(250, 100, 100, 255));
+		mlx_put_pixel(cube->image, X, Y, c_rgba(250, 100, 100, 255));
 		X += Xinc;
 		Y += Yinc;
 		i++;

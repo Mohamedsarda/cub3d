@@ -1,9 +1,6 @@
 #include "../recasting.h"
 #include "../parsing.h"
 
-#include "../recasting.h"
-#include "../parsing.h"
-
 void	ft_check_line(char *tmp, int i)
 {
 	if (ft_strncmp(tmp, "1", 1)
