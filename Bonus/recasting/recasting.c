@@ -1,12 +1,12 @@
 #include "../../recasting.h"
 
-static void ft_error(void)
+void	ft_error(void)
 {
 	fprintf(stderr, "%s\n", mlx_strerror(mlx_errno));
 	exit(EXIT_FAILURE);
 }
 
-void    ft_free_data(t_cub *cube)
+void	ft_free_data(t_cub *cube)
 {
 	free_double_arr(cube->data->map);
 	free(cube->data->ea);
@@ -24,15 +24,15 @@ void	malloc_error(void)
 
 double deg2rad(double degrees)
 {
-	return degrees * (M_PI / 180.0);
+	return (degrees * (M_PI / 180.0));
 }
 
-void ft_get_player_pos(t_player *player , t_cub *cube)
+void	ft_get_player_pos(t_player *player, t_cub *cube)
 {
-	int x;
-	int y;
-	t_doors *head;
-	t_doors *new;
+	int		x;
+	int		y;
+	t_doors	*head;
+	t_doors	*new;
 
 	y = -1;
 	head = NULL;
@@ -56,31 +56,8 @@ void ft_get_player_pos(t_player *player , t_cub *cube)
 	cube->doors_locations = head;
 }
 
-t_player *init_player(t_cub *cube)
+void	init_player_1(t_cub *cube, t_player *player)
 {
-	t_player *player;
-
-	player = (t_player *)ft_calloc(sizeof(t_player));
-	if (!player)
-		malloc_error();
-	ft_get_player_pos(player, cube);
-	player->radius = 10;
-	player->move_speed = 0;
-	if (cube->data->p == 'W')
-		player->rotat_angle = deg2rad(180);  // Initialize in radians
-	else if (cube->data->p == 'S')
-		player->rotat_angle = deg2rad(90);  // Initialize in radians
-	else if (cube->data->p == 'N')
-		player->rotat_angle = deg2rad(270);  // Initialize in radians
-	else if (cube->data->p == 'E')
-		player->rotat_angle = deg2rad(0);  // Initialize in radians
-	player->rotation_speed = 0.04;
-	player->turn_direction = 0;
-	player->strafe_direction = 0;
-	player->walk_direction = 0;
-	player->player_z = 0;
-	player->start = 0;
-	player->jump = 0;
 	player->minimap = 1;
 	player->tab = 0;
 	player->jump_var = 0;
@@ -95,12 +72,40 @@ t_player *init_player(t_cub *cube)
 	player->shift = 1;
 	player->open = 1;
 	cube->right_press = 0;
+}
+
+t_player	*init_player(t_cub *cube)
+{
+	t_player	*player;
+
+	player = (t_player *)ft_calloc(sizeof(t_player));
+	if (!player)
+		malloc_error();
+	ft_get_player_pos(player, cube);
+	player->radius = 10;
+	player->move_speed = 0;
+	if (cube->data->p == 'W')
+		player->rotat_angle = deg2rad(180);
+	else if (cube->data->p == 'S')
+		player->rotat_angle = deg2rad(90);
+	else if (cube->data->p == 'N')
+		player->rotat_angle = deg2rad(270);
+	else if (cube->data->p == 'E')
+		player->rotat_angle = deg2rad(0);
+	player->rotation_speed = 0.04;
+	player->turn_direction = 0;
+	player->strafe_direction = 0;
+	player->walk_direction = 0;
+	player->player_z = 0;
+	player->start = 0;
+	player->jump = 0;
+	init_player_1(cube, player);
 	return (player);
 }
 
-int create_rgba(int r, int g, int b, int a)
+int	c_rgba(int r, int g, int b, int a)
 {
-	return (r << 24) | (g << 16) | (b << 8) | a;
+	return ((r << 24) | (g << 16) | (b << 8) | a);
 }
 
 static char	*zero(void)
@@ -175,7 +180,7 @@ char	*ft_itoa(int n)
 	return (res);
 }
 
-void    ft_load_doors(t_cub *cube, int i, char *path)
+void	ft_load_doors(t_cub *cube, int i, char *path)
 {
 	cube->doors[i] = mlx_load_png(path);
 	if (!cube->doors[i])
@@ -187,82 +192,76 @@ void    ft_load_doors(t_cub *cube, int i, char *path)
 
 void ft_fractol_init(t_cub *cube)
 {
-    cube->mlx = mlx_init(WIDTH, HEIGHT, "42Balls", true);
-    if (!cube->mlx)
-        ft_error();
-    cube->image = mlx_new_image(cube->mlx, WIDTH, HEIGHT);
-    if (!cube->image || (mlx_image_to_window(cube->mlx, cube->image, 0, 0) < 0))
-        ft_error();
+	cube->mlx = mlx_init(WIDTH, HEIGHT, "42Balls", true);
+	if (!cube->mlx)
+		ft_error();
+	cube->image = mlx_new_image(cube->mlx, WIDTH, HEIGHT);
+	if (!cube->image || (mlx_image_to_window(cube->mlx, cube->image, 0, 0) < 0))
+		ft_error();
+	char **guns = (char **)ft_calloc(sizeof(char *) * (Y_CLICK + R_CLICK + 1));
+	if (!guns)
+		return ;
+	int i = 0;
+	while (i < Y_CLICK + R_CLICK)
+	{
+		char *tmp = ft_strdup("../Textures/png/guns_0/");
+		char *num = ft_itoa(i);
+		char *str = ft_strjoin(tmp, num);
+		str = ft_strjoin(str, ".png");
+		guns[i] = str;
+		i++;
+		free(num);
+	}
+	guns[i] = NULL;
 
-    // Load and display textures
-    char **guns = (char **)ft_calloc(sizeof(char *) * (Y_CLICK + R_CLICK + 1));
-    if (!guns)
-        return;
-
-    // Load gun texture file paths
-    int i = 0;
-    while (i < Y_CLICK + R_CLICK)
-    {
-        char *tmp = ft_strdup("../Textures/png/guns_0/");
-        char *num = ft_itoa(i);
-        char *str = ft_strjoin(tmp, num);
-        str = ft_strjoin(str, ".png");
-        guns[i] = str;
-        i++;
-        free(num);
-    }
-    guns[i] = NULL;
-
-    // Load gun textures
-    i = 0;
-    while (i < Y_CLICK)
-    {
-        cube->gun[i] = mlx_load_png(guns[i]);
-        if (!cube->gun[i])
-            ft_error();
-        if (i < 2)
+	i = 0;
+	while (i < Y_CLICK)
+	{
+		cube->gun[i] = mlx_load_png(guns[i]);
+		if (!cube->gun[i])
+			ft_error();
+		if (i < 2)
 		{
 			cube->gun_img[i] = mlx_texture_to_image(cube->mlx, cube->gun[i]);
 			if (!cube->gun_img[i])
 				ft_error();
 		}
-        i++;
-    }
+		i++;
+	}
 
-    int k = 0;
-    while (guns[i])
-    {
-        cube->gun_r[k] = mlx_load_png(guns[i]);
-        if (!cube->gun_r[k])
-            ft_error();
+	int k = 0;
+	while (guns[i])
+	{
+		cube->gun_r[k] = mlx_load_png(guns[i]);
+		if (!cube->gun_r[k])
+			ft_error();
 		if (k < 2)
-        {
+		{
 			cube->gun_r_img[k] = mlx_texture_to_image(cube->mlx, cube->gun_r[k]);
 			if (!cube->gun_r_img[k])
 				ft_error();
 		}
-        k++;
-        i++;
-    }
+		k++;
+		i++;
+	}
 
-    free_double_arr(guns);
+	free_double_arr(guns);
 
-    // Load other textures
-    ft_load_doors(cube, 0, "../Textures/Doors/tile000.png");
-    char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea};
-    i = 0;
-    while (i < 4)
-    {
-        cube->texture[i] = mlx_load_png(texture_files[i]);
-        if (!cube->texture[i])
-            ft_error();
-        cube->img[i] = mlx_texture_to_image(cube->mlx, cube->texture[i]);
-        if (!cube->img[i])
-            ft_error();
-        i++;
-    }
+	ft_load_doors(cube, 0, "../Textures/Doors/tile000.png");
+	char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea};
+	i = 0;
+	while (i < 4)
+	{
+		cube->texture[i] = mlx_load_png(texture_files[i]);
+		if (!cube->texture[i])
+			ft_error();
+		cube->img[i] = mlx_texture_to_image(cube->mlx, cube->texture[i]);
+		if (!cube->img[i])
+			ft_error();
+		i++;
+	}
 
-    cube->player = init_player(cube);
+	cube->player = init_player(cube);
 }
 
 void    draw_cube(t_cub *cube, int x, int y, int color)
@@ -275,7 +274,8 @@ void    draw_cube(t_cub *cube, int x, int y, int color)
 	{
 		i = -1;
 		while (++i < tile_size)
-			mlx_put_pixel(cube->image,  (x * tile_size) + i ,  (y * tile_size) + j, color);
+			mlx_put_pixel(cube->image, (x * tile_size) + i,
+				(y * tile_size) + j, color);
 	}
 	return ;
 }
@@ -292,7 +292,7 @@ void	draw_all_black(t_cub *cube)
 	{
 		x = -1;
 		while (++x < WIDTH)
-			mlx_put_pixel(cube->image, x, y, create_rgba(0, 0, 0, 150));
+			mlx_put_pixel(cube->image, x, y, c_rgba(0, 0, 0, 150));
 	}
 }
 // end all_black
@@ -317,7 +317,7 @@ void	draw_all_black(t_cub *cube)
 // 	return (p);
 // }
 
-int is_it_a_wall(double x, double y, t_cub *cube)
+int	is_it_a_wall(double x, double y, t_cub *cube)
 {
 	double left;
 	double up;
@@ -381,7 +381,7 @@ int is_it_a_wall(double x, double y, t_cub *cube)
 // 	}
 // }
 
-void DDA(t_cub *cube, double X0, double Y0, double X1, double Y1)
+void	DDA(t_cub *cube, double X0, double Y0, double X1, double Y1)
 {
 	double dx = X1 - X0;
 	double dy = Y1 - Y0;
@@ -393,32 +393,35 @@ void DDA(t_cub *cube, double X0, double Y0, double X1, double Y1)
 	int i = 0;
 	while (i <= steps)
 	{
-		mlx_put_pixel(cube->image, X , Y, create_rgba(250, 100, 100 , 255));
+		mlx_put_pixel(cube->image, X , Y, c_rgba(250, 100, 100 , 255));
 		X += Xinc;
 		Y += Yinc;
 		i++;
 	}
 }
 
-double normalizeAngle(double angle)
+double	normalizeAngle(double angle)
 {
 	angle = fmod(angle, 2 * M_PI);
 	if (angle < 0)
 		angle += 2 * M_PI;
-	return angle;
+	return (angle);
 }
 
-uint32_t ft_rgb(uint8_t r, uint8_t g, uint8_t b)
+uint32_t	ft_rgb(uint8_t r, uint8_t g, uint8_t b)
 {
-	return (r << 24) | (g << 16) | (b << 8) | 0xFF;
+	return ((r << 24) | (g << 16) | (b << 8) | 0xFF);
 }
 
-uint32_t get_pixel_color(mlx_texture_t* texture, int x, int y)
+uint32_t	get_pixel_color(mlx_texture_t* texture, int x, int y)
 {
+	int		index;
+	uint8_t	*pixels;
+
 	if (x < 0 || x >= (int)texture->width || y < 0 || y >= (int)texture->height)
-		return 0;
-	int index = (y * texture->width + x) * 4;
-	uint8_t* pixels = texture->pixels;
+		return (0);
+	index = (y * texture->width + x) * 4;
+	pixels = texture->pixels;
 
 	uint8_t r = pixels[index];
 	uint8_t g = pixels[index + 1];
@@ -431,17 +434,17 @@ uint32_t get_pixel_color(mlx_texture_t* texture, int x, int y)
 
 void ft_draw_sky_floor(t_cub *cube)
 {
-	int i;
-	int j;
-	int sky_end_y;
-	int floor_start_y;
+	int	i;
+	int	j;
+	int	sky_end_y;
+	int	floor_st_y;
 
 	sky_end_y = HEIGHT / 2 - cube->player->player_z - cube->player->jump_var;
-	floor_start_y = HEIGHT / 2 - cube->player->player_z - cube->player->jump_var;
+	floor_st_y = HEIGHT / 2 - cube->player->player_z - cube->player->jump_var;
 	if (sky_end_y < 0)
 		sky_end_y = 0;
-	if (floor_start_y >= HEIGHT)
-		floor_start_y = HEIGHT - 1;
+	if (floor_st_y >= HEIGHT)
+		floor_st_y = HEIGHT - 1;
 	i = 0;
 	while (i < WIDTH)
 	{
@@ -449,26 +452,30 @@ void ft_draw_sky_floor(t_cub *cube)
 		while (j < HEIGHT)
 		{
 			if (j < sky_end_y)
-				mlx_put_pixel(cube->image, i, j, create_rgba(cube->data->sky.r, cube->data->sky.g, cube->data->sky.b, 255));
-			else if (j >= floor_start_y)
-				mlx_put_pixel(cube->image, i, j, create_rgba(cube->data->floor.r, cube->data->floor.g, cube->data->floor.b, 255));
+				mlx_put_pixel(cube->image, i, j, c_rgba(cube->data->sky.r, cube->data->sky.g, cube->data->sky.b, 255));
+			else if (j >= floor_st_y)
+				mlx_put_pixel(cube->image, i, j, c_rgba(cube->data->floor.r, cube->data->floor.g, cube->data->floor.b, 255));
 			++j;
 		}
 		++i;
 	}
 }
 
-uint32_t ft_shaded_color(uint32_t color, double shade)
+uint32_t	ft_shaded_color(uint32_t color, double shade)
 {
-	uint8_t r = ((color >> 24) & 0xFF) * shade;
-	uint8_t g = ((color >> 16) & 0xFF) * shade;
-	uint8_t b = ((color >> 8) & 0xFF) * shade;
-	return (r << 24) | (g << 16) | (b << 8) | (color & 0xFF);
+	uint8_t	r;
+	uint8_t	g;
+	uint8_t	b;
+
+	r = ((color >> 24) & 0xFF) * shade;
+	g = ((color >> 16) & 0xFF) * shade;
+	b = ((color >> 8) & 0xFF) * shade;
+	return ((r << 24) | (g << 16) | (b << 8) | (color & 0xFF));
 }
 
-t_doors *ft_get_smallest_dist(t_doors *head)
+t_doors	*ft_get_smallest_dist(t_doors *head)
 {
-	t_doors *low;
+	t_doors	*low;
 
 	low = head;
 	while (head)
@@ -480,17 +487,18 @@ t_doors *ft_get_smallest_dist(t_doors *head)
 	return (low);
 }
 
-void ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i, int door)
+void	ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i, int door)
 {
-	mlx_texture_t* texture = NULL;
+	mlx_texture_t	*texture;
+	double			texturePosX;
+
+	texture = NULL;
 	if (vars.door)
 		texture = cube->doors[0];
 	else
 		texture = cube->texture[textureNum];
 
-	double texturePosX = vars.wasHitVert ?
-		fmod(vars.wallHitY, tile_size) / tile_size :
-		fmod(vars.wallHitX, tile_size) / tile_size;
+	texturePosX = vars.wasHitVert ? fmod(vars.wallHitY, tile_size) / tile_size : fmod(vars.wallHitX, tile_size) / tile_size;
 	texturePosX = 1.0 - texturePosX;
 
 	int textureX = (int)(texturePosX * texture->width);
@@ -1112,7 +1120,7 @@ void    draw_inside_head(t_cub *cube)
 		while (y <= 20)
 		{
 			if (i != 0 && y != 0 && y != 20 && i != 400)
-				mlx_put_pixel(cube->image, i + 10, y + 10, create_rgba(0, 0, 255, 255));
+				mlx_put_pixel(cube->image, i + 10, y + 10, c_rgba(0, 0, 255, 255));
 			y++;
 		}
 		i++;
@@ -1129,7 +1137,7 @@ void    heal_bar(t_cub *cube)
 		while (y <= 20)
 		{
 			if (i == 0 || y == 0 || y == 20 || i == 400)
-				mlx_put_pixel(cube->image, i + 10, y + 10, create_rgba(255, 0, 0, 255));
+				mlx_put_pixel(cube->image, i + 10, y + 10, c_rgba(255, 0, 0, 255));
 			y++;
 		}
 		i++;
@@ -1149,9 +1157,9 @@ void    draw_shots(t_cub *cube)
 		while (y <= 150)
 		{
 			if (i == 135)
-				mlx_put_pixel(cube->image, i + WIDTH / 1.2, y + HEIGHT / 1.2, create_rgba(0, 0, 255, 255));
+				mlx_put_pixel(cube->image, i + WIDTH / 1.2, y + HEIGHT / 1.2, c_rgba(0, 0, 255, 255));
 			else
-				mlx_put_pixel(cube->image, i + WIDTH / 1.2, y + HEIGHT / 1.2, create_rgba(0, 0, 0, 255));
+				mlx_put_pixel(cube->image, i + WIDTH / 1.2, y + HEIGHT / 1.2, c_rgba(0, 0, 0, 255));
 			y++;
 		}
 		i++;
@@ -1166,46 +1174,46 @@ void    draw_shots(t_cub *cube)
 
 void loop_fun(void* param)
 {
-    t_cub* cube = (t_cub*)param;
-    static clock_t previous_frame_time = 0;
-    clock_t current_time = clock();
-    double delta_time = (current_time - previous_frame_time) / (double)CLOCKS_PER_SEC;
+	t_cub* cube = (t_cub*)param;
+	static clock_t previous_frame_time = 0;
+	clock_t current_time = clock();
+	double delta_time = (current_time - previous_frame_time) / (double)CLOCKS_PER_SEC;
 
-    if (delta_time >= 1.0 / TARGET_FPS)
-    {
-        update_player(cube);
-        ft_draw_sky_floor(cube);
-        cube->threads[0].id = 0;
-        cube->threads[1].id = 1;
-        pthread_create(&cube->threads[0].thread, NULL, &draw_lines_3D, (void *)cube);
-        pthread_create(&cube->threads[1].thread, NULL, &draw_lines_3D_1, (void *)cube);
-        pthread_join(cube->threads[0].thread, NULL);
-        pthread_join(cube->threads[1].thread, NULL);
+	if (delta_time >= 1.0 / TARGET_FPS)
+	{
+		update_player(cube);
+		ft_draw_sky_floor(cube);
+		cube->threads[0].id = 0;
+		cube->threads[1].id = 1;
+		pthread_create(&cube->threads[0].thread, NULL, &draw_lines_3D, (void *)cube);
+		pthread_create(&cube->threads[1].thread, NULL, &draw_lines_3D_1, (void *)cube);
+		pthread_join(cube->threads[0].thread, NULL);
+		pthread_join(cube->threads[1].thread, NULL);
 
-        draw_per(cube);
-        update_run_on_right_click(cube);
-        update_y_press(cube);
-        draw_gun_right_click(cube);
-        previous_frame_time = current_time;
-    }
-    clock_t frame_time = clock() - current_time;
-    if (frame_time < FRAME_TARGET_TIME)
-    {
-        struct timespec rem, req = {0, (FRAME_TARGET_TIME - frame_time) * 1000000};
-        nanosleep(&req, &rem);
-    }
-    // Mouse handling
-    int32_t xpos, ypos;
-    mlx_get_mouse_pos(cube->mlx, &xpos, &ypos);
+		draw_per(cube);
+		update_run_on_right_click(cube);
+		update_y_press(cube);
+		draw_gun_right_click(cube);
+		previous_frame_time = current_time;
+	}
+	clock_t frame_time = clock() - current_time;
+	if (frame_time < FRAME_TARGET_TIME)
+	{
+		struct timespec rem, req = {0, (FRAME_TARGET_TIME - frame_time) * 1000000};
+		nanosleep(&req, &rem);
+	}
+	// Mouse handling
+	int32_t xpos, ypos;
+	mlx_get_mouse_pos(cube->mlx, &xpos, &ypos);
 
-    if (xpos != WIDTH / 2 && ypos != HEIGHT / 2 && (cube->player->start == 0 || cube->player->start == 1))
-    {
-        mlx_set_mouse_pos(cube->mlx, WIDTH / 2, HEIGHT / 2);
-        cube->player->start += 1;
-    }
-    else if (cube->player->shift == 1)
-        handle_mouse(cube);
-    else
-        mlx_set_cursor_mode(cube->mlx, MLX_MOUSE_NORMAL);
+	if (xpos != WIDTH / 2 && ypos != HEIGHT / 2 && (cube->player->start == 0 || cube->player->start == 1))
+	{
+		mlx_set_mouse_pos(cube->mlx, WIDTH / 2, HEIGHT / 2);
+		cube->player->start += 1;
+	}
+	else if (cube->player->shift == 1)
+		handle_mouse(cube);
+	else
+		mlx_set_cursor_mode(cube->mlx, MLX_MOUSE_NORMAL);
 }
 // // end hooks

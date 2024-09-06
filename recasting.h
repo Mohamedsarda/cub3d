@@ -252,7 +252,7 @@ void	my_keyhook(mlx_key_data_t keydata, void *param);
 // end hooks
 //minimap
 void	draw_per(t_cub *cube);
-int		create_rgba(int r, int g, int b, int a);
+int		c_rgba(int r, int g, int b, int a);
 
 //raycasting
 void	DDA(t_cub *cube, double X0, double Y0, double X1, double Y1);
