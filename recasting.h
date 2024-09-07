@@ -299,10 +299,20 @@ double	deg2rad(double degrees);
 int		is_it_a_wall(double x, double y, t_cub *cube);
 
 // player
-t_player	*init_player(t_cub *cube);
 
 // draw hero
 void	ft_draw_hero(t_cub *cube, t_vars *vars);
 void	ft_draw_ver(t_cub *cube, t_vars *vars);
 
+t_player	*init_player(t_cub *cube);
+void	ft_draw_minimap_to_screen(t_cub *cube);
+void	ft_draw_player_indecator(t_cub *cube);
+void	ft_draw_map_background(t_cub *cube);
+void	ft_draw_border_1(t_cub *cube, int x, int y);
+int		check_drow_minimap(t_cub *cube, int dx, int dy, int is);
+int		check_drow_minimap_1(t_cub *cube, int x, int y, int is);
+void	ft_draw_border(t_cub *cube);
+void	ft_get_player_pos(t_player *player, t_cub *cube);
+void	ft_load_doors(t_cub *cube, int i, char *path);
+char	*ft_itoa(int n);
 #endif
