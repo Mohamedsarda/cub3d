@@ -7,8 +7,12 @@ SRCS	= main.c ./Parsing/parsing.c ./Parsing/parsing_1.c\
 		  ./Parsing/utils/ft_map.c	./Parsing/utils/ft_split.c	\
 		  ./Parsing/utils/ft_map_2.c ./Parsing/utils/ft_colors.c \
 		  ./Parsing/utils/get_next_line.c	./Parsing/utils/get_next_line_utils.c\
-		  ./Parsing/error/error_1.c  recasting/recasting.c \
-		  recasting/ft_mini_map.c recasting/raycasting.c\
+		  ./Parsing/error/error_1.c  recasting/build_raycasting/recasting.c \
+		  recasting/build_raycasting/recasting_1.c recasting/build_raycasting/recasting_2.c \
+		  recasting/build_raycasting/recasting_3.c \
+		  recasting/mini_map/ft_mini_map.c recasting/mini_map/ft_mini_map_1.c \
+		  recasting/mini_map/ft_mini_map_2.c\
+		  recasting/raycasting.c recasting/raycasting_1.c\
 		  ./linked/struct_doors.c
 
 OBJS	= $(SRCS:.c=.o)
