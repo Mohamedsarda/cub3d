@@ -400,11 +400,7 @@ void	DDA(t_cub *cube, double X0, double Y0, double X1, double Y1)
 	}
 }
 
-<<<<<<< HEAD
-double normalize_angle(double angle)
-=======
-double	normalizeAngle(double angle)
->>>>>>> main
+double	normalize_angle(double angle)
 {
 	angle = fmod(angle, 2 * M_PI);
 	if (angle < 0)
@@ -502,13 +498,7 @@ void	ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i, int door)
 	else
 		texture = cube->texture[textureNum];
 
-<<<<<<< HEAD
-	double texturePosX = vars.washitvert ?
-		fmod(vars.wallhity, tile_size) / tile_size :
-		fmod(vars.wallhitx, tile_size) / tile_size;
-=======
-	texturePosX = vars.wasHitVert ? fmod(vars.wallHitY, tile_size) / tile_size : fmod(vars.wallHitX, tile_size) / tile_size;
->>>>>>> main
+	texturePosX = vars.washitvert ? fmod(vars.wallhity, tile_size) / tile_size : fmod(vars.wallhitx, tile_size) / tile_size;
 	texturePosX = 1.0 - texturePosX;
 
 	int textureX = (int)(texturePosX * texture->width);
@@ -1072,7 +1062,6 @@ void update_player(t_cub *cube)
 	}
 	else if (cube->player->jump == 2)
 		cube->player->move_speed = 2;
-
 	int move_speed = cube->player->move_speed;
 	cube->player->rotat_angle = normalize_angle(cube->player->rotat_angle);
 	cube->player->rotat_angle += (double)cube->player->turn_direction * cube->player->rotation_speed;
