@@ -120,12 +120,12 @@ typedef struct s_texture
 
 typedef struct s_vars
 {
-	int		isRayFacingDown;
-	int		isRayFacingUp;
-	int		isRayFacingRight;
-	int		isRayFacingLeft;
-	int		foundHorzWallHit;
-	int		foundVertWallHit;
+	int		israyfacingdown;
+	int		israyfacingup;
+	int		israyfacingright;
+	int		israyfacingleft;
+	int		foundhorzwallhit;
+	int		foundvertwallhit;
 
 	double	y_intercept;
 	double	x_intercept;
@@ -133,34 +133,34 @@ typedef struct s_vars
 	double	ystep;
 	double	xstep;
 
-	double	nextHorzTouchX;
-	double	nextHorzTouchY;
+	double	nexthorztouchx;
+	double	nexthorztouchy;
 
-	double	horzWallHitX;
-	double	horzWallHitY;
+	double	horzwallhitx;
+	double	horzwallhity;
 
-	double	vertWallHitX;
-	double	vertWallHitY;
+	double	vertwallhitx;
+	double	vertwallhity;
 
-	double	nextVertTouchX;
-	double	nextVertTouchY;
+	double	nextverttouchx;
+	double	nextverttouchy;
 
-	double	horzHitDistance;
-	double	vertHitDistance;
+	double	horzhitdistance;
+	double	verthitdistance;
 
-	double	wallHitX;
-	double	wallHitY;
+	double	wallhitx;
+	double	wallhity;
 
 	double	distance;
-	int		wasHitVert;
+	int		washitvert;
 
 	double	angle;
 
 	int		textureNum;
-	double	textureStep;
-	double	textureOffsetY;
-	double	wallBottomPixel;
-	double	wallTopPixel;
+	double	texturestep;
+	double	textureoffsety;
+	double	wallbottompixel;
+	double	walltoppixel;
 	int		door;
 }	t_vars;
 
@@ -259,7 +259,7 @@ void	DDA(t_cub *cube, double X0, double Y0, double X1, double Y1);
 int		has_wall(t_cub *cube, double x1, double y1, int is);
 t_vars	draw_line(t_cub *cube, double angle, int is);
 void	draw_lines(t_cub *cube, int is);
-double	normalizeAngle(double angle);
+double	normalize_angle(double angle);
 
 void	ft_draw_player(t_cub *cube);
 void	my_mousehook(mouse_key_t button, action_t action,
@@ -300,5 +300,9 @@ int		is_it_a_wall(double x, double y, t_cub *cube);
 
 // player
 t_player	*init_player(t_cub *cube);
+
+// draw hero
+void	ft_draw_hero(t_cub *cube, t_vars *vars);
+void	ft_draw_ver(t_cub *cube, t_vars *vars);
 
 #endif

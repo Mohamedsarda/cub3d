@@ -400,7 +400,7 @@ void	DDA(t_cub *cube, double X0, double Y0, double X1, double Y1)
 	}
 }
 
-double	normalizeAngle(double angle)
+double	normalize_angle(double angle)
 {
 	angle = fmod(angle, 2 * M_PI);
 	if (angle < 0)
@@ -498,17 +498,17 @@ void	ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i, int door)
 	else
 		texture = cube->texture[textureNum];
 
-	texturePosX = vars.wasHitVert ? fmod(vars.wallHitY, tile_size) / tile_size : fmod(vars.wallHitX, tile_size) / tile_size;
+	texturePosX = vars.washitvert ? fmod(vars.wallhity, tile_size) / tile_size : fmod(vars.wallhitx, tile_size) / tile_size;
 	texturePosX = 1.0 - texturePosX;
 
 	int textureX = (int)(texturePosX * texture->width);
-	double texturePos = vars.textureOffsetY * vars.textureStep;
+	double texturePos = vars.textureoffsety * vars.texturestep;
 	double shade = fmax(0.2, 1.0 - (vars.distance / 500.0));
 
-	for (int y = vars.wallTopPixel; y < vars.wallBottomPixel && y < HEIGHT; y++)
+	for (int y = vars.walltoppixel; y < vars.wallbottompixel && y < HEIGHT; y++)
 	{
 		int textureY = (int)(texturePos * texture->height) % texture->height;
-		texturePos += vars.textureStep;
+		texturePos += vars.texturestep;
 		uint32_t color = get_pixel_color(texture, textureX, textureY);
 		if (!(door && ((ft_shaded_color(color, shade) & 0xFFFFFF00) == 0)) && y >= 0)
 			mlx_put_pixel(cube->image, i, y, ft_shaded_color(color, shade));
@@ -651,9 +651,9 @@ void *draw_lines_3D(void *tmp)
 		t_vars vars = draw_line(cube, cube->angle_0, 0);
 		double fx = cube->player->player_x;
 		double fy = cube->player->player_y;
-		if (vars.isRayFacingLeft)
+		if (vars.israyfacingleft)
 			fx--;
-		if (vars.isRayFacingUp)
+		if (vars.israyfacingup)
 			fy--;
 		int x = floor(fx / tile_size);
 		int y = floor(fy / tile_size);
@@ -733,15 +733,15 @@ void *draw_lines_3D(void *tmp)
 		double wallDistance = vars.distance * cos(cube->angle_0 - cube->player->rotat_angle);
 		double wallStripHeight = (tile_size / wallDistance) * distanceProjPlane;
 
-		vars.wallTopPixel = (HEIGHT / 2.0) - (wallStripHeight / 2.0) - cube->player->player_z - cube->player->jump_var;
-		vars.wallBottomPixel = fmin((HEIGHT / 2.0) + (wallStripHeight / 2.0) - cube->player->player_z - cube->player->jump_var, HEIGHT);
+		vars.walltoppixel = (HEIGHT / 2.0) - (wallStripHeight / 2.0) - cube->player->player_z - cube->player->jump_var;
+		vars.wallbottompixel = fmin((HEIGHT / 2.0) + (wallStripHeight / 2.0) - cube->player->player_z - cube->player->jump_var, HEIGHT);
 
-		vars.textureStep = 1.0 / wallStripHeight;
-		vars.textureOffsetY = 0;
+		vars.texturestep = 1.0 / wallStripHeight;
+		vars.textureoffsety = 0;
 
-		int textureNum = vars.wasHitVert ?
-			(vars.isRayFacingLeft ? 2 : 3) :
-			(vars.isRayFacingUp ? 0 : 1);
+		int textureNum = vars.washitvert ?
+			(vars.israyfacingleft ? 2 : 3) :
+			(vars.israyfacingup ? 0 : 1);
 		ft_get_texture(cube, vars, textureNum, i, (cube->doortype / 2));
 		cube->angle_0 += angleStep;
 	}
@@ -760,9 +760,9 @@ void *draw_lines_3D_1(void *tmp)
 		t_vars vars = draw_line(cube, cube->angle_1, 0);
 		double fx = cube->player->player_x;
 		double fy = cube->player->player_y;
-		if (vars.isRayFacingLeft)
+		if (vars.israyfacingleft)
 			fx--;
-		if (vars.isRayFacingUp)
+		if (vars.israyfacingup)
 			fy--;
 		int x = floor(fx / tile_size);
 		int y = floor(fy / tile_size);
@@ -842,15 +842,15 @@ void *draw_lines_3D_1(void *tmp)
 		double wallDistance = vars.distance * cos(cube->angle_1 - cube->player->rotat_angle);
 		double wallStripHeight = (tile_size / wallDistance) * distanceProjPlane;
 
-		vars.wallTopPixel = (HEIGHT / 2.0) - (wallStripHeight / 2.0) - cube->player->player_z - cube->player->jump_var;
-		vars.wallBottomPixel = fmin((HEIGHT / 2.0) + (wallStripHeight / 2.0) - cube->player->player_z - cube->player->jump_var, HEIGHT);
+		vars.walltoppixel = (HEIGHT / 2.0) - (wallStripHeight / 2.0) - cube->player->player_z - cube->player->jump_var;
+		vars.wallbottompixel = fmin((HEIGHT / 2.0) + (wallStripHeight / 2.0) - cube->player->player_z - cube->player->jump_var, HEIGHT);
 
-		vars.textureStep = 1.0 / wallStripHeight;
-		vars.textureOffsetY = 0;
+		vars.texturestep = 1.0 / wallStripHeight;
+		vars.textureoffsety = 0;
 
-		int textureNum = vars.wasHitVert ?
-			(vars.isRayFacingLeft ? 2 : 3) :
-			(vars.isRayFacingUp ? 0 : 1);
+		int textureNum = vars.washitvert ?
+			(vars.israyfacingleft ? 2 : 3) :
+			(vars.israyfacingup ? 0 : 1);
 		ft_get_texture(cube, vars, textureNum, i, (cube->doortype / 2));
 		cube->angle_1 += angleStep;
 	}
@@ -1062,9 +1062,8 @@ void update_player(t_cub *cube)
 	}
 	else if (cube->player->jump == 2)
 		cube->player->move_speed = 2;
-
 	int move_speed = cube->player->move_speed;
-	cube->player->rotat_angle = normalizeAngle(cube->player->rotat_angle);
+	cube->player->rotat_angle = normalize_angle(cube->player->rotat_angle);
 	cube->player->rotat_angle += (double)cube->player->turn_direction * cube->player->rotation_speed;
 
 	while (move_speed--)
