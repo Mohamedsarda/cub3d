@@ -1,6 +1,6 @@
 #include "../recasting.h"
 
-int	create_rgba(int r, int g, int b, int a)
+int	c_rgba(int r, int g, int b, int a)
 {
 	return ((r << 24) | (g << 16) | (b << 8) | a);
 }
