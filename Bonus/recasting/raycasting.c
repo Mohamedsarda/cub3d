@@ -20,7 +20,7 @@ int	has_wall(t_cub *cube, double x1, double y1, int is)
 void	ft_draw_her_wh(t_cub *cube, t_vars *vars, int a)
 {
 	int	wall;
-	
+
 	while (vars->nexthorztouchx > 0
 		&& vars->nexthorztouchx < cube->data->map_cols * tile_size
 		&& vars->nexthorztouchy > 0
