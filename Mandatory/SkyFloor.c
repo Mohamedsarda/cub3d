@@ -26,11 +26,11 @@ void	ft_draw_sky_floor_1(t_cub *cube, int i,
 	{
 		if (j < sky_end_y)
 			mlx_put_pixel(cube->image, i, j,
-				create_rgba(cube->data->sky.r,
+				c_rgba(cube->data->sky.r,
 					cube->data->sky.g, cube->data->sky.b, 255));
 		else if (j >= floor_start_y)
 			mlx_put_pixel(cube->image, i, j,
-				create_rgba(cube->data->floor.r,
+				c_rgba(cube->data->floor.r,
 					cube->data->floor.g, cube->data->floor.b, 255));
 		++j;
 	}

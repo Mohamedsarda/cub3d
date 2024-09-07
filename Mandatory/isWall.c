@@ -26,6 +26,30 @@ int	is_it_a_wall(double x, double y, t_cub *cube)
 	return (1);
 }
 
+<<<<<<< HEAD
+=======
+void	DDA(t_cub *cube, double X0, double Y0, double X1, double Y1)
+{
+	double	dx = X1 - X0;
+	double	dy = Y1 - Y0;
+	double	steps = fabs(dx) > fabs(dy) ? fabs(dx) : fabs(dy);
+	double	Xinc = dx / steps;
+	double	Yinc = dy / steps;
+	double	X = X0;
+	double	Y = Y0;
+	int i;
+
+	i = 0;
+	while (i <= steps)
+	{
+		mlx_put_pixel(cube->image, X, Y, c_rgba(250, 100, 100, 255));
+		X += Xinc;
+		Y += Yinc;
+		i++;
+	}
+}
+
+>>>>>>> main
 int	has_wall(t_cub *cube, double x1, double y1, int is)
 {
 	int	x;

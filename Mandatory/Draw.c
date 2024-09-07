@@ -43,7 +43,7 @@ void	draw_all_black(t_cub *cube)
 	{
 		x = -1;
 		while (++x < WIDTH)
-			mlx_put_pixel(cube->image, x, y, create_rgba(0, 0, 0, 150));
+			mlx_put_pixel(cube->image, x, y, c_rgba(0, 0, 0, 150));
 	}
 }
 
