@@ -20,19 +20,19 @@ void	ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i)
 	uint32_t	shaded_color;
 
 	v.texture = cube->texture[textureNum];
-	v.texture_pos_x = fmod(vars.wallHitX, tile_size) / tile_size;
-	if (vars.wasHitVert)
-		v.texture_pos_x = fmod(vars.wallHitY, tile_size) / tile_size;
+	v.texture_pos_x = fmod(vars.wallhitx, tile_size) / tile_size;
+	if (vars.washitvert)
+		v.texture_pos_x = fmod(vars.wallhity, tile_size) / tile_size;
 	v.texture_pos_x = 1.0 - v.texture_pos_x;
 	v.texture_x = (int)(v.texture_pos_x * v.texture->width);
-	v.texture_pos = vars.textureOffsetY * vars.textureStep;
+	v.texture_pos = vars.textureoffsety * vars.texturestep;
 	v.shade = fmax(0.3, 1.0 - (vars.distance / 1000.0));
-	y = vars.wallTopPixel;
-	while (y < vars.wallBottomPixel && y < HEIGHT)
+	y = vars.walltoppixel;
+	while (y < vars.wallbottompixel && y < HEIGHT)
 	{
 		v.texture_y = (int)(v.texture_pos
 				* v.texture->height) % v.texture->height;
-		v.texture_pos += vars.textureStep;
+		v.texture_pos += vars.texturestep;
 		color = get_pixel_color(v.texture, v.texture_x, v.texture_y);
 		shaded_color = ft_shade(color, v.shade);
 		if (!(vars.door && ((shaded_color & 0xFFFFFF00) == 0)) && y >= 0)
@@ -45,16 +45,16 @@ int	ft_texture_num(t_vars vars)
 {
 	int	texturenum;
 
-	if (vars.wasHitVert)
+	if (vars.washitvert)
 	{
-		if (vars.isRayFacingLeft)
+		if (vars.israyfacingleft)
 			texturenum = 2;
 		else
 			texturenum = 3;
 	}
 	else
 	{
-		if (vars.isRayFacingUp)
+		if (vars.israyfacingup)
 			texturenum = 0;
 		else
 			texturenum = 1;
@@ -79,12 +79,12 @@ void	draw_lines_3d(t_cub *cube)
 		v.walldistance = vars.distance
 			* cos(v.angle - cube->player->rotat_angle);
 		v.wallstripheight = (tile_size / v.walldistance) * v.distanceprojplane;
-		vars.wallTopPixel = (HEIGHT / 2.0) - (v.wallstripheight / 2.0)
+		vars.walltoppixel = (HEIGHT / 2.0) - (v.wallstripheight / 2.0)
 			- cube->player->player_z - cube->player->jump_var;
-		vars.wallBottomPixel = fmin((HEIGHT / 2.0) + (v.wallstripheight / 2.0)
+		vars.wallbottompixel = fmin((HEIGHT / 2.0) + (v.wallstripheight / 2.0)
 				- cube->player->player_z - cube->player->jump_var, HEIGHT);
-		vars.textureStep = 1.0 / v.wallstripheight;
-		vars.textureOffsetY = 0;
+		vars.texturestep = 1.0 / v.wallstripheight;
+		vars.textureoffsety = 0;
 		texturenum = ft_texture_num(vars);
 		ft_get_texture(cube, vars, texturenum, i);
 		v.angle += FOV_ANGLE / WIDTH;
