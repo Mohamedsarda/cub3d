@@ -1,270 +1,11 @@
-#include "../../recasting.h"
-
-void	ft_error(void)
-{
-	fprintf(stderr, "%s\n", mlx_strerror(mlx_errno));
-	exit(EXIT_FAILURE);
-}
-
-void	ft_free_data(t_cub *cube)
-{
-	free_double_arr(cube->data->map);
-	free(cube->data->ea);
-	free(cube->data->so);
-	free(cube->data->no);
-	free(cube->data->we);
-	free(cube->player);
-}
-
-void	malloc_error(void)
-{
-	printf("Error: in malloc\n");
-	exit(EXIT_FAILURE);
-}
-
-double deg2rad(double degrees)
-{
-	return (degrees * (M_PI / 180.0));
-}
-
-void	ft_get_player_pos(t_player *player, t_cub *cube)
-{
-	int		x;
-	int		y;
-	t_doors	*head;
-	t_doors	*new;
-
-	y = -1;
-	head = NULL;
-	while (++y < cube->data->map_row)
-	{
-		x = -1;
-		while (++x < cube->data->map_cols)
-		{
-			if (cube->data->map[y][x] == 'D' || cube->data->map[y][x] == 'O')
-			{
-				new = ft_lstnew_doors(x, y);
-				ft_lstaddback_doors(&head, new);
-			}
-			if (cube->data->map[y][x] == cube->data->p)
-			{
-				player->player_x = (x * tile_size) + (tile_size / 2);
-				player->player_y = (y * tile_size) + (tile_size / 2);
-			}
-		}
-	}
-	cube->doors_locations = head;
-}
-
-void	init_player_1(t_cub *cube, t_player *player)
-{
-	player->minimap = 1;
-	player->tab = 0;
-	player->jump_var = 0;
-	player->middle = 0;
-	player->mouse = 0;
-	player->stop_mouse = 0;
-	player->right_left = 0;
-	cube->current_gun_index = 0;
-	cube->cur_g_right_clikc = 100;
-	cube->y_press = 0;
-	cube->t_press = 0;
-	player->shift = 1;
-	player->open = 1;
-	cube->right_press = 0;
-}
-
-t_player	*init_player(t_cub *cube)
-{
-	t_player	*player;
-
-	player = (t_player *)ft_calloc(sizeof(t_player));
-	if (!player)
-		malloc_error();
-	ft_get_player_pos(player, cube);
-	player->radius = 10;
-	player->move_speed = 0;
-	if (cube->data->p == 'W')
-		player->rotat_angle = deg2rad(180);
-	else if (cube->data->p == 'S')
-		player->rotat_angle = deg2rad(90);
-	else if (cube->data->p == 'N')
-		player->rotat_angle = deg2rad(270);
-	else if (cube->data->p == 'E')
-		player->rotat_angle = deg2rad(0);
-	player->rotation_speed = 0.04;
-	player->turn_direction = 0;
-	player->strafe_direction = 0;
-	player->walk_direction = 0;
-	player->player_z = 0;
-	player->start = 0;
-	player->jump = 0;
-	init_player_1(cube, player);
-	return (player);
-}
+#include "../../../recasting.h"
 
 int	c_rgba(int r, int g, int b, int a)
 {
 	return ((r << 24) | (g << 16) | (b << 8) | a);
 }
 
-static char	*zero(void)
-{
-	char	*arr;
-
-	arr = malloc(2 * sizeof(char));
-	if (!arr)
-		return (NULL);
-	if (arr == NULL)
-		return (NULL);
-	arr[0] = '0';
-	arr[1] = '\0';
-	return (arr);
-}
-
-static int	ft_intlen(int n)
-{
-	int	nbdg;
-	int	tmp;
-
-	nbdg = 0;
-	tmp = n;
-	while (tmp != 0)
-	{
-		tmp /= 10;
-		nbdg++;
-	}
-	return (nbdg);
-}
-
-static void	fillarr(char *res, int n, int nbrdg, int isnegative)
-{
-	int	index;
-	int	digit;
-
-	index = nbrdg - 1;
-	while (n != 0)
-	{
-		if (n < 0)
-			digit = -(n % 10);
-		else
-			digit = n % 10;
-		res[index] = digit + '0';
-		n /= 10;
-		index--;
-	}
-	if (isnegative != 0)
-		res[0] = '-';
-	res[nbrdg] = '\0';
-}
-
-char	*ft_itoa(int n)
-{
-	int		nbrdg;
-	int		isnegative;
-	char	*res;
-
-	if (n == 0)
-		return (zero());
-	nbrdg = ft_intlen(n);
-	isnegative = 0;
-	if (n < 0)
-	{
-		isnegative = 1;
-		nbrdg++;
-	}
-	res = malloc((nbrdg + 1) * sizeof(char));
-	if (!res)
-		return (NULL);
-	fillarr(res, n, nbrdg, isnegative);
-	return (res);
-}
-
-void	ft_load_doors(t_cub *cube, int i, char *path)
-{
-	cube->doors[i] = mlx_load_png(path);
-	if (!cube->doors[i])
-		ft_error();
-	cube->door_img[i] = mlx_texture_to_image(cube->mlx, cube->doors[i]);
-	if (!cube->door_img[i])
-		ft_error();
-}
-
-void ft_fractol_init(t_cub *cube)
-{
-	cube->mlx = mlx_init(WIDTH, HEIGHT, "42Balls", true);
-	if (!cube->mlx)
-		ft_error();
-	cube->image = mlx_new_image(cube->mlx, WIDTH, HEIGHT);
-	if (!cube->image || (mlx_image_to_window(cube->mlx, cube->image, 0, 0) < 0))
-		ft_error();
-	char **guns = (char **)ft_calloc(sizeof(char *) * (Y_CLICK + R_CLICK + 1));
-	if (!guns)
-		return ;
-	int i = 0;
-	while (i < Y_CLICK + R_CLICK)
-	{
-		char *tmp = ft_strdup("../Textures/png/guns_0/");
-		char *num = ft_itoa(i);
-		char *str = ft_strjoin(tmp, num);
-		str = ft_strjoin(str, ".png");
-		guns[i] = str;
-		i++;
-		free(num);
-	}
-	guns[i] = NULL;
-
-	i = 0;
-	while (i < Y_CLICK)
-	{
-		cube->gun[i] = mlx_load_png(guns[i]);
-		if (!cube->gun[i])
-			ft_error();
-		if (i < 2)
-		{
-			cube->gun_img[i] = mlx_texture_to_image(cube->mlx, cube->gun[i]);
-			if (!cube->gun_img[i])
-				ft_error();
-		}
-		i++;
-	}
-
-	int k = 0;
-	while (guns[i])
-	{
-		cube->gun_r[k] = mlx_load_png(guns[i]);
-		if (!cube->gun_r[k])
-			ft_error();
-		if (k < 2)
-		{
-			cube->gun_r_img[k] = mlx_texture_to_image(cube->mlx, cube->gun_r[k]);
-			if (!cube->gun_r_img[k])
-				ft_error();
-		}
-		k++;
-		i++;
-	}
-
-	free_double_arr(guns);
-
-	ft_load_doors(cube, 0, "../Textures/Doors/tile000.png");
-	char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea};
-	i = 0;
-	while (i < 4)
-	{
-		cube->texture[i] = mlx_load_png(texture_files[i]);
-		if (!cube->texture[i])
-			ft_error();
-		cube->img[i] = mlx_texture_to_image(cube->mlx, cube->texture[i]);
-		if (!cube->img[i])
-			ft_error();
-		i++;
-	}
-
-	cube->player = init_player(cube);
-}
-
-void    draw_cube(t_cub *cube, int x, int y, int color)
+void	draw_cube(t_cub *cube, int x, int y, int color)
 {
 	int	i;
 	int	j;
@@ -415,24 +156,25 @@ uint32_t	ft_rgb(uint8_t r, uint8_t g, uint8_t b)
 
 uint32_t	get_pixel_color(mlx_texture_t* texture, int x, int y)
 {
-	int		index;
 	uint8_t	*pixels;
+	uint8_t	r;
+	uint8_t	g;
+	uint8_t	b;
+	uint8_t	a;
 
 	if (x < 0 || x >= (int)texture->width || y < 0 || y >= (int)texture->height)
 		return (0);
-	index = (y * texture->width + x) * 4;
 	pixels = texture->pixels;
 
-	uint8_t r = pixels[index];
-	uint8_t g = pixels[index + 1];
-	uint8_t b = pixels[index + 2];
-	uint8_t a = pixels[index + 3];
+	r = pixels[(int)((y * texture->width + x) * 4)];
+	g = pixels[(int)((y * texture->width + x) * 4) + 1];
+	b = pixels[(int)((y * texture->width + x) * 4) + 2];
+	a = pixels[(int)((y * texture->width + x) * 4) + 3];
 
-	// Combine into RGBA format
-	return (r << 24) | (g << 16) | (b << 8) | a;
+	return ((r << 24) | (g << 16) | (b << 8) | a);
 }
 
-void ft_draw_sky_floor(t_cub *cube)
+void	ft_draw_sky_floor(t_cub *cube)
 {
 	int	i;
 	int	j;
@@ -445,19 +187,19 @@ void ft_draw_sky_floor(t_cub *cube)
 		sky_end_y = 0;
 	if (floor_st_y >= HEIGHT)
 		floor_st_y = HEIGHT - 1;
-	i = 0;
-	while (i < WIDTH)
+	i = -1;
+	while (++i < WIDTH)
 	{
-		j = 0;
-		while (j < HEIGHT)
+		j = -1;
+		while (++j < HEIGHT)
 		{
 			if (j < sky_end_y)
-				mlx_put_pixel(cube->image, i, j, c_rgba(cube->data->sky.r, cube->data->sky.g, cube->data->sky.b, 255));
+				mlx_put_pixel(cube->image, i, j, c_rgba(cube->data->sky.r,
+						cube->data->sky.g, cube->data->sky.b, 255));
 			else if (j >= floor_st_y)
-				mlx_put_pixel(cube->image, i, j, c_rgba(cube->data->floor.r, cube->data->floor.g, cube->data->floor.b, 255));
-			++j;
+				mlx_put_pixel(cube->image, i, j, c_rgba(cube->data->floor.r,
+						cube->data->floor.g, cube->data->floor.b, 255));
 		}
-		++i;
 	}
 }
 
@@ -522,7 +264,6 @@ void draw_textured_floor(t_cub *cube)
 	double dir_x = cos(cube->player->rotat_angle);
 	double dir_y = sin(cube->player->rotat_angle);
 
-	// Plane vector perpendicular to the direction vector
 	double plane_x = -dir_y;
 	double plane_y = dir_x;
 
@@ -581,10 +322,11 @@ void draw_gun_right_click(t_cub *cube)
 	previous_gun_index = gun_index;
 }
 
-void update_y_press(t_cub *cube)
+void	update_y_press(t_cub *cube)
 {
-	static int prev_gun_index = -1;
+	static int	prev_gun_index;
 
+	prev_gun_index = -1;
 	if (cube->y_press)
 	{
 		if (prev_gun_index != -1 && cube->gun_img[prev_gun_index])
@@ -600,14 +342,14 @@ void update_y_press(t_cub *cube)
 				ft_error();
 		}
 		if (mlx_image_to_window(cube->mlx, cube->gun_img[cube->current_gun_index],
-								WIDTH / 2 - cube->gun[cube->current_gun_index]->width / 2,
-								HEIGHT - cube->gun[cube->current_gun_index]->height) < 0)
+				WIDTH / 2 - cube->gun[cube->current_gun_index]->width / 2,
+				HEIGHT - cube->gun[cube->current_gun_index]->height) < 0)
 			ft_error();
 
 		prev_gun_index = cube->current_gun_index;
 		if (cube->current_gun_index == Y_CLICK - 1)
 		{
-			mlx_delete_image(cube->mlx, cube->gun_img[prev_gun_index]);	
+			mlx_delete_image(cube->mlx, cube->gun_img[prev_gun_index]);
 			cube->y_press = 0;
 		}
 	}
@@ -615,7 +357,7 @@ void update_y_press(t_cub *cube)
 
 void update_t_press(t_cub *cube)
 {
-	static int prev_gun_index;
+	static int	prev_gun_index;
 
 	prev_gun_index = -1;
 	if (cube->t_press)
@@ -632,8 +374,8 @@ void update_t_press(t_cub *cube)
 				ft_error();
 		}
 		if (mlx_image_to_window(cube->mlx, cube->gun_img[0],
-								WIDTH / 2 - cube->gun[0]->width / 2,
-								HEIGHT - cube->gun[0]->height) < 0)
+				WIDTH / 2 - cube->gun[0]->width / 2,
+				HEIGHT - cube->gun[0]->height) < 0)
 			ft_error();
 		prev_gun_index = 0;
 	}
@@ -885,7 +627,8 @@ void	ft_realse(t_cub *cube, mlx_key_data_t keydata)
 		cube->player->turn_direction = 0;
 	if (keydata.key == MLX_KEY_D || keydata.key == MLX_KEY_A)
 		cube->player->strafe_direction = 0;
-	if (keydata.key == MLX_KEY_LEFT_CONTROL || keydata.key == MLX_KEY_LEFT_SHIFT)
+	if (keydata.key == MLX_KEY_LEFT_CONTROL
+		|| keydata.key == MLX_KEY_LEFT_SHIFT)
 		cube->player->jump = 0;
 	if (keydata.key == MLX_KEY_RIGHT_SHIFT)
 		cube->player->shift *= -1;
@@ -942,14 +685,13 @@ void	ft_press_1(t_cub *cube, mlx_key_data_t keydata)
 		cube->player->jump = -1;
 }
 
-void my_keyhook(mlx_key_data_t keydata, void* param)
+void	my_keyhook(mlx_key_data_t keydata, void* param)
 {
-	t_cub * cube = param;
+	t_cub	*cube;
+
+	cube = param;
 	if (keydata.action == MLX_PRESS)
-	{
-		ft_press(cube, keydata);
-		ft_press_1(cube, keydata);
-	}
+		(ft_press(cube, keydata), ft_press_1(cube, keydata));
 	if (keydata.action == MLX_RELEASE)
 	{
 		ft_realse(cube, keydata);
@@ -958,7 +700,8 @@ void my_keyhook(mlx_key_data_t keydata, void* param)
 			cube->t_press = 0;
 			if (cube->gun_img[cube->current_gun_index])
 			{
-				mlx_delete_image(cube->mlx, cube->gun_img[cube->current_gun_index]);
+				mlx_delete_image(cube->mlx,
+					cube->gun_img[cube->current_gun_index]);
 				cube->gun_img[cube->current_gun_index] = NULL;
 			}
 			if (cube->gun_img[0])
@@ -970,40 +713,48 @@ void my_keyhook(mlx_key_data_t keydata, void* param)
 	}
 }
 
-void handle_mouse(t_cub *cube)
+void	handle_mouse(t_cub *cube)
 {
-	mlx_set_cursor_mode(cube->mlx, MLX_MOUSE_HIDDEN);
-	int32_t prev_xpos = WIDTH / 2;
-	int32_t xpos;
-	int32_t ypos;
-	double sensitivity = 0.001;
+	int32_t	prev_xpos;
+	int32_t	xpos;
+	int32_t	ypos;
+	double	sensitivity;
+	int32_t	delta_x;
+	int32_t prev_ypos;
+	int32_t delta_y;
 
+	prev_xpos = WIDTH / 2;
+	sensitivity = 0.001;
+	mlx_set_cursor_mode(cube->mlx, MLX_MOUSE_HIDDEN);
 	mlx_get_mouse_pos(cube->mlx, &xpos, &ypos);
 
-	int32_t delta_x = xpos - prev_xpos;
+	delta_x = xpos - prev_xpos;
 
 	cube->player->rotat_angle += delta_x * sensitivity;
 
 	mlx_set_mouse_pos(cube->mlx, WIDTH / 2, HEIGHT / 2);
 
-	int32_t prev_ypos = HEIGHT / 2;
-	int32_t delta_y = ypos - prev_ypos;
+	prev_ypos = HEIGHT / 2;
+	delta_y = ypos - prev_ypos;
 
 	cube->player->player_z = cube->player->player_z + delta_y;
 }
 
-void update_run_on_right_click(t_cub *cube)
+void	update_run_on_right_click(t_cub *cube)
 {
-	static double last_gun_change_time = 0;
-	double current_time = mlx_get_time();
+	static double	last_gun_change_time;
+	double			current_time;
 
+	last_gun_change_time = 0;
+	current_time = mlx_get_time();
 	if (cube->right_press)
 	{
 		if ((current_time - last_gun_change_time) > 0.15)
 		{
 			if (cube->gun_r_img[cube->cur_g_right_clikc])
 			{
-				mlx_delete_image(cube->mlx, cube->gun_r_img[cube->cur_g_right_clikc]);
+				mlx_delete_image(cube->mlx,
+					cube->gun_r_img[cube->cur_g_right_clikc]);
 				cube->gun_r_img[cube->cur_g_right_clikc] = NULL;
 			}
 
@@ -1017,19 +768,17 @@ void update_run_on_right_click(t_cub *cube)
 		cube->cur_g_right_clikc = 0;
 }
 
-int calculateDistance(int x1, int y1, int x2, int y2)
+int	calculateDistance(int x1, int y1, int x2, int y2)
 {
-	int deltaX = x2 - x1;
-	int deltaY = y2 - y1;
-	return sqrt(deltaX * deltaX + deltaY * deltaY);
+	int	delta_x;
+	int	delta_y;
+
+	delta_x = x2 - x1;
+	delta_y = y2 - y1;
+	return (sqrt(delta_x * delta_x + delta_y * delta_y));
 }
 
-// void	inti_jump(t_cub *cube)
-// {
-
-// }
-
-void update_player(t_cub *cube)
+void	update_player(t_cub *cube)
 {
 	static double last_gun_change_time = 0;
 	double current_time = mlx_get_time();
@@ -1109,34 +858,40 @@ void update_player(t_cub *cube)
 }
 
 // heal
-void    draw_inside_head(t_cub *cube)
+void	draw_inside_head(t_cub *cube)
 {
-	int i = 0;
-	int y;
+	int	i;
+	int	y;
+
+	i = 0;
 	while (i <= 400)
 	{
 		y = 0;
 		while (y <= 20)
 		{
 			if (i != 0 && y != 0 && y != 20 && i != 400)
-				mlx_put_pixel(cube->image, i + 10, y + 10, c_rgba(0, 0, 255, 255));
+				mlx_put_pixel(cube->image, i + 10,
+					y + 10, c_rgba(0, 0, 255, 255));
 			y++;
 		}
 		i++;
 	}
 }
 
-void    heal_bar(t_cub *cube)
+void	heal_bar(t_cub *cube)
 {
-	int i = 0;
-	int y;
+	int	i;
+	int	y;
+
+	i = 0;
 	while (i <= 400)
 	{
 		y = 0;
 		while (y <= 20)
 		{
 			if (i == 0 || y == 0 || y == 20 || i == 400)
-				mlx_put_pixel(cube->image, i + 10, y + 10, c_rgba(255, 0, 0, 255));
+				mlx_put_pixel(cube->image, i + 10,
+					y + 10, c_rgba(255, 0, 0, 255));
 			y++;
 		}
 		i++;
@@ -1146,19 +901,23 @@ void    heal_bar(t_cub *cube)
 // end heal
 
 // shots
-void    draw_shots(t_cub *cube)
+void	draw_shots(t_cub *cube)
 {
-	int i = 0;
-	int y;
+	int	i;
+	int	y;
+
+	i = 0;
 	while (i <= 280)
 	{
 		y = 0;
 		while (y <= 150)
 		{
 			if (i == 135)
-				mlx_put_pixel(cube->image, i + WIDTH / 1.2, y + HEIGHT / 1.2, c_rgba(0, 0, 255, 255));
+				mlx_put_pixel(cube->image, i + WIDTH / 1.2,
+					y + HEIGHT / 1.2, c_rgba(0, 0, 255, 255));
 			else
-				mlx_put_pixel(cube->image, i + WIDTH / 1.2, y + HEIGHT / 1.2, c_rgba(0, 0, 0, 255));
+				mlx_put_pixel(cube->image, i + WIDTH / 1.2,
+					y + HEIGHT / 1.2, c_rgba(0, 0, 0, 255));
 			y++;
 		}
 		i++;
