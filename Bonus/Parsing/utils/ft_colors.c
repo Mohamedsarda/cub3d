@@ -73,4 +73,3 @@ int	ft_check_char(char c, int is)
 	return (c == '0' || c == 'N' || c == 'E'
 		|| c == 'W' || c == 'S' || c == 'D');
 }
-

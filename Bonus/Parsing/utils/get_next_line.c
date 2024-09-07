@@ -1,6 +1,6 @@
 #include "../../../parsing.h"
 
-char    *ft_read(char *line, int fd)
+char	*ft_read(char *line, int fd)
 {
 	int		byte;
 	char	*buffer;
