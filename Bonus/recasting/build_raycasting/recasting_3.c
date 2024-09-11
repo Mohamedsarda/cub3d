@@ -1,52 +1,5 @@
 #include "../../../recasting.h"
 
-void	init_player_1(t_cub *cube, t_player *player)
-{
-	player->minimap = 1;
-	player->tab = 0;
-	player->jump_var = 0;
-	player->middle = 0;
-	player->mouse = 0;
-	player->stop_mouse = 0;
-	player->right_left = 0;
-	cube->current_gun_index = 0;
-	cube->cur_g_right_clikc = 100;
-	cube->y_press = 0;
-	cube->t_press = 0;
-	player->shift = 1;
-	player->open = 1;
-	cube->right_press = 0;
-}
-
-t_player	*init_player(t_cub *cube)
-{
-	t_player	*player;
-
-	player = (t_player *)ft_calloc(sizeof(t_player));
-	if (!player)
-		malloc_error();
-	ft_get_player_pos(player, cube);
-	player->radius = 10;
-	player->move_speed = 0;
-	if (cube->data->p == 'W')
-		player->rotat_angle = deg2rad(180);
-	else if (cube->data->p == 'S')
-		player->rotat_angle = deg2rad(90);
-	else if (cube->data->p == 'N')
-		player->rotat_angle = deg2rad(270);
-	else if (cube->data->p == 'E')
-		player->rotat_angle = deg2rad(0);
-	player->rotation_speed = 0.04;
-	player->turn_direction = 0;
-	player->strafe_direction = 0;
-	player->walk_direction = 0;
-	player->player_z = 0;
-	player->start = 0;
-	player->jump = 0;
-	init_player_1(cube, player);
-	return (player);
-}
-
 char	**arr_guns(void)
 {
 	int		i;
@@ -72,25 +25,24 @@ char	**arr_guns(void)
 	return (guns);
 }
 
-void	arr_guns_1(t_cub *cube, char **guns)
-{
-	int		i;
-
-	i = 0;
-	while (i < Y_CLICK)
-	{
-		cube->gun[i] = mlx_load_png(guns[i]);
-		if (!cube->gun[i])
-			ft_error();
-		if (i < 2)
-		{
-			cube->gun_img[i] = mlx_texture_to_image(cube->mlx, cube->gun[i]);
-			if (!cube->gun_img[i])
-				ft_error();
-		}
-		i++;
-	}
-}
+// void	arr_guns_1(t_cub *cube, char **guns)
+// {
+// 	int		i;
+// 	i = 0;
+// 	while (i < Y_CLICK)
+// 	{
+// 		cube->gun[i] = mlx_load_png(guns[i]);
+// 		if (!cube->gun[i])
+// 			ft_error();
+// 		if (i < 2)
+// 		{
+// 			cube->gun_img[i] = mlx_texture_to_image(cube->mlx, cube->gun[i]);
+// 			if (!cube->gun_img[i])
+// 				ft_error();
+// 		}
+// 		i++;
+// 	}
+// }
 
 // void	arr_guns_2(t_cub *cube, char **guns)
 // {
@@ -132,21 +84,21 @@ void	ft_fractol_init(t_cub *cube)
 	guns = arr_guns();
 	if (!guns)
 		return ;
-	arr_guns_1(cube, guns);
-	// i = 0;
-	// while (i < Y_CLICK)
-	// {
-	// 	cube->gun[i] = mlx_load_png(guns[i]);
-	// 	if (!cube->gun[i])
-	// 		ft_error();
-	// 	if (i < 2)
-	// 	{
-	// 		cube->gun_img[i] = mlx_texture_to_image(cube->mlx, cube->gun[i]);
-	// 		if (!cube->gun_img[i])
-	// 			ft_error();
-	// 	}
-	// 	i++;
-	// }
+	// arr_guns_1(cube, guns);
+	i = 0;
+	while (i < Y_CLICK)
+	{
+		cube->gun[i] = mlx_load_png(guns[i]);
+		if (!cube->gun[i])
+			ft_error();
+		if (i < 2)
+		{
+			cube->gun_img[i] = mlx_texture_to_image(cube->mlx, cube->gun[i]);
+			if (!cube->gun_img[i])
+				ft_error();
+		}
+		i++;
+	}
 	while (guns[i])
 	{
 		cube->gun_r[k] = mlx_load_png(guns[i]);
