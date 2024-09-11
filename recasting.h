@@ -40,6 +40,29 @@
 # define R_CLICK 76
 # define Y_CLICK 105
 
+typedef struct s_p_indecator
+{
+	int	indicator_length;
+	int	end_x;
+	int	end_y;
+	int	dx;
+	int	dy;
+	int	sx;
+	int	sy;
+	int	err;
+	int	e2;
+}	t_p_indecator;
+
+typedef struct s_map_background
+{
+	int	y;
+	int	x;
+	int	sx;
+	int	sy;
+	int	dx;
+	int	dy;
+}	t_map_background;
+
 typedef struct s_doors
 {
 	int				x;
@@ -262,8 +285,8 @@ void	draw_lines(t_cub *cube, int is);
 double	normalize_angle(double angle);
 
 void	ft_draw_player(t_cub *cube);
-void	my_mousehook(mouse_key_t button, action_t action,
-			modifier_key_t mods, void *param);
+void	my_mousehook(mouse_key_t bt, action_t ac,
+			modifier_key_t md, void *pa);
 ///
 t_doors	*ft_lstnew_doors(int x, int y);
 void	ft_lstaddback_doors(t_doors **head, t_doors *node);
@@ -315,4 +338,15 @@ void	ft_draw_border(t_cub *cube);
 void	ft_get_player_pos(t_player *player, t_cub *cube);
 void	ft_load_doors(t_cub *cube, int i, char *path);
 char	*ft_itoa(int n);
+uint32_t	ft_rgb(uint8_t r, uint8_t g, uint8_t b);
+uint32_t	ft_shaded_color(uint32_t color, double shade);
+t_doors	*ft_get_smallest_dist(t_doors *head);
+void	update_t_press(t_cub *cube);
+void	ft_realse(t_cub *cube, mlx_key_data_t keydata);
+void	ft_press(t_cub *cube, mlx_key_data_t keydata);
+void	ft_press_1(t_cub *cube, mlx_key_data_t keydata);
+void	update_run_on_right_click(t_cub *cube);
+int	calculate_distance(int x1, int y1, int x2, int y2);
+void	draw_inside_head(t_cub *cube);
+void	ft_get_texture(t_cub *cube, t_vars vars, int txturnm, int i, int door);
 #endif

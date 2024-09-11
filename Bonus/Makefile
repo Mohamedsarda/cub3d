@@ -9,7 +9,9 @@ SRCS	= main.c ./Parsing/parsing.c ./Parsing/parsing_1.c\
 		  ./Parsing/utils/get_next_line.c	./Parsing/utils/get_next_line_utils.c\
 		  ./Parsing/error/error_1.c  recasting/build_raycasting/recasting.c \
 		  recasting/build_raycasting/recasting_1.c recasting/build_raycasting/recasting_2.c \
-		  recasting/build_raycasting/recasting_3.c \
+		  recasting/build_raycasting/recasting_3.c recasting/build_raycasting/recasting_4.c  \
+		  recasting/build_raycasting/recasting_5.c recasting/build_raycasting/recasting_6.c\
+		  recasting/build_raycasting/recasting_7.c \
 		  recasting/mini_map/ft_mini_map.c recasting/mini_map/ft_mini_map_1.c \
 		  recasting/mini_map/ft_mini_map_2.c\
 		  recasting/raycasting.c recasting/raycasting_1.c\

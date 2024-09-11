@@ -1,42 +1,5 @@
 #include "../../../recasting.h"
 
-int	c_rgba(int r, int g, int b, int a)
-{
-	return ((r << 24) | (g << 16) | (b << 8) | a);
-}
-
-void	draw_cube(t_cub *cube, int x, int y, int color)
-{
-	int	i;
-	int	j;
-
-	j = -1;
-	while (++j < tile_size)
-	{
-		i = -1;
-		while (++i < tile_size)
-			mlx_put_pixel(cube->image, (x * tile_size) + i,
-				(y * tile_size) + j, color);
-	}
-	return ;
-}
-
-// all_black
-void	draw_all_black(t_cub *cube)
-{
-	int	x;
-	int	y;
-
-	y = -1;
-	x = -1;
-	while (++y < HEIGHT)
-	{
-		x = -1;
-		while (++x < WIDTH)
-			mlx_put_pixel(cube->image, x, y, c_rgba(0, 0, 0, 150));
-	}
-}
-// end all_black
 
 // draw_player
 // t_pos ft_is_a_door(double x, double y, t_cub *cube)
@@ -141,121 +104,8 @@ void	DDA(t_cub *cube, double X0, double Y0, double X1, double Y1)
 	}
 }
 
-double	normalize_angle(double angle)
-{
-	angle = fmod(angle, 2 * M_PI);
-	if (angle < 0)
-		angle += 2 * M_PI;
-	return (angle);
-}
 
-uint32_t	ft_rgb(uint8_t r, uint8_t g, uint8_t b)
-{
-	return ((r << 24) | (g << 16) | (b << 8) | 0xFF);
-}
 
-uint32_t	get_pixel_color(mlx_texture_t* texture, int x, int y)
-{
-	uint8_t	*pixels;
-	uint8_t	r;
-	uint8_t	g;
-	uint8_t	b;
-	uint8_t	a;
-
-	if (x < 0 || x >= (int)texture->width || y < 0 || y >= (int)texture->height)
-		return (0);
-	pixels = texture->pixels;
-
-	r = pixels[(int)((y * texture->width + x) * 4)];
-	g = pixels[(int)((y * texture->width + x) * 4) + 1];
-	b = pixels[(int)((y * texture->width + x) * 4) + 2];
-	a = pixels[(int)((y * texture->width + x) * 4) + 3];
-
-	return ((r << 24) | (g << 16) | (b << 8) | a);
-}
-
-void	ft_draw_sky_floor(t_cub *cube)
-{
-	int	i;
-	int	j;
-	int	sky_end_y;
-	int	floor_st_y;
-
-	sky_end_y = HEIGHT / 2 - cube->player->player_z - cube->player->jump_var;
-	floor_st_y = HEIGHT / 2 - cube->player->player_z - cube->player->jump_var;
-	if (sky_end_y < 0)
-		sky_end_y = 0;
-	if (floor_st_y >= HEIGHT)
-		floor_st_y = HEIGHT - 1;
-	i = -1;
-	while (++i < WIDTH)
-	{
-		j = -1;
-		while (++j < HEIGHT)
-		{
-			if (j < sky_end_y)
-				mlx_put_pixel(cube->image, i, j, c_rgba(cube->data->sky.r,
-						cube->data->sky.g, cube->data->sky.b, 255));
-			else if (j >= floor_st_y)
-				mlx_put_pixel(cube->image, i, j, c_rgba(cube->data->floor.r,
-						cube->data->floor.g, cube->data->floor.b, 255));
-		}
-	}
-}
-
-uint32_t	ft_shaded_color(uint32_t color, double shade)
-{
-	uint8_t	r;
-	uint8_t	g;
-	uint8_t	b;
-
-	r = ((color >> 24) & 0xFF) * shade;
-	g = ((color >> 16) & 0xFF) * shade;
-	b = ((color >> 8) & 0xFF) * shade;
-	return ((r << 24) | (g << 16) | (b << 8) | (color & 0xFF));
-}
-
-t_doors	*ft_get_smallest_dist(t_doors *head)
-{
-	t_doors	*low;
-
-	low = head;
-	while (head)
-	{
-		if (head->next && head->next->distance < low->distance)
-			low = head->next;
-		head = head->next;
-	}
-	return (low);
-}
-
-void	ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i, int door)
-{
-	mlx_texture_t	*texture;
-	double			texturePosX;
-
-	texture = NULL;
-	if (vars.door)
-		texture = cube->doors[0];
-	else
-		texture = cube->texture[textureNum];
-
-	texturePosX = vars.washitvert ? fmod(vars.wallhity, tile_size) / tile_size : fmod(vars.wallhitx, tile_size) / tile_size;
-	texturePosX = 1.0 - texturePosX;
-
-	int textureX = (int)(texturePosX * texture->width);
-	double texturePos = vars.textureoffsety * vars.texturestep;
-	double shade = fmax(0.2, 1.0 - (vars.distance / 500.0));
-
-	for (int y = vars.walltoppixel; y < vars.wallbottompixel && y < HEIGHT; y++)
-	{
-		int textureY = (int)(texturePos * texture->height) % texture->height;
-		texturePos += vars.texturestep;
-		uint32_t color = get_pixel_color(texture, textureX, textureY);
-		if (!(door && ((ft_shaded_color(color, shade) & 0xFFFFFF00) == 0)) && y >= 0)
-			mlx_put_pixel(cube->image, i, y, ft_shaded_color(color, shade));
-	}
-}
 
 // Add this function to your code
 void draw_textured_floor(t_cub *cube)
@@ -355,31 +205,6 @@ void	update_y_press(t_cub *cube)
 	}
 }
 
-void update_t_press(t_cub *cube)
-{
-	static int	prev_gun_index;
-
-	prev_gun_index = -1;
-	if (cube->t_press)
-	{
-		if (prev_gun_index != -1 && cube->gun_img[prev_gun_index])
-		{
-			mlx_delete_image(cube->mlx, cube->gun_img[prev_gun_index]);
-			cube->gun_img[prev_gun_index] = NULL;
-		}
-		if (!cube->gun_img[0])
-		{
-			cube->gun_img[0] = mlx_texture_to_image(cube->mlx, cube->gun[0]);
-			if (!cube->gun_img[0])
-				ft_error();
-		}
-		if (mlx_image_to_window(cube->mlx, cube->gun_img[0],
-				WIDTH / 2 - cube->gun[0]->width / 2,
-				HEIGHT - cube->gun[0]->height) < 0)
-			ft_error();
-		prev_gun_index = 0;
-	}
-}
 
 void *draw_lines_3D(void *tmp)
 {
@@ -599,119 +424,9 @@ void *draw_lines_3D_1(void *tmp)
 	return NULL;
 }
 
-void my_mousehook(mouse_key_t button, action_t action, modifier_key_t mods, void *param)
-{
-	(void)mods;
-	t_cub *cube = (t_cub *)param;
-
-	if (button == MLX_MOUSE_BUTTON_LEFT && action == MLX_PRESS)
-		cube->right_press = 1;
-	if (button == MLX_MOUSE_BUTTON_LEFT && action == MLX_RELEASE)
-		cube->right_press = 0;
-}
 // hooks
 
-void	ft_realse(t_cub *cube, mlx_key_data_t keydata)
-{
-	if (keydata.key == MLX_KEY_O)
-		cube->player->open *= -1;
-	if (keydata.key == MLX_KEY_W)
-		cube->player->walk_direction = 0;
-	if (keydata.key == MLX_KEY_DOWN)
-		cube->player->walk_direction = 0;
-	if (keydata.key == MLX_KEY_S)
-		cube->player->walk_direction = 0;
-	if (keydata.key == MLX_KEY_UP)
-		cube->player->walk_direction = 0;
-	if (keydata.key == MLX_KEY_RIGHT || keydata.key == MLX_KEY_LEFT)
-		cube->player->turn_direction = 0;
-	if (keydata.key == MLX_KEY_D || keydata.key == MLX_KEY_A)
-		cube->player->strafe_direction = 0;
-	if (keydata.key == MLX_KEY_LEFT_CONTROL
-		|| keydata.key == MLX_KEY_LEFT_SHIFT)
-		cube->player->jump = 0;
-	if (keydata.key == MLX_KEY_RIGHT_SHIFT)
-		cube->player->shift *= -1;
-	if (keydata.key == MLX_KEY_M)
-		cube->player->minimap *= -1;
-	if (keydata.key == MLX_KEY_TAB)
-		cube->player->tab = 0;
-}
 
-void	ft_press(t_cub *cube, mlx_key_data_t keydata)
-{
-	if (keydata.key == MLX_KEY_RIGHT)
-		cube->player->turn_direction = 1;
-	if (keydata.key == MLX_KEY_LEFT)
-		cube->player->turn_direction = -1;
-	if (keydata.key == MLX_KEY_W)
-		cube->player->walk_direction = 1;
-	if (keydata.key == MLX_KEY_UP)
-		cube->player->walk_direction = 1;
-	if (keydata.key == MLX_KEY_S)
-		cube->player->walk_direction = -1;
-	if (keydata.key == MLX_KEY_DOWN)
-		cube->player->walk_direction = -1;
-	if (keydata.key == MLX_KEY_D)
-		cube->player->strafe_direction = 1;
-	if (keydata.key == MLX_KEY_A)
-		cube->player->strafe_direction = -1;
-	if (keydata.key == MLX_KEY_TAB)
-		cube->player->right_left = 1;
-	if (keydata.key == MLX_KEY_RIGHT_SHIFT)
-		cube->player->mouse = 1;
-	if (keydata.key == MLX_KEY_LEFT_SHIFT)
-		cube->player->jump = 2;
-}
-
-void	ft_press_1(t_cub *cube, mlx_key_data_t keydata)
-{
-	if (keydata.key == MLX_KEY_Y)
-	{
-		if (cube->current_gun_index == Y_CLICK)
-			cube->current_gun_index = 0;
-		cube->t_press = 0;
-		cube->y_press = 1;
-	}
-	if (keydata.key == MLX_KEY_ESCAPE)
-	{
-		ft_free_data(cube);
-		mlx_close_window(cube->mlx);
-		mlx_delete_image(cube->mlx, cube->image);
-	}
-	if (keydata.key == MLX_KEY_TAB)
-		cube->player->tab = 1;
-	if (keydata.key == MLX_KEY_LEFT_CONTROL)
-		cube->player->jump = -1;
-}
-
-void	my_keyhook(mlx_key_data_t keydata, void* param)
-{
-	t_cub	*cube;
-
-	cube = param;
-	if (keydata.action == MLX_PRESS)
-		(ft_press(cube, keydata), ft_press_1(cube, keydata));
-	if (keydata.action == MLX_RELEASE)
-	{
-		ft_realse(cube, keydata);
-		if (keydata.key == MLX_KEY_Y)
-		{
-			cube->t_press = 0;
-			if (cube->gun_img[cube->current_gun_index])
-			{
-				mlx_delete_image(cube->mlx,
-					cube->gun_img[cube->current_gun_index]);
-				cube->gun_img[cube->current_gun_index] = NULL;
-			}
-			if (cube->gun_img[0])
-			{
-				mlx_delete_image(cube->mlx, cube->gun_img[0]);
-				cube->gun_img[0] = NULL;
-			}
-		}
-	}
-}
 
 void	handle_mouse(t_cub *cube)
 {
@@ -740,43 +455,6 @@ void	handle_mouse(t_cub *cube)
 	cube->player->player_z = cube->player->player_z + delta_y;
 }
 
-void	update_run_on_right_click(t_cub *cube)
-{
-	static double	last_gun_change_time;
-	double			current_time;
-
-	last_gun_change_time = 0;
-	current_time = mlx_get_time();
-	if (cube->right_press)
-	{
-		if ((current_time - last_gun_change_time) > 0.15)
-		{
-			if (cube->gun_r_img[cube->cur_g_right_clikc])
-			{
-				mlx_delete_image(cube->mlx,
-					cube->gun_r_img[cube->cur_g_right_clikc]);
-				cube->gun_r_img[cube->cur_g_right_clikc] = NULL;
-			}
-
-			cube->cur_g_right_clikc++;
-			if (cube->cur_g_right_clikc > 1)
-				cube->cur_g_right_clikc = 0;
-			last_gun_change_time = current_time;
-		}
-	}
-	else
-		cube->cur_g_right_clikc = 0;
-}
-
-int	calculateDistance(int x1, int y1, int x2, int y2)
-{
-	int	delta_x;
-	int	delta_y;
-
-	delta_x = x2 - x1;
-	delta_y = y2 - y1;
-	return (sqrt(delta_x * delta_x + delta_y * delta_y));
-}
 
 void	update_player(t_cub *cube)
 {
@@ -852,77 +530,74 @@ void	update_player(t_cub *cube)
 	int y = floor(cube->player->player_y / tile_size);
 	while (tmp)
 	{
-		tmp->distance = calculateDistance(x, y, tmp->x, tmp->y);
+		tmp->distance = calculate_distance(x, y, tmp->x, tmp->y);
 		tmp = tmp->next;
 	}
 }
 
 // heal
-void	draw_inside_head(t_cub *cube)
-{
-	int	i;
-	int	y;
+// void	draw_inside_head(t_cub *cube)
+// {
+// 	int	i;
+// 	int	y;
+// 	i = 0;
+// 	while (i <= 400)
+// 	{
+// 		y = 0;
+// 		while (y <= 20)
+// 		{
+// 			if (i != 0 && y != 0 && y != 20 && i != 400)
+// 				mlx_put_pixel(cube->image, i + 10,
+// 					y + 10, c_rgba(0, 0, 255, 255));
+// 			y++;
+// 		}
+// 		i++;
+// 	}
+// }
 
-	i = 0;
-	while (i <= 400)
-	{
-		y = 0;
-		while (y <= 20)
-		{
-			if (i != 0 && y != 0 && y != 20 && i != 400)
-				mlx_put_pixel(cube->image, i + 10,
-					y + 10, c_rgba(0, 0, 255, 255));
-			y++;
-		}
-		i++;
-	}
-}
-
-void	heal_bar(t_cub *cube)
-{
-	int	i;
-	int	y;
-
-	i = 0;
-	while (i <= 400)
-	{
-		y = 0;
-		while (y <= 20)
-		{
-			if (i == 0 || y == 0 || y == 20 || i == 400)
-				mlx_put_pixel(cube->image, i + 10,
-					y + 10, c_rgba(255, 0, 0, 255));
-			y++;
-		}
-		i++;
-	}
-	draw_inside_head(cube);
-}
+// void	heal_bar(t_cub *cube)
+// {
+// 	int	i;
+// 	int	y;
+// 	i = 0;
+// 	while (i <= 400)
+// 	{
+// 		y = 0;
+// 		while (y <= 20)
+// 		{
+// 			if (i == 0 || y == 0 || y == 20 || i == 400)
+// 				mlx_put_pixel(cube->image, i + 10,
+// 					y + 10, c_rgba(255, 0, 0, 255));
+// 			y++;
+// 		}
+// 		i++;
+// 	}
+// 	draw_inside_head(cube);
+// }
 // end heal
 
 // shots
-void	draw_shots(t_cub *cube)
-{
-	int	i;
-	int	y;
-
-	i = 0;
-	while (i <= 280)
-	{
-		y = 0;
-		while (y <= 150)
-		{
-			if (i == 135)
-				mlx_put_pixel(cube->image, i + WIDTH / 1.2,
-					y + HEIGHT / 1.2, c_rgba(0, 0, 255, 255));
-			else
-				mlx_put_pixel(cube->image, i + WIDTH / 1.2,
-					y + HEIGHT / 1.2, c_rgba(0, 0, 0, 255));
-			y++;
-		}
-		i++;
-	}
-}
+// void	draw_shots(t_cub *cube)
+// {
+// 	int	i;
+// 	int	y;
+// 	i = 0;
+// 	while (i <= 280)
+// 	{
+// 		y = 0;
+// 		while (y <= 150)
+// 		{
+// 			if (i == 135)
+// 				mlx_put_pixel(cube->image, i + WIDTH / 1.2,
+// 					y + HEIGHT / 1.2, c_rgba(0, 0, 255, 255));
+// 			else
+// 				mlx_put_pixel(cube->image, i + WIDTH / 1.2,
+// 					y + HEIGHT / 1.2, c_rgba(0, 0, 0, 255));
+// 			y++;
+// 		}
+// 		i++;
+// 	}
+// }
 // end shots
 
 #include <time.h>
