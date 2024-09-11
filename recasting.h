@@ -40,6 +40,29 @@
 # define R_CLICK 76
 # define Y_CLICK 105
 
+typedef struct s_p_indecator
+{
+	int	indicator_length;
+	int	end_x;
+	int	end_y;
+	int	dx;
+	int	dy;
+	int	sx;
+	int	sy;
+	int	err;
+	int	e2;
+}	t_p_indecator;
+
+typedef struct s_map_background
+{
+	int	y;
+	int	x;
+	int	sx;
+	int	sy;
+	int	dx;
+	int	dy;
+}	t_map_background;
+
 typedef struct s_doors
 {
 	int				x;
