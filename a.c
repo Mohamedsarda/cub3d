@@ -92,37 +92,36 @@ void	arr_guns_1(t_cub *cube, char **guns)
 	}
 }
 
-// void	arr_guns_2(t_cub *cube, char **guns)
-// {
-// 	int		i;
-// 	int		k;
-// 	i = 0;
-// 	k = 0;
-// 	while (guns[i])
-// 	{
-// 		cube->gun_r[k] = mlx_load_png(guns[i]);
-// 		if (!cube->gun_r[k])
-// 			ft_error();
-// 		if (k < 2)
-// 		{
-// 			cube->gun_r_img[k] = mlx_texture_to_image(cube->mlx,
-// 					cube->gun_r[k]);
-// 			if (!cube->gun_r_img[k])
-// 				ft_error();
-// 		}
-// 		k++;
-// 		i++;
-// 	}
-// }
-
-void	ft_fractol_init(t_cub *cube)
+void	arr_guns_2(t_cub *cube, char **guns)
 {
-	char	**guns;
 	int		i;
 	int		k;
 
 	i = 0;
 	k = 0;
+	while (guns[i])
+	{
+		cube->gun_r[k] = mlx_load_png(guns[i]);
+		if (!cube->gun_r[k])
+			ft_error();
+		if (k < 2)
+		{
+			cube->gun_r_img[k] = mlx_texture_to_image(cube->mlx,
+					cube->gun_r[k]);
+			if (!cube->gun_r_img[k])
+				ft_error();
+		}
+		k++;
+		i++;
+	}
+}
+
+void	ft_fractol_init(t_cub *cube)
+{
+	char	**guns;
+	int		i;
+
+	i = 0;
 	cube->mlx = mlx_init(WIDTH, HEIGHT, "42Balls", true);
 	if (!cube->mlx)
 		ft_error();
@@ -133,37 +132,8 @@ void	ft_fractol_init(t_cub *cube)
 	if (!guns)
 		return ;
 	arr_guns_1(cube, guns);
-	// i = 0;
-	// while (i < Y_CLICK)
-	// {
-	// 	cube->gun[i] = mlx_load_png(guns[i]);
-	// 	if (!cube->gun[i])
-	// 		ft_error();
-	// 	if (i < 2)
-	// 	{
-	// 		cube->gun_img[i] = mlx_texture_to_image(cube->mlx, cube->gun[i]);
-	// 		if (!cube->gun_img[i])
-	// 			ft_error();
-	// 	}
-	// 	i++;
-	// }
-	while (guns[i])
-	{
-		cube->gun_r[k] = mlx_load_png(guns[i]);
-		if (!cube->gun_r[k])
-			ft_error();
-		if (k < 2)
-		{
-			cube->gun_r_img[k] = mlx_texture_to_image(cube->mlx, cube->gun_r[k]);
-			if (!cube->gun_r_img[k])
-				ft_error();
-		}
-		k++;
-		i++;
-	}
-
+	arr_guns_2(cube, guns);
 	free_double_arr(guns);
-
 	ft_load_doors(cube, 0, "../Textures/Doors/tile000.png");
 	char *texture_files[] = {cube->data->no, cube->data->so, cube->data->we, cube->data->ea};
 	i = 0;
