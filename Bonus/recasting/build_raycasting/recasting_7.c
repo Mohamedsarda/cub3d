@@ -45,7 +45,6 @@ void	update_run_on_right_click(t_cub *cube)
 					cube->gun_r_img[cube->cur_g_right_clikc]);
 				cube->gun_r_img[cube->cur_g_right_clikc] = NULL;
 			}
-
 			cube->cur_g_right_clikc++;
 			if (cube->cur_g_right_clikc > 1)
 				cube->cur_g_right_clikc = 0;
@@ -86,8 +85,7 @@ void	draw_inside_head(t_cub *cube)
 	}
 }
 
-
-void	ft_get_texture(t_cub *cube, t_vars vars, int txturnm, int i, int door)
+void	ft_get_texture_b(t_cub *cube, t_vars vars, int txturnm, int i, int door)
 {
 	mlx_texture_t	*texture;
 	double			texturePosX;
@@ -100,10 +98,8 @@ void	ft_get_texture(t_cub *cube, t_vars vars, int txturnm, int i, int door)
 		texture = cube->doors[0];
 	else
 		texture = cube->texture[txturnm];
-
 	texturePosX = vars.washitvert ? fmod(vars.wallhity, tile_size) / tile_size : fmod(vars.wallhitx, tile_size) / tile_size;
 	texturePosX = 1.0 - texturePosX;
-
 	textureX = (int)(texturePosX * texture->width);
 	texturePos = vars.textureoffsety * vars.texturestep;
 	shade = fmax(0.2, 1.0 - (vars.distance / 500.0));

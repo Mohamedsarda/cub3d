@@ -12,7 +12,7 @@ uint32_t	ft_shade(uint32_t color, double shade)
 	return ((r << 24) | (g << 16) | (b << 8) | (color & 0xFF));
 }
 
-void	ft_get_texture(t_cub *cube, t_vars vars, int textureNum, int i)
+void	ft_get_texture_m(t_cub *cube, t_vars vars, int textureNum, int i)
 {
 	t_text_vars	v;
 	int			y;
@@ -86,7 +86,7 @@ void	draw_lines_3d(t_cub *cube)
 		vars.texturestep = 1.0 / v.wallstripheight;
 		vars.textureoffsety = 0;
 		texturenum = ft_texture_num(vars);
-		ft_get_texture(cube, vars, texturenum, i);
+		ft_get_texture_m(cube, vars, texturenum, i);
 		v.angle += FOV_ANGLE / WIDTH;
 	}
 }
