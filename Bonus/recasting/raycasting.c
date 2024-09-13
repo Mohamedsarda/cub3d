@@ -43,10 +43,10 @@ void	check_if_door(t_cub *cube, t_vars *vars)
 
 	fx = vars->wallhitx;
 	fy = vars->wallhity;
-	if (vars->israyfacingleft)
-		fx--;
-	if (vars->israyfacingup)
+	if (!vars->washitvert && vars->israyfacingup)
 		fy--;
+	if (vars->washitvert && vars->israyfacingleft)
+		fx--;
 	x = floor(fx / tile_size);
 	y = floor(fy / tile_size);
 	if (cube->data->map[y][x] == 'D')
