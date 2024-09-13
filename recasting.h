@@ -349,4 +349,5 @@ void	update_run_on_right_click(t_cub *cube);
 int	calculate_distance(int x1, int y1, int x2, int y2);
 void	draw_inside_head(t_cub *cube);
 void	ft_get_texture(t_cub *cube, t_vars vars, int txturnm, int i, int door);
+void *draw_lines_3D_1(void *tmp);
 #endif
