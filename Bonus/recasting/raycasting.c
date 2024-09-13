@@ -49,7 +49,7 @@ void	check_if_door(t_cub *cube, t_vars *vars)
 		fx--;
 	x = floor(fx / tile_size);
 	y = floor(fy / tile_size);
-	if (cube->data->map[y][x] == 'D')
+	if (cube->data->map[y][x] == 'D' )
 		vars->door = 1;
 }
 

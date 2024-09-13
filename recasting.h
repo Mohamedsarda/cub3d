@@ -348,6 +348,8 @@ void	ft_press_1(t_cub *cube, mlx_key_data_t keydata);
 void	update_run_on_right_click(t_cub *cube);
 int	calculate_distance(int x1, int y1, int x2, int y2);
 void	draw_inside_head(t_cub *cube);
-void	ft_get_texture(t_cub *cube, t_vars vars, int txturnm, int i, int door);
+void	ft_get_texture_b(t_cub *cube, t_vars vars, int txturnm, int i, int door);
+void	ft_get_texture_m(t_cub *cube, t_vars vars, int txturnm, int i);
 void *draw_lines_3D_1(void *tmp);
+t_vars	open_door(t_vars vars, t_cub *cube, double angle);
 #endif
