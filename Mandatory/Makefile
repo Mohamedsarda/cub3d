@@ -1,5 +1,5 @@
 CC		= cc
-CFLAGS	=   -pthread  -Wall -Wextra -Werror  -Wunreachable-code -Ofast -g  -fsanitize=address
+CFLAGS	=   -pthread  -Wall -Wextra -Werror  -Wunreachable-code -Ofast #-g  -fsanitize=address
 RM		= rm -rf
 SRCS	= main.c 	./Parsing/parsing.c	\
 		  ./Parsing/init/ft_get_init.c		./Parsing/init/ft_reading_init.c\

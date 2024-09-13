@@ -13,6 +13,9 @@ void	ft_error(void)
 
 void	ft_free_data(t_cub *cube)
 {
+	int	i;
+
+	i = -1;
 	free_double_arr(cube->data->map);
 	free(cube->data->ea);
 	free(cube->data->so);
@@ -20,7 +23,11 @@ void	ft_free_data(t_cub *cube)
 	free(cube->data->we);
 	free(cube->data);
 	free(cube->player);
-	// exit(0);
+	while (++i < 4)
+	{
+		mlx_delete_image(cube->mlx, cube->img[i]);
+		mlx_delete_texture(cube->texture[i]);
+	}
 }
 
 void	malloc_error(void)

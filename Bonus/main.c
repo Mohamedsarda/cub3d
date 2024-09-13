@@ -17,12 +17,33 @@ void	ft_check_line(char *tmp, int i)
 	}
 }
 
+void	ft_check_extention(char *dst)
+{
+	int	i;
+
+	i = 0;
+	while (*dst)
+	{
+		if (*dst == '.' && i > 2)
+			break ;
+		dst++;
+		i++;
+	}
+	if (!dst[0] || ft_strncmp(dst, ".cub", ft_strlen(dst)) != 0)
+	{
+		printf("The Map Should End With .cub\n");
+		exit (1);
+	}
+}
+
 void	ft_count_file_lines(t_init *init, char **dst)
 {
 	char	*tmp;
 	int		fd;
 	int		i;
 
+	i = 0;
+	ft_check_extention(dst[1]);
 	fd = open(dst[1], O_RDONLY);
 	if (fd <= 0)
 	{
@@ -67,6 +88,16 @@ void	ft_read_file_0(t_init *init, char **dst)
 	close(fd);
 }
 
+void	close_window(void *param)
+{
+	t_cub	*cube;
+
+	cube = (t_cub *)param;
+	ft_free_data(cube);
+	mlx_delete_image(cube->mlx, cube->image);
+	mlx_close_window(cube->mlx);
+}
+
 void	ft_cube_func(t_cub *cube)
 {
 	cube->data->height = cube->data->map_row * tile_size;
@@ -75,7 +106,13 @@ void	ft_cube_func(t_cub *cube)
 	mlx_key_hook(cube->mlx, &my_keyhook, cube);
 	mlx_mouse_hook(cube->mlx, &my_mousehook, cube);
 	mlx_loop_hook(cube->mlx, loop_fun, cube);
+	mlx_close_hook(cube->mlx, &close_window, cube);
 	mlx_loop(cube->mlx);
+}
+
+void	f()
+{
+	system("leaks cub3D");
 }
 
 int	main(int c, char **dst)
@@ -83,7 +120,7 @@ int	main(int c, char **dst)
 	t_init	*init;
 	t_data	*data;
 	t_cub	cube;
-
+	atexit(f);
 	if (c != 2)
 	{
 		ft_putstr_fd("To Play the game u need to provide a map\n", 2);
