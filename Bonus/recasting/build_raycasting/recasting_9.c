@@ -34,9 +34,8 @@ void	draw_gun_right_click(t_cub *cube)
 	static int	previous_gun_index;
 	int			gun_index;
 
-	previous_gun_index = -1;
 	gun_index = cube->cur_g_right_clikc;
-	if (previous_gun_index != -1 && cube->gun_r_img[previous_gun_index])
+	if (cube->gun_r_img[previous_gun_index])
 	{
 		mlx_delete_image(cube->mlx, cube->gun_r_img[previous_gun_index]);
 		cube->gun_r_img[previous_gun_index] = NULL;
@@ -105,7 +104,6 @@ void	*draw_lines_3d(void *tmp)
 	cube = (t_cub *)tmp;
 	distance_proj_plane = (WIDTH / 2.0) / tan(FOV_ANGLE / 2);
 	cube->angle_0 = cube->player->rotat_angle - FOV_ANGLE / 2.0;
-
 	while (i < WIDTH / 2)
 	{
 		vars = draw_line(cube, cube->angle_0, 0);

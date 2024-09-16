@@ -76,7 +76,6 @@ t_vars	open_door(t_vars vars, t_cub *cube, double angle)
 	return (vars);
 }
 
-
 void	*draw_lines_3d_1(void *tmp)
 {
 	t_cub	*cube;
