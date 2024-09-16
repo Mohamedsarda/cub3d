@@ -40,6 +40,17 @@
 # define R_CLICK 76
 # define Y_CLICK 105
 
+typedef struct s_het_wall
+{
+	double left;
+	double up;
+	double right;
+	double down;
+	int  t_left;
+	int  t_up;
+	int  t_right;
+	int  t_down;
+}	t_het_wall;
 typedef struct s_p_indecator
 {
 	int	indicator_length;
@@ -278,7 +289,6 @@ void	draw_per(t_cub *cube);
 int		c_rgba(int r, int g, int b, int a);
 
 //raycasting
-void	DDA(t_cub *cube, double X0, double Y0, double X1, double Y1);
 int		has_wall(t_cub *cube, double x1, double y1, int is);
 t_vars	draw_line(t_cub *cube, double angle, int is);
 void	draw_lines(t_cub *cube, int is);
@@ -295,7 +305,6 @@ void	ft_lstdel_doors(t_doors *lst);
 void	ft_lstclear_doors(t_doors **lst);
 
 //wall 
-void	draw_lines_3d(t_cub *cube);
 uint32_t	get_pixel_color(mlx_texture_t *texture, int x, int y);
 
 // sky floor
@@ -350,6 +359,11 @@ int	calculate_distance(int x1, int y1, int x2, int y2);
 void	draw_inside_head(t_cub *cube);
 void	ft_get_texture_b(t_cub *cube, t_vars vars, int txturnm, int i, int door);
 void	ft_get_texture_m(t_cub *cube, t_vars vars, int txturnm, int i);
-void *draw_lines_3D_1(void *tmp);
+void *draw_lines_3d_1(void *tmp);
 t_vars	open_door(t_vars vars, t_cub *cube, double angle);
+void	draw_gun_right_click(t_cub *cube);
+void	*draw_lines_3d(void *tmp);
+void	init_vars_1(t_vars *vars, t_cub *cube, double dis_pr_plan, double angle);
+int	texternum(t_vars vars);
+void	draw_lines_3d_m(t_cub *cube);
 #endif
