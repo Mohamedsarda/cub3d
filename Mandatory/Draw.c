@@ -56,7 +56,7 @@ void	loop_fun(void *param)
 	cube = (t_cub *)param;
 	update_player(cube);
 	mlx_get_mouse_pos(cube->mlx, &xpos, &ypos);
-	draw_lines_3d(cube);
+	draw_lines_3d_m(cube);
 	if (xpos != WIDTH / 2 && ypos != HEIGHT / 2 && cube->player->start == 0)
 	{
 		mlx_set_mouse_pos(cube->mlx, WIDTH / 2, HEIGHT / 2);

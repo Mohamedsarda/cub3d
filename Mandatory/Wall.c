@@ -62,7 +62,7 @@ int	ft_texture_num(t_vars vars)
 	return (texturenum);
 }
 
-void	draw_lines_3d(t_cub *cube)
+void	draw_lines_3d_m(t_cub *cube)
 {
 	int			i;
 	t_vars_3d	v;

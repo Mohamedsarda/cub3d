@@ -1,109 +1,6 @@
 #include "../../../recasting.h"
 
 
-// draw_player
-// t_pos ft_is_a_door(double x, double y, t_cub *cube)
-// {
-// 	(void)x;
-// 	(void)y;
-// 	t_pos p;
-// 	p.x = -1;
-// 	p.y = -1;
-// 	while (++p.x < cube->data->map_row)
-// 	{
-// 		p.y = -1;
-// 		while (++p.y < cube->data->map_row)
-// 		{
-// 			if (p.x <= cube->data->map_cols && (cube->data->map[p.x][p.y] == 'D' || cube->data->map[p.x][p.y] == 'T'))
-// 				return (p);
-// 		}
-// 	}
-// 	return (p);
-// }
-
-int	is_it_a_wall(double x, double y, t_cub *cube)
-{
-	double left;
-	double up;
-	double right;
-	double down;
-	int  t_left;
-	int  t_up;
-	int  t_right;
-	int  t_down;
-
-	left = x - ((double)cube->player->radius);
-	up = y - ((double)cube->player->radius);
-	right = x + ((double)cube->player->radius);
-	down = y + ((double)cube->player->radius);
-	if (left < 0 || right > cube->data->map_cols * tile_size
-		|| up < 0 || down > cube->data->map_row * tile_size)
-		return (0);
-	t_left = floor(left / tile_size);
-	t_up = floor(up / tile_size);
-	t_right = floor(right / tile_size);
-	t_down = floor(down / tile_size);
-	if (cube->data->map[t_up][t_left] == '1' || cube->data->map[t_down][t_right] == '1'
-		|| cube->data->map[t_up][t_right] == '1' || cube->data->map[t_down][t_left] == '1')
-		return (0);
-	if ((cube->data->map[t_up][t_left] == 'D' || cube->data->map[t_down][t_right] == 'D'
-		|| cube->data->map[t_up][t_right] == 'D' || cube->data->map[t_down][t_left] == 'D') && cube->player->open == 1)
-		return (0);
-	return (1);
-}
-
-// void	ft_draw_line(t_point x1, t_point x2, t_fdf *box)
-// {
-// 	box->draw.dx = abs(x2.x - x1.x);
-// 	box->draw.dy = abs(x2.y - x1.y);
-// 	if (x1.x < x2.x)
-// 		box->draw.sx = 1;
-// 	else
-// 		box->draw.sx = -1;
-// 	if (x1.y < x2.y)
-// 		box->draw.sy = 1;
-// 	else
-// 		box->draw.sy = -1;
-// 	box->draw.error = box->draw.dx - box->draw.dy;
-// 	while (1)
-// 	{
-// 		if (x1.x >= 0 && x1.y >= 0 && x1.x < WIDTH && x1.y < HEIGHT)
-// 			my_pixel_put(x1.x, x1.y, box->var.color, box);
-// 		if (x1.x == x2.x && x1.y == x2.y)
-// 			break ;
-// 		box->draw.e2 = 2 * box->draw.error;
-// 		if (box->draw.e2 >= -box->draw.dy)
-// 		{
-// 			box->draw.error -= box->draw.dy;
-// 			x1.x += box->draw.sx;
-// 		}
-// 		if (box->draw.e2 <= box->draw.dx)
-// 		{
-// 			box->draw.error += box->draw.dx;
-// 			x1.y += box->draw.sy;
-// 		}
-// 	}
-// }
-
-void	DDA(t_cub *cube, double X0, double Y0, double X1, double Y1)
-{
-	double dx = X1 - X0;
-	double dy = Y1 - Y0;
-	double steps = fabs(dx) > fabs(dy) ? fabs(dx) : fabs(dy);
-	double Xinc = dx / steps;
-	double Yinc = dy / steps;
-	double X = X0;
-	double Y = Y0;
-	int i = 0;
-	while (i <= steps)
-	{
-		mlx_put_pixel(cube->image, X , Y, c_rgba(250, 100, 100 , 255));
-		X += Xinc;
-		Y += Yinc;
-		i++;
-	}
-}
-
 // Add this function to your code
 void draw_textured_floor(t_cub *cube)
 {
@@ -145,29 +42,6 @@ void draw_textured_floor(t_cub *cube)
 	}
 }
 
-void draw_gun_right_click(t_cub *cube)
-{
-	static int previous_gun_index = -1;
-
-	int gun_index = cube->cur_g_right_clikc;
-
-	if (previous_gun_index != -1 && cube->gun_r_img[previous_gun_index])
-	{
-		mlx_delete_image(cube->mlx, cube->gun_r_img[previous_gun_index]);
-		cube->gun_r_img[previous_gun_index] = NULL;
-	}
-
-	if (!cube->gun_r_img[gun_index])
-	{
-		cube->gun_r_img[gun_index] = mlx_texture_to_image(cube->mlx, cube->gun_r[gun_index]);
-		if (!cube->gun_r_img[gun_index])
-			ft_error();
-	}
-	if (mlx_image_to_window(cube->mlx, cube->gun_r_img[gun_index], WIDTH / 2 - cube->gun_r[gun_index]->width / 2, HEIGHT - cube->gun_r[gun_index]->height) < 0)
-		ft_error();
-
-	previous_gun_index = gun_index;
-}
 
 void	update_y_press(t_cub *cube)
 {
@@ -198,35 +72,6 @@ void	update_y_press(t_cub *cube)
 			cube->y_press = 0;
 		}
 	}
-}
-
-void	*draw_lines_3D(void *tmp)
-{
-	t_cub *cube = (t_cub *)tmp;
-	double distanceProjPlane = (WIDTH / 2.0) / tan(FOV_ANGLE / 2);
-	double angleStep = FOV_ANGLE / WIDTH;
-	cube->angle_0 = cube->player->rotat_angle - FOV_ANGLE / 2.0;
-
-	for (int i = 0; i < WIDTH / 2; i++)
-	{
-		t_vars vars = draw_line(cube, cube->angle_0, 0);
-		vars = open_door(vars, cube, cube->angle_0);
-		double wallDistance = vars.distance * cos(cube->angle_0 - cube->player->rotat_angle);
-		double wallStripHeight = (tile_size / wallDistance) * distanceProjPlane;
-
-		vars.walltoppixel = (HEIGHT / 2.0) - (wallStripHeight / 2.0) - cube->player->player_z - cube->player->jump_var;
-		vars.wallbottompixel = fmin((HEIGHT / 2.0) + (wallStripHeight / 2.0) - cube->player->player_z - cube->player->jump_var, HEIGHT);
-
-		vars.texturestep = 1.0 / wallStripHeight;
-		vars.textureoffsety = 0;
-
-		int textureNum = vars.washitvert ?
-			(vars.israyfacingleft ? 2 : 3) :
-			(vars.israyfacingup ? 0 : 1);
-		ft_get_texture_b(cube, vars, textureNum, i, (cube->doortype / 2));
-		cube->angle_0 += angleStep;
-	}
-	return (NULL);
 }
 
 void	handle_mouse(t_cub *cube)
@@ -329,71 +174,6 @@ void	update_player(t_cub *cube)
 	}
 }
 
-// heal
-// void	draw_inside_head(t_cub *cube)
-// {
-// 	int	i;
-// 	int	y;
-// 	i = 0;
-// 	while (i <= 400)
-// 	{
-// 		y = 0;
-// 		while (y <= 20)
-// 		{
-// 			if (i != 0 && y != 0 && y != 20 && i != 400)
-// 				mlx_put_pixel(cube->image, i + 10,
-// 					y + 10, c_rgba(0, 0, 255, 255));
-// 			y++;
-// 		}
-// 		i++;
-// 	}
-// }
-
-// void	heal_bar(t_cub *cube)
-// {
-// 	int	i;
-// 	int	y;
-// 	i = 0;
-// 	while (i <= 400)
-// 	{
-// 		y = 0;
-// 		while (y <= 20)
-// 		{
-// 			if (i == 0 || y == 0 || y == 20 || i == 400)
-// 				mlx_put_pixel(cube->image, i + 10,
-// 					y + 10, c_rgba(255, 0, 0, 255));
-// 			y++;
-// 		}
-// 		i++;
-// 	}
-// 	draw_inside_head(cube);
-// }
-// end heal
-
-// shots
-// void	draw_shots(t_cub *cube)
-// {
-// 	int	i;
-// 	int	y;
-// 	i = 0;
-// 	while (i <= 280)
-// 	{
-// 		y = 0;
-// 		while (y <= 150)
-// 		{
-// 			if (i == 135)
-// 				mlx_put_pixel(cube->image, i + WIDTH / 1.2,
-// 					y + HEIGHT / 1.2, c_rgba(0, 0, 255, 255));
-// 			else
-// 				mlx_put_pixel(cube->image, i + WIDTH / 1.2,
-// 					y + HEIGHT / 1.2, c_rgba(0, 0, 0, 255));
-// 			y++;
-// 		}
-// 		i++;
-// 	}
-// }
-// end shots
-
 #include <time.h>
 
 #define TARGET_FPS 60
@@ -412,8 +192,8 @@ void loop_fun(void* param)
 		ft_draw_sky_floor(cube);
 		cube->threads[0].id = 0;
 		cube->threads[1].id = 1;
-		pthread_create(&cube->threads[0].thread, NULL, &draw_lines_3D, (void *)cube);
-		pthread_create(&cube->threads[1].thread, NULL, &draw_lines_3D_1, (void *)cube);
+		pthread_create(&cube->threads[0].thread, NULL, &draw_lines_3d, (void *)cube);
+		pthread_create(&cube->threads[1].thread, NULL, &draw_lines_3d_1, (void *)cube);
 		pthread_join(cube->threads[0].thread, NULL);
 		pthread_join(cube->threads[1].thread, NULL);
 
