@@ -282,6 +282,7 @@ void	ft_fractol_init(t_cub *cube);
 
 // hooks
 void	loop_fun(void *param);
+void	close_window(void *param);
 void	my_keyhook(mlx_key_data_t keydata, void *param);
 // end hooks
 //minimap
