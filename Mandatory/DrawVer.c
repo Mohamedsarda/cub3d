@@ -1,5 +1,15 @@
 #include "../recasting.h"
 
+void	close_window(void *param)
+{
+	t_cub	*cube;
+
+	cube = (t_cub *)param;
+	ft_free_data(cube);
+	mlx_delete_image(cube->mlx, cube->image);
+	mlx_close_window(cube->mlx);
+}
+
 void	ft_fractol_init(t_cub *cube)
 {
 	int		i;

@@ -17,12 +17,32 @@ void	ft_check_line(char *tmp, int i)
 	}
 }
 
+void	ft_check_extention(char *dst)
+{
+	int	i;
+
+	i = 0;
+	while (*dst)
+	{
+		if (*dst == '.' && i > 2)
+			break ;
+		dst++;
+		i++;
+	}
+	if (!dst[0] || ft_strncmp(dst, ".cub", ft_strlen(dst)) != 0)
+	{
+		printf("The Map Should End With .cub\n");
+		exit (1);
+	}
+}
+
 void	ft_count_file_lines(t_init *init, char **dst)
 {
 	char	*tmp;
 	int		fd;
 	int		i;
 
+	ft_check_extention(dst[1]);
 	fd = open(dst[1], O_RDONLY);
 	if (fd <= 0)
 	{
@@ -74,7 +94,13 @@ void	ft_cube_func(t_cub *cube)
 	ft_fractol_init(cube);
 	mlx_key_hook(cube->mlx, &my_keyhook, cube);
 	mlx_loop_hook(cube->mlx, loop_fun, cube);
+	mlx_close_hook(cube->mlx, &close_window, cube);
 	mlx_loop(cube->mlx);
+}
+
+void	f()
+{
+	system("leaks cub3D");
 }
 
 int	main(int c, char **dst)
@@ -82,7 +108,7 @@ int	main(int c, char **dst)
 	t_init	*init;
 	t_data	*data;
 	t_cub	cube;
-
+	atexit(f);
 	if (c != 2)
 	{
 		ft_putstr_fd("To Play the game u need to provide a map\n", 2);
