@@ -32,7 +32,6 @@ void	my_mousehook(mouse_key_t bt, action_t ac, modifier_key_t md, void *pa)
 
 	(void)md;
 	cube = (t_cub *)pa;
-
 	if (bt == MLX_MOUSE_BUTTON_LEFT && ac == MLX_PRESS)
 		cube->right_press = 1;
 	if (bt == MLX_MOUSE_BUTTON_LEFT && ac == MLX_RELEASE)
