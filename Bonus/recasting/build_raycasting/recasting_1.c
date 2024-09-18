@@ -18,7 +18,6 @@ void	ft_free_data(t_cub *cube)
 	free(cube->data->we);
 	free(cube->data);
 	free(cube->player);
-	mlx_delete_image(cube->mlx, cube->door_img[0]);
 	mlx_delete_texture(cube->doors[0]);
 	while (++i < 4)
 	{
@@ -30,12 +29,6 @@ void	ft_free_data(t_cub *cube)
 	{
 		mlx_delete_image(cube->mlx, cube->img[i]);
 		mlx_delete_texture(cube->gun[i]);
-	}
-	i = -1;
-	while (++i < R_CLICK)
-	{
-		mlx_delete_image(cube->mlx, cube->gun_r_img[i]);
-		mlx_delete_texture(cube->gun_r[i]);
 	}
 }
 
