@@ -40,6 +40,28 @@
 # define R_CLICK 76
 # define Y_CLICK 105
 
+typedef struct s_texture_data
+{
+	mlx_texture_t	*texture;
+	uint32_t		color;
+	double			textureposx;
+	int				texture_x;
+	int				texture_y;
+	double			texture_pos;
+	double			shade;
+}	t_texture_data;
+
+typedef struct s_het_wall
+{
+	double	left;
+	double	up;
+	double	right;
+	double	down;
+	int		t_left;
+	int		t_up;
+	int		t_right;
+	int		t_down;
+}	t_het_wall;
 typedef struct s_p_indecator
 {
 	int	indicator_length;
@@ -185,6 +207,7 @@ typedef struct s_vars
 	double	wallbottompixel;
 	double	walltoppixel;
 	int		door;
+	int		door_var;
 }	t_vars;
 
 typedef struct s_minimap_vars
@@ -246,8 +269,6 @@ typedef struct s_cub
 	mlx_image_t		*img[4];
 	mlx_texture_t	*gun[Y_CLICK];
 	mlx_image_t		*gun_img[Y_CLICK];
-	mlx_texture_t	*gun_r[R_CLICK];
-	mlx_image_t		*gun_r_img[R_CLICK];
 	mlx_texture_t	*doors[1];
 	mlx_image_t		*door_img[1];
 	char			**colors;
@@ -259,7 +280,7 @@ typedef struct s_cub
 	int				cur_g_right_clikc;
 	int				doortype;
 	t_minimap_vars	map_data;
-	t_sprite		*sprite;
+	// t_sprite		*sprite;
 	double			angle_0;
 	double			angle_1;
 	pthread_mutex_t	lock;
@@ -279,7 +300,6 @@ void	draw_per(t_cub *cube);
 int		c_rgba(int r, int g, int b, int a);
 
 //raycasting
-void	DDA(t_cub *cube, double X0, double Y0, double X1, double Y1);
 int		has_wall(t_cub *cube, double x1, double y1, int is);
 t_vars	draw_line(t_cub *cube, double angle, int is);
 void	draw_lines(t_cub *cube, int is);
@@ -296,7 +316,6 @@ void	ft_lstdel_doors(t_doors *lst);
 void	ft_lstclear_doors(t_doors **lst);
 
 //wall 
-void	draw_lines_3d(t_cub *cube);
 uint32_t	get_pixel_color(mlx_texture_t *texture, int x, int y);
 
 // sky floor
@@ -322,7 +341,7 @@ double	deg2rad(double degrees);
 // iswall
 int		is_it_a_wall(double x, double y, t_cub *cube);
 
-// player
+void	update_y_press(t_cub *cube);
 
 // draw hero
 void	ft_draw_hero(t_cub *cube, t_vars *vars);
@@ -342,15 +361,19 @@ char	*ft_itoa(int n);
 uint32_t	ft_rgb(uint8_t r, uint8_t g, uint8_t b);
 uint32_t	ft_shaded_color(uint32_t color, double shade);
 t_doors	*ft_get_smallest_dist(t_doors *head);
-void	update_t_press(t_cub *cube);
 void	ft_realse(t_cub *cube, mlx_key_data_t keydata);
 void	ft_press(t_cub *cube, mlx_key_data_t keydata);
 void	ft_press_1(t_cub *cube, mlx_key_data_t keydata);
 void	update_run_on_right_click(t_cub *cube);
 int	calculate_distance(int x1, int y1, int x2, int y2);
 void	draw_inside_head(t_cub *cube);
-void	ft_get_texture_b(t_cub *cube, t_vars vars, int txturnm, int i, int door);
+void	ft_get_texture_b(t_cub *cube, t_vars vars, int txturnm, int i);
 void	ft_get_texture_m(t_cub *cube, t_vars vars, int txturnm, int i);
-void *draw_lines_3D_1(void *tmp);
+void *draw_lines_3d_1(void *tmp);
 t_vars	open_door(t_vars vars, t_cub *cube, double angle);
+void	draw_gun_right_click(t_cub *cube);
+void	*draw_lines_3d(void *tmp);
+void	init_vars_1(t_vars *vars, t_cub *cube, double dis_pr_plan, double angle);
+int	texternum(t_vars vars);
+void	draw_lines_3d_m(t_cub *cube);
 #endif

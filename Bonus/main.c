@@ -96,6 +96,7 @@ void	close_window(void *param)
 	ft_free_data(cube);
 	mlx_delete_image(cube->mlx, cube->image);
 	mlx_close_window(cube->mlx);
+	exit(0);
 }
 
 void	ft_cube_func(t_cub *cube)

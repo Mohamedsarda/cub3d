@@ -12,6 +12,8 @@ SRCS	= main.c ./Parsing/parsing.c ./Parsing/parsing_1.c\
 		  recasting/build_raycasting/recasting_3.c recasting/build_raycasting/recasting_4.c  \
 		  recasting/build_raycasting/recasting_5.c recasting/build_raycasting/recasting_6.c\
 		  recasting/build_raycasting/recasting_7.c recasting/build_raycasting/recasting_8.c \
+		  recasting/build_raycasting/recasting_9.c recasting/build_raycasting/recasting_10.c\
+		  recasting/build_raycasting/recasting_11.c\
 		  recasting/mini_map/ft_mini_map.c recasting/mini_map/ft_mini_map_1.c \
 		  recasting/mini_map/ft_mini_map_2.c\
 		  recasting/raycasting.c recasting/raycasting_1.c\

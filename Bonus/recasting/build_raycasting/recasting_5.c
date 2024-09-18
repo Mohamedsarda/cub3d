@@ -16,12 +16,10 @@ uint32_t	get_pixel_color(mlx_texture_t *texture, int x, int y)
 	if (x < 0 || x >= (int)texture->width || y < 0 || y >= (int)texture->height)
 		return (0);
 	pixels = texture->pixels;
-
 	r = pixels[(int)((y * texture->width + x) * 4)];
 	g = pixels[(int)((y * texture->width + x) * 4) + 1];
 	b = pixels[(int)((y * texture->width + x) * 4) + 2];
 	a = pixels[(int)((y * texture->width + x) * 4) + 3];
-
 	return ((r << 24) | (g << 16) | (b << 8) | a);
 }
 
