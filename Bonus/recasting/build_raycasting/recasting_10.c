@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   recasting_10.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eel-ghal <eel-ghal@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/18 22:03:17 by eel-ghal          #+#    #+#             */
+/*   Updated: 2024/09/18 22:03:18 by eel-ghal         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../../recasting.h"
 
 void	update_player_1(t_cub *cube)
@@ -23,7 +35,7 @@ void	update_player_1(t_cub *cube)
 	else if (cube->player->jump == -1)
 		((1) && (cube->player->move_speed = 3, cube->player->jump_var = 100));
 	else if (cube->player->jump == 0)
-		((1) && (cube->player->move_speed = 3, cube->player->jump_var = 0));
+		((1) && (cube->player->move_speed = 4, cube->player->jump_var = 0));
 	else if (cube->player->jump == 2)
 		cube->player->move_speed = 2;
 }

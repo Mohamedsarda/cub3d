@@ -1,13 +1,13 @@
 C    20,20,0
-SO ../Textures/png/Ground_01.png
+SO ./Textures/png/Ground_01.png
 
 
 
-WE ../Textures/png/4.png
+WE ./Textures/png/4.png
 
 
-EA ../Textures/png/Ground_02.png
-NO ../Textures/png/Ground_03.png
+EA ./Textures/png/Ground_02.png
+NO ./Textures/png/Ground_03.png
 
 F          50,50,50
 

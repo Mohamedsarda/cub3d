@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   recasting.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eel-ghal <eel-ghal@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/18 22:02:26 by eel-ghal          #+#    #+#             */
+/*   Updated: 2024/09/18 22:02:27 by eel-ghal         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef RECASTING_H
 # define RECASTING_H
 
@@ -307,10 +319,6 @@ void		ft_draw_sky_floor_1(t_cub *cube, int i,
 				int sky_end_y, int floor_start_y);
 void		ft_draw_sky_floor(t_cub *cube);
 
-//Draw 
-void		draw_cube(t_cub *cube, int x, int y, int color);
-void		draw_all_black(t_cub *cube);
-
 // raycastin
 void		update_player(t_cub *cube);
 void		handle_mouse(t_cub *cube);
@@ -347,7 +355,6 @@ uint32_t	ft_shaded_color(uint32_t color, double shade);
 void		ft_realse(t_cub *cube, mlx_key_data_t keydata);
 void		ft_press(t_cub *cube, mlx_key_data_t keydata);
 void		ft_press_1(t_cub *cube, mlx_key_data_t keydata);
-void		update_run_on_right_click(t_cub *cube);
 int			calculate_distance(int x1, int y1, int x2, int y2);
 void		draw_inside_head(t_cub *cube);
 void		ft_get_texture_b(t_cub *cube, t_vars vars, int txturnm, int i);
