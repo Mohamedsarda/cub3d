@@ -13,8 +13,8 @@ void	ft_get_player_pos(t_player *player, t_cub *cube)
 		{
 			if (cube->data->map[y][x] == cube->data->p)
 			{
-				player->player_x = (x * tile_size) + (tile_size / 2);
-				player->player_y = (y * tile_size) + (tile_size / 2);
+				player->player_x = (x * TILE_SIZE) + (TILE_SIZE / 2);
+				player->player_y = (y * TILE_SIZE) + (TILE_SIZE / 2);
 			}
 		}
 	}

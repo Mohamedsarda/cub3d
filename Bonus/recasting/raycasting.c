@@ -47,8 +47,8 @@ void	check_if_door(t_cub *cube, t_vars *vars)
 		fy--;
 	if (vars->washitvert && vars->israyfacingleft)
 		fx--;
-	x = floor(fx / tile_size);
-	y = floor(fy / tile_size);
+	x = floor(fx / TILE_SIZE);
+	y = floor(fy / TILE_SIZE);
 	if (cube->data->map[y][x] == 'D' )
 		vars->door = 1;
 }

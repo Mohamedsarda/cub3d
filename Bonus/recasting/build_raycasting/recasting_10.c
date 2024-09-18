@@ -6,7 +6,7 @@ void	update_player_1(t_cub *cube)
 	double			current_time;
 
 	current_time = mlx_get_time();
-	if (cube->y_press && (current_time - last_gun_change_time) > 0.1)
+	if (cube->y_press && (current_time - last_gun_change_time) > 0.11)
 	{
 		if (cube->gun_img[cube->current_gun_index])
 		{
@@ -84,8 +84,8 @@ void	update_player(t_cub *cube)
 		* cube->player->rotation_speed;
 	while_check_move_speed(cube, move_speed);
 	tmp = cube->doors_locations;
-	x = floor(cube->player->player_x / tile_size);
-	y = floor(cube->player->player_y / tile_size);
+	x = floor(cube->player->player_x / TILE_SIZE);
+	y = floor(cube->player->player_y / TILE_SIZE);
 	while (tmp)
 	{
 		tmp->distance = calculate_distance(x, y, tmp->x, tmp->y);

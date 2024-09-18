@@ -61,8 +61,8 @@ void	ft_read_file_0(t_init *init, char **dst)
 
 void	ft_cube_func(t_cub *cube)
 {
-	cube->data->height = cube->data->map_row * tile_size;
-	cube->data->width = cube->data->map_cols * tile_size;
+	cube->data->height = cube->data->map_row * TILE_SIZE;
+	cube->data->width = cube->data->map_cols * TILE_SIZE;
 	ft_fractol_init(cube);
 	mlx_key_hook(cube->mlx, &my_keyhook, cube);
 	mlx_mouse_hook(cube->mlx, &my_mousehook, cube);
@@ -71,9 +71,9 @@ void	ft_cube_func(t_cub *cube)
 	mlx_loop(cube->mlx);
 }
 
-void	f(void)
+void	f()
 {
-	system("leaks cub3D");
+	system("leaks cub3D_bonus");
 }
 
 int	main(int c, char **dst)
