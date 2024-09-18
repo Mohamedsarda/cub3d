@@ -92,7 +92,8 @@ void	*draw_lines_3d_1(void *tmp)
 		vars = draw_line(cube, cube->angle_1, 0);
 		vars = open_door(vars, cube, cube->angle_1);
 		init_vars_1(&vars, cube, distance_proj_plane, cube->angle_1);
-		ft_get_texture_b(cube, vars, texternum(vars), i, (cube->doortype / 2));
+		vars.door_var = (cube->doortype / 2);
+		ft_get_texture_b(cube, vars, texternum(vars), i);
 		cube->angle_1 += (FOV_ANGLE / WIDTH);
 		i++;
 	}

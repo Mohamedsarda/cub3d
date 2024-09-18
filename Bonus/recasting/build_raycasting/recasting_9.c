@@ -34,22 +34,22 @@ void	draw_gun_right_click(t_cub *cube)
 	static int	previous_gun_index;
 	int			gun_index;
 
-	gun_index = cube->cur_g_right_clikc;
-	if (cube->gun_r_img[previous_gun_index])
+	gun_index = 10;
+	if (cube->gun_img[previous_gun_index])
 	{
-		mlx_delete_image(cube->mlx, cube->gun_r_img[previous_gun_index]);
-		cube->gun_r_img[previous_gun_index] = NULL;
+		mlx_delete_image(cube->mlx, cube->gun_img[previous_gun_index]);
+		cube->gun_img[previous_gun_index] = NULL;
 	}
-	if (!cube->gun_r_img[gun_index])
+	if (!cube->gun_img[gun_index])
 	{
-		cube->gun_r_img[gun_index] = mlx_texture_to_image(cube->mlx,
-				cube->gun_r[gun_index]);
-		if (!cube->gun_r_img[gun_index])
+		cube->gun_img[gun_index] = mlx_texture_to_image(cube->mlx,
+				cube->gun[gun_index]);
+		if (!cube->gun_img[gun_index])
 			ft_error();
 	}
-	if (mlx_image_to_window(cube->mlx, cube->gun_r_img[gun_index],
-			WIDTH / 2 - cube->gun_r[gun_index]->width / 2,
-			HEIGHT - cube->gun_r[gun_index]->height) < 0)
+	if (mlx_image_to_window(cube->mlx, cube->gun_img[gun_index],
+			WIDTH / 2 - cube->gun[gun_index]->width / 2,
+			HEIGHT - cube->gun[gun_index]->height) < 0)
 		ft_error();
 	previous_gun_index = gun_index;
 }
@@ -109,7 +109,8 @@ void	*draw_lines_3d(void *tmp)
 		vars = draw_line(cube, cube->angle_0, 0);
 		vars = open_door(vars, cube, cube->angle_0);
 		init_vars_1(&vars, cube, distance_proj_plane, cube->angle_0);
-		ft_get_texture_b(cube, vars, texternum(vars), i, (cube->doortype / 2));
+		vars.door_var = (cube->doortype / 2);
+		ft_get_texture_b(cube, vars, texternum(vars), i);
 		cube->angle_0 += (FOV_ANGLE / WIDTH);
 		i++;
 	}

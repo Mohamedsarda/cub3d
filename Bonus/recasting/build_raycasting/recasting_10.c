@@ -5,9 +5,8 @@ void	update_player_1(t_cub *cube)
 	static double	last_gun_change_time;
 	double			current_time;
 
-	last_gun_change_time = 0;
 	current_time = mlx_get_time();
-	if (cube->y_press && (current_time - last_gun_change_time) > 0.15)
+	if (cube->y_press && (current_time - last_gun_change_time) > 0.1)
 	{
 		if (cube->gun_img[cube->current_gun_index])
 		{
