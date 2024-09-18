@@ -58,3 +58,19 @@ t_player	*init_player(t_cub *cube)
 	ft_init_player_1(player);
 	return (player);
 }
+
+void	ft_check_line(char *tmp, int i)
+{
+	if (ft_strncmp(tmp, "1", 1)
+		&& ft_strncmp(tmp, "C ", 2) != 0
+		&& ft_strncmp(tmp, "F ", 2) != 0
+		&& ft_strncmp(tmp, "EA ", 2) != 0
+		&& ft_strncmp(tmp, "WE ", 2) != 0
+		&& ft_strncmp(tmp, "SO ", 2) != 0
+		&& ft_strncmp(tmp, "NO ", 2) != 0)
+	{
+		printf("Please Remove This unnecessary");
+		printf(" Line From The File, It's on this line %d\n", i + 1);
+		exit (1);
+	}
+}

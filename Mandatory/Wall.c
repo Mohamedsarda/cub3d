@@ -70,8 +70,8 @@ void	draw_lines_3d_m(t_cub *cube)
 	int			texture_num;
 
 	ft_draw_sky_floor(cube);
-	v.distanceprojplane = (WIDTH / 2.0) / tan(FOV_ANGLE / 2);
-	v.angle = cube->player->rotat_angle - FOV_ANGLE / 2.0;
+	v.distanceprojplane = (WIDTH / 2.0) / tan((M_PI / 3) / 2);
+	v.angle = cube->player->rotat_angle - (M_PI / 3) / 2.0;
 	i = -1;
 	while (++i < WIDTH)
 	{
@@ -87,6 +87,6 @@ void	draw_lines_3d_m(t_cub *cube)
 		vars.textureoffsety = 0;
 		texture_num = ft_texture_num(vars);
 		ft_get_texture_m(cube, vars, texture_num, i);
-		v.angle += FOV_ANGLE / WIDTH;
+		v.angle += (M_PI / 3) / WIDTH;
 	}
 }

@@ -42,7 +42,6 @@ typedef struct s_data
 	t_color			sky;
 }	t_data;
 
-
 // parsing
 int		ft_count_map_words(char **map);
 int		my_ft_strlen(char *str);
