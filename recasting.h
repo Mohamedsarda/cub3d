@@ -6,21 +6,13 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <pthread.h>
-// # include "mlx.h"
 # include "./parsing.h"
 # include "../MLX42/include/MLX42/MLX42.h"
-// # define map_row 14
-// # define map_cols 33
-
-//check map
-// # define WIDTH 3000
-// # define HEIGHT 2000
 
 //check 3D
 # define WIDTH 2000
 # define HEIGHT 1000
 # define TILE_SIZE 64
-# define FOV_ANGLE M_PI / 3
 # define WALL_STRIP_WIDTH 1
 # define NUM_RAYS WIDTH
 
@@ -289,11 +281,10 @@ typedef struct s_cub
 	int				cur_g_right_clikc;
 	int				doortype;
 	t_minimap_vars	map_data;
-	// t_sprite		*sprite;
 	double			angle_0;
 	double			angle_1;
 	pthread_mutex_t	lock;
-	t_threads		threads[4];
+	t_threads		threads[2];
 	t_data			*data;
 }		t_cub;
 
