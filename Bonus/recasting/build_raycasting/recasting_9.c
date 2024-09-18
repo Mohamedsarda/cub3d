@@ -102,8 +102,8 @@ void	*draw_lines_3d(void *tmp)
 
 	i = 0;
 	cube = (t_cub *)tmp;
-	distance_proj_plane = (WIDTH / 2.0) / tan(FOV_ANGLE / 2);
-	cube->angle_0 = cube->player->rotat_angle - FOV_ANGLE / 2.0;
+	distance_proj_plane = (WIDTH / 2.0) / tan((M_PI / 3) / 2);
+	cube->angle_0 = cube->player->rotat_angle - (M_PI / 3) / 2.0;
 	while (i < WIDTH / 2)
 	{
 		vars = draw_line(cube, cube->angle_0, 0);
@@ -111,7 +111,7 @@ void	*draw_lines_3d(void *tmp)
 		init_vars_1(&vars, cube, distance_proj_plane, cube->angle_0);
 		vars.door_var = (cube->doortype / 2);
 		ft_get_texture_b(cube, vars, texternum(vars), i);
-		cube->angle_0 += (FOV_ANGLE / WIDTH);
+		cube->angle_0 += ((M_PI / 3) / WIDTH);
 		i++;
 	}
 	return (NULL);

@@ -80,12 +80,12 @@ void	draw_lines(t_cub *cube, int is)
 	int		i;
 
 	cube->is = MAP_SCALE;
-	angle = cube->player->rotat_angle + (FOV_ANGLE / 2);
+	angle = cube->player->rotat_angle + ((M_PI / 3) / 2);
 	i = 0;
 	while (i < NUM_RAYS)
 	{
 		draw_line(cube, angle, is);
-		angle -= FOV_ANGLE / NUM_RAYS;
+		angle -= (M_PI / 3) / NUM_RAYS;
 		i++;
 	}
 }
