@@ -69,8 +69,8 @@ t_vars	open_door(t_vars vars, t_cub *cube, double angle)
 		fx--;
 	if (!vars.washitvert && vars.israyfacingup)
 		fy--;
-	x = floor(fx / tile_size);
-	y = floor(fy / tile_size);
+	x = floor(fx / TILE_SIZE);
+	y = floor(fy / TILE_SIZE);
 	vars = _open(cube, x, y, angle);
 	vars = _close(cube, x, y, angle);
 	return (vars);
@@ -84,7 +84,7 @@ void	*draw_lines_3d_1(void *tmp)
 	t_vars	vars;
 
 	cube = (t_cub *)tmp;
-	distance_proj_plane = (WIDTH / 2.0) / tan(FOV_ANGLE / 2);
+	distance_proj_plane = (WIDTH / 2.0) / tan((M_PI / 3) / 2);
 	cube->angle_1 = cube->player->rotat_angle;
 	i = (WIDTH / 2);
 	while (i < WIDTH)
@@ -94,7 +94,7 @@ void	*draw_lines_3d_1(void *tmp)
 		init_vars_1(&vars, cube, distance_proj_plane, cube->angle_1);
 		vars.door_var = (cube->doortype / 2);
 		ft_get_texture_b(cube, vars, texternum(vars), i);
-		cube->angle_1 += (FOV_ANGLE / WIDTH);
+		cube->angle_1 += ((M_PI / 3) / WIDTH);
 		i++;
 	}
 	return (NULL);

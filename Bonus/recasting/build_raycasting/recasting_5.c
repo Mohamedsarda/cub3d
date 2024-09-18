@@ -63,17 +63,3 @@ uint32_t	ft_shaded_color(uint32_t color, double shade)
 	b = ((color >> 8) & 0xFF) * shade;
 	return ((r << 24) | (g << 16) | (b << 8) | (color & 0xFF));
 }
-
-t_doors	*ft_get_smallest_dist(t_doors *head)
-{
-	t_doors	*low;
-
-	low = head;
-	while (head)
-	{
-		if (head->next && head->next->distance < low->distance)
-			low = head->next;
-		head = head->next;
-	}
-	return (low);
-}

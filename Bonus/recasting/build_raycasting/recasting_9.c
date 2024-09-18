@@ -8,13 +8,13 @@ int	is_it_a_wall(double x, double y, t_cub *cube)
 	player.up = y - ((double)cube->player->radius);
 	player.right = x + ((double)cube->player->radius);
 	player.down = y + ((double)cube->player->radius);
-	if (player.left < 0 || player.right > cube->data->map_cols * tile_size
-		|| player.up < 0 || player.down > cube->data->map_row * tile_size)
+	if (player.left < 0 || player.right > cube->data->map_cols * TILE_SIZE
+		|| player.up < 0 || player.down > cube->data->map_row * TILE_SIZE)
 		return (0);
-	player.t_left = floor(player.left / tile_size);
-	player.t_up = floor(player.up / tile_size);
-	player.t_right = floor(player.right / tile_size);
-	player.t_down = floor(player.down / tile_size);
+	player.t_left = floor(player.left / TILE_SIZE);
+	player.t_up = floor(player.up / TILE_SIZE);
+	player.t_right = floor(player.right / TILE_SIZE);
+	player.t_down = floor(player.down / TILE_SIZE);
 	if (cube->data->map[player.t_up][player.t_left] == '1'
 		|| cube->data->map[player.t_down][player.t_right] == '1'
 		|| cube->data->map[player.t_up][player.t_right] == '1'
@@ -83,7 +83,7 @@ void	init_vars_1(t_vars *vars, t_cub *cube, double dis_pr_plan, double angle)
 
 	wall_distance = vars->distance
 		* cos(angle - cube->player->rotat_angle);
-	wall_strip_height = (tile_size / wall_distance) * dis_pr_plan;
+	wall_strip_height = (TILE_SIZE / wall_distance) * dis_pr_plan;
 	vars->walltoppixel = (HEIGHT / 2.0) - (wall_strip_height / 2.0)
 		- cube->player->player_z - cube->player->jump_var;
 	vars->wallbottompixel = fmin((HEIGHT / 2.0)
@@ -102,8 +102,8 @@ void	*draw_lines_3d(void *tmp)
 
 	i = 0;
 	cube = (t_cub *)tmp;
-	distance_proj_plane = (WIDTH / 2.0) / tan(FOV_ANGLE / 2);
-	cube->angle_0 = cube->player->rotat_angle - FOV_ANGLE / 2.0;
+	distance_proj_plane = (WIDTH / 2.0) / tan((M_PI / 3) / 2);
+	cube->angle_0 = cube->player->rotat_angle - (M_PI / 3) / 2.0;
 	while (i < WIDTH / 2)
 	{
 		vars = draw_line(cube, cube->angle_0, 0);
@@ -111,7 +111,7 @@ void	*draw_lines_3d(void *tmp)
 		init_vars_1(&vars, cube, distance_proj_plane, cube->angle_0);
 		vars.door_var = (cube->doortype / 2);
 		ft_get_texture_b(cube, vars, texternum(vars), i);
-		cube->angle_0 += (FOV_ANGLE / WIDTH);
+		cube->angle_0 += ((M_PI / 3) / WIDTH);
 		i++;
 	}
 	return (NULL);

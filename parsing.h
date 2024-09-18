@@ -1,7 +1,6 @@
 #ifndef PARSING_H
 # define PARSING_H
 
-
 # include <unistd.h>
 # include <fcntl.h>
 # include <stdio.h>
@@ -19,8 +18,6 @@ typedef struct s_init
 	char	**coordinats;
 	char	**colors;
 }	t_init;
-
-
 
 typedef struct s_color
 {
@@ -44,7 +41,6 @@ typedef struct s_data
 	t_color			floor;
 	t_color			sky;
 }	t_data;
-
 
 // parsing
 int		ft_count_map_words(char **map);
