@@ -24,7 +24,7 @@ NAME	= cub3D_bonus
 
 all: $(NAME)
 
-%.o: %.c parsing.h recasting.h
+%.o: %.c ../parsing.h ../recasting.h
 	$(CC) $(CFLAGS) -c $< -o $@
 #-lmlx -framework OpenGL -framework AppKit
 $(NAME): $(OBJS)

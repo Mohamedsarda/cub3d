@@ -71,18 +71,12 @@ void	ft_cube_func(t_cub *cube)
 	mlx_loop(cube->mlx);
 }
 
-void	f()
-{
-	system("leaks cub3D_bonus");
-}
-
 int	main(int c, char **dst)
 {
 	t_init	*init;
 	t_data	*data;
 	t_cub	cube;
 
-	atexit(f);
 	if (c != 2)
 	{
 		ft_putstr_fd("To Play the game u need to provide a map\n", 2);
