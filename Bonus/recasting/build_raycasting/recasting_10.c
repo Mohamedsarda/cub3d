@@ -73,9 +73,6 @@ void	while_check_move_speed(t_cub *cube, double move_speed)
 void	update_player(t_cub *cube)
 {
 	int		move_speed;
-	t_doors	*tmp;
-	int		x;
-	int		y;
 
 	update_player_1(cube);
 	move_speed = cube->player->move_speed;
@@ -83,12 +80,4 @@ void	update_player(t_cub *cube)
 	cube->player->rotat_angle += (double)cube->player->turn_direction
 		* cube->player->rotation_speed;
 	while_check_move_speed(cube, move_speed);
-	tmp = cube->doors_locations;
-	x = floor(cube->player->player_x / TILE_SIZE);
-	y = floor(cube->player->player_y / TILE_SIZE);
-	while (tmp)
-	{
-		tmp->distance = calculate_distance(x, y, tmp->x, tmp->y);
-		tmp = tmp->next;
-	}
 }
