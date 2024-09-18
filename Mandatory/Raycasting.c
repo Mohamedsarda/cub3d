@@ -59,8 +59,8 @@ t_vars	draw_line(t_cub *cube, double angle, int is)
 	ft_draw_ver(cube, &vars);
 	ft_horz_or_ver(&vars, cube);
 	ft_get_wallhit(&vars);
-	x = floor(vars.wallhitx / tile_size);
-	y = floor(vars.wallhity / tile_size);
+	x = floor(vars.wallhitx / TILE_SIZE);
+	y = floor(vars.wallhity / TILE_SIZE);
 	vars.door = 0;
 	if (cube->data->map[y][x] == 'D')
 		vars.door = 1;

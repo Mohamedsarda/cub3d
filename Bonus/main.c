@@ -61,8 +61,8 @@ void	ft_read_file_0(t_init *init, char **dst)
 
 void	ft_cube_func(t_cub *cube)
 {
-	cube->data->height = cube->data->map_row * tile_size;
-	cube->data->width = cube->data->map_cols * tile_size;
+	cube->data->height = cube->data->map_row * TILE_SIZE;
+	cube->data->width = cube->data->map_cols * TILE_SIZE;
 	ft_fractol_init(cube);
 	mlx_key_hook(cube->mlx, &my_keyhook, cube);
 	mlx_mouse_hook(cube->mlx, &my_mousehook, cube);
@@ -71,18 +71,12 @@ void	ft_cube_func(t_cub *cube)
 	mlx_loop(cube->mlx);
 }
 
-void	f(void)
-{
-	system("leaks cub3D");
-}
-
 int	main(int c, char **dst)
 {
 	t_init	*init;
 	t_data	*data;
 	t_cub	cube;
 
-	atexit(f);
 	if (c != 2)
 	{
 		ft_putstr_fd("To Play the game u need to provide a map\n", 2);
