@@ -1,44 +1,25 @@
 #include "../recasting.h"
 #include "../parsing.h"
 
-void	ft_check_line(char *tmp, int i)
+void	ft_count_file_lines_while(int fd, int *i)
 {
-	if (ft_strncmp(tmp, "1", 1)
-		&& ft_strncmp(tmp, "C ", 2) != 0
-		&& ft_strncmp(tmp, "F ", 2) != 0
-		&& ft_strncmp(tmp, "EA ", 2) != 0
-		&& ft_strncmp(tmp, "WE ", 2) != 0
-		&& ft_strncmp(tmp, "SO ", 2) != 0
-		&& ft_strncmp(tmp, "NO ", 2) != 0)
-	{
-		printf("Please Remove This unnecessary");
-		printf(" Line From The File, It's on this line %d\n", i + 1);
-		exit (1);
-	}
-}
+	char	*tmp;
 
-void	ft_check_extention(char *dst)
-{
-	int	i;
-
-	i = 0;
-	while (*dst)
+	while (1)
 	{
-		if (*dst == '.' && i > 2)
+		tmp = get_next_line(fd);
+		if (tmp && (ft_strncmp(tmp, " ", ft_strlen(tmp)) != 0
+				|| ft_strncmp(tmp, "\t", ft_strlen(tmp)) != 0))
+			ft_check_line(tmp, *i);
+		if (!tmp)
 			break ;
-		dst++;
-		i++;
-	}
-	if (!dst[0] || ft_strncmp(dst, ".cub", ft_strlen(dst)) != 0)
-	{
-		printf("The Map Should End With .cub\n");
-		exit (1);
+		free(tmp);
+		(*i)++;
 	}
 }
 
 void	ft_count_file_lines(t_init *init, char **dst)
 {
-	char	*tmp;
 	int		fd;
 	int		i;
 
@@ -51,17 +32,7 @@ void	ft_count_file_lines(t_init *init, char **dst)
 		exit(1);
 	}
 	i = 0;
-	while (1)
-	{
-		tmp = get_next_line(fd);
-		if (tmp && (ft_strncmp(tmp, " ", ft_strlen(tmp)) != 0
-				|| ft_strncmp(tmp, "\t", ft_strlen(tmp)) != 0))
-			ft_check_line(tmp, i);
-		if (!tmp)
-			break ;
-		free(tmp);
-		i++;
-	}
+	ft_count_file_lines_while(fd, &i);
 	init->file_lines = i;
 	close(fd);
 }
@@ -88,17 +59,6 @@ void	ft_read_file_0(t_init *init, char **dst)
 	close(fd);
 }
 
-void	close_window(void *param)
-{
-	t_cub	*cube;
-
-	cube = (t_cub *)param;
-	ft_free_data(cube);
-	mlx_delete_image(cube->mlx, cube->image);
-	mlx_close_window(cube->mlx);
-	exit(0);
-}
-
 void	ft_cube_func(t_cub *cube)
 {
 	cube->data->height = cube->data->map_row * tile_size;
@@ -111,7 +71,7 @@ void	ft_cube_func(t_cub *cube)
 	mlx_loop(cube->mlx);
 }
 
-void	f()
+void	f(void)
 {
 	system("leaks cub3D");
 }
@@ -121,6 +81,7 @@ int	main(int c, char **dst)
 	t_init	*init;
 	t_data	*data;
 	t_cub	cube;
+
 	atexit(f);
 	if (c != 2)
 	{

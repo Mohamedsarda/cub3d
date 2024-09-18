@@ -51,6 +51,17 @@ typedef struct s_texture_data
 	double			shade;
 }	t_texture_data;
 
+typedef struct s_mouse_data
+{
+	int32_t	prev_xpos;
+	int32_t	xpos;
+	int32_t	ypos;
+	double	sensitivity;
+	int32_t	delta_x;
+	int32_t	prev_ypos;
+	int32_t	delta_y;
+}	t_mouse_data;
+
 typedef struct s_het_wall
 {
 	double	left;
@@ -376,4 +387,6 @@ void	*draw_lines_3d(void *tmp);
 void	init_vars_1(t_vars *vars, t_cub *cube, double dis_pr_plan, double angle);
 int	texternum(t_vars vars);
 void	draw_lines_3d_m(t_cub *cube);
+void	ft_check_line(char *tmp, int i);
+void	ft_check_extention(char *dst);
 #endif
