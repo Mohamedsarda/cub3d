@@ -69,8 +69,8 @@ t_vars	open_door(t_vars vars, t_cub *cube, double angle)
 		fx--;
 	if (!vars.washitvert && vars.israyfacingup)
 		fy--;
-	x = floor(fx / tile_size);
-	y = floor(fy / tile_size);
+	x = floor(fx / TILE_SIZE);
+	y = floor(fy / TILE_SIZE);
 	vars = _open(cube, x, y, angle);
 	vars = _close(cube, x, y, angle);
 	return (vars);

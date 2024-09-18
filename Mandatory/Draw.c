@@ -22,12 +22,12 @@ void	draw_cube(t_cub *cube, int x, int y, int color)
 	int	j;
 
 	j = -1;
-	while (++j < tile_size)
+	while (++j < TILE_SIZE)
 	{
 		i = -1;
-		while (++i < tile_size)
-			mlx_put_pixel(cube->image, (x * tile_size) + i,
-				(y * tile_size) + j, color);
+		while (++i < TILE_SIZE)
+			mlx_put_pixel(cube->image, (x * TILE_SIZE) + i,
+				(y * TILE_SIZE) + j, color);
 	}
 	return ;
 }
