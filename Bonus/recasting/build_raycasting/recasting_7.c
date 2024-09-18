@@ -28,33 +28,6 @@ void	my_keyhook(mlx_key_data_t keydata, void *param)
 	}
 }
 
-void	update_run_on_right_click(t_cub *cube)
-{
-	static double	last_gun_change_time;
-	double			current_time;
-
-	last_gun_change_time = 0;
-	current_time = mlx_get_time();
-	if (cube->right_press)
-	{
-		if ((current_time - last_gun_change_time) > 0.15)
-		{
-			if (cube->gun_r_img[cube->cur_g_right_clikc])
-			{
-				mlx_delete_image(cube->mlx,
-					cube->gun_r_img[cube->cur_g_right_clikc]);
-				cube->gun_r_img[cube->cur_g_right_clikc] = NULL;
-			}
-			cube->cur_g_right_clikc++;
-			if (cube->cur_g_right_clikc > 1)
-				cube->cur_g_right_clikc = 0;
-			last_gun_change_time = current_time;
-		}
-	}
-	else
-		cube->cur_g_right_clikc = 0;
-}
-
 int	calculate_distance(int x1, int y1, int x2, int y2)
 {
 	int	delta_x;
@@ -85,31 +58,40 @@ void	draw_inside_head(t_cub *cube)
 	}
 }
 
-void	ft_get_texture_b(t_cub *cube, t_vars vars, int txturnm, int i, int door)
+void	ft_calc_text_data(t_texture_data *v, t_vars vars,
+	int txturnm, t_cub *cube)
 {
-	mlx_texture_t	*texture;
-	double			texturePosX;
-	int				textureX;
-	double			texturePos;
-	double			shade;
-
-	texture = NULL;
+	v->texture = NULL;
 	if (vars.door)
-		texture = cube->doors[0];
+		v->texture = cube->doors[0];
 	else
-		texture = cube->texture[txturnm];
-	texturePosX = vars.washitvert ? fmod(vars.wallhity, tile_size) / tile_size : fmod(vars.wallhitx, tile_size) / tile_size;
-	texturePosX = 1.0 - texturePosX;
-	textureX = (int)(texturePosX * texture->width);
-	texturePos = vars.textureoffsety * vars.texturestep;
-	shade = fmax(0.2, 1.0 - (vars.distance / 500.0));
+		v->texture = cube->texture[txturnm];
+	v->textureposx = fmod(vars.wallhitx, tile_size) / tile_size;
+	if (vars.washitvert)
+		v->textureposx = fmod(vars.wallhity, tile_size) / tile_size;
+	v->textureposx = 1.0 - v->textureposx;
+	v->texture_x = (int)(v->textureposx * v->texture->width);
+	v->texture_pos = vars.textureoffsety * vars.texturestep;
+	v->shade = fmax(0.2, 1.0 - (vars.distance / 500.0));
+}
 
-	for (int y = vars.walltoppixel; y < vars.wallbottompixel && y < HEIGHT; y++)
+void	ft_get_texture_b(t_cub *cube, t_vars vars, int txturnm, int i)
+{
+	int				y;
+	t_texture_data	v;
+
+	ft_calc_text_data(&v, vars, txturnm, cube);
+	y = vars.walltoppixel;
+	while (y < vars.wallbottompixel && y < HEIGHT)
 	{
-		int textureY = (int)(texturePos * texture->height) % texture->height;
-		texturePos += vars.texturestep;
-		uint32_t color = get_pixel_color(texture, textureX, textureY);
-		if (!(door && ((ft_shaded_color(color, shade) & 0xFFFFFF00) == 0)) && y >= 0)
-			mlx_put_pixel(cube->image, i, y, ft_shaded_color(color, shade));
+		v.texture_y = (int)(v.texture_pos
+				* v.texture->height) % v.texture->height;
+		v.texture_pos += vars.texturestep;
+		v.color = get_pixel_color(v.texture, v.texture_x, v.texture_y);
+		if (!(vars.door_var
+				&& ((ft_shaded_color(v.color, v.shade) & 0xFFFFFF00) == 0))
+			&& y >= 0)
+			mlx_put_pixel(cube->image, i, y, ft_shaded_color(v.color, v.shade));
+		y++;
 	}
 }
