@@ -17,7 +17,6 @@ SRCS	= main.c ./Parsing/parsing.c ./Parsing/parsing_1.c\
 		  recasting/mini_map/ft_mini_map.c recasting/mini_map/ft_mini_map_1.c \
 		  recasting/mini_map/ft_mini_map_2.c\
 		  recasting/raycasting.c recasting/raycasting_1.c\
-		  ./linked/struct_doors.c
 
 OBJS	= $(SRCS:.c=.o)
 NAME	= cub3D_bonus

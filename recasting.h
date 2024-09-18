@@ -86,15 +86,6 @@ typedef struct s_map_background
 	int	dy;
 }	t_map_background;
 
-typedef struct s_doors
-{
-	int				x;
-	int				y;
-	int				distance;
-	int				state;
-	struct s_doors	*next;
-}	t_doors;
-
 typedef struct s_vars_3d
 {
 	double	distanceprojplane;
@@ -262,7 +253,6 @@ typedef struct s_pixel_vars
 typedef struct s_cub
 {
 	char			**map;
-	t_doors			*doors_locations;
 	mlx_image_t		*image;
 	mlx_t			*mlx;
 	t_player		*player;
@@ -308,12 +298,6 @@ double		normalize_angle(double angle);
 void		ft_draw_player(t_cub *cube);
 void		my_mousehook(mouse_key_t bt, action_t ac,
 				modifier_key_t md, void *pa);
-///
-t_doors		*ft_lstnew_doors(int x, int y);
-void		ft_lstaddback_doors(t_doors **head, t_doors *node);
-int			ft_doors_size(t_doors *head);
-void		ft_lstdel_doors(t_doors *lst);
-void		ft_lstclear_doors(t_doors **lst);
 
 //wall 
 uint32_t	get_pixel_color(mlx_texture_t *texture, int x, int y);
@@ -360,7 +344,6 @@ void		ft_load_doors(t_cub *cube, int i, char *path);
 char		*ft_itoa(int n);
 uint32_t	ft_rgb(uint8_t r, uint8_t g, uint8_t b);
 uint32_t	ft_shaded_color(uint32_t color, double shade);
-t_doors		*ft_get_smallest_dist(t_doors *head);
 void		ft_realse(t_cub *cube, mlx_key_data_t keydata);
 void		ft_press(t_cub *cube, mlx_key_data_t keydata);
 void		ft_press_1(t_cub *cube, mlx_key_data_t keydata);

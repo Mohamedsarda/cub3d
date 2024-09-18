@@ -86,3 +86,23 @@ void	ft_press_1(t_cub *cube, mlx_key_data_t keydata)
 	if (keydata.key == MLX_KEY_LEFT_CONTROL)
 		cube->player->jump = -1;
 }
+
+void	ft_get_player_pos(t_player *player, t_cub *cube)
+{
+	int		x;
+	int		y;
+
+	y = -1;
+	while (++y < cube->data->map_row)
+	{
+		x = -1;
+		while (++x < cube->data->map_cols)
+		{
+			if (cube->data->map[y][x] == cube->data->p)
+			{
+				player->player_x = (x * TILE_SIZE) + (TILE_SIZE / 2);
+				player->player_y = (y * TILE_SIZE) + (TILE_SIZE / 2);
+			}
+		}
+	}
+}
