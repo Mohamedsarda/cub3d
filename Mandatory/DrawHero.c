@@ -7,15 +7,15 @@ int	c_rgba(int r, int g, int b, int a)
 
 static void	ft_hero_calc(t_cub *cube, t_vars *vars)
 {
-	vars->y_intercept = floor(cube->player->player_y / tile_size) * tile_size;
+	vars->y_intercept = floor(cube->player->player_y / TILE_SIZE) * TILE_SIZE;
 	if (vars->israyfacingdown)
-		vars->y_intercept += tile_size;
+		vars->y_intercept += TILE_SIZE;
 	vars->x_intercept = cube->player->player_x
 		+ (vars->y_intercept - cube->player->player_y) / tan(vars->angle);
-	vars->ystep = tile_size;
+	vars->ystep = TILE_SIZE;
 	if (vars->israyfacingup)
 		vars->ystep *= -1;
-	vars->xstep = tile_size / tan(vars->angle);
+	vars->xstep = TILE_SIZE / tan(vars->angle);
 	if (vars->israyfacingleft && vars->xstep > 0)
 		vars->xstep *= -1;
 	if (vars->israyfacingright && vars->xstep < 0)
@@ -33,9 +33,9 @@ void	ft_draw_hero(t_cub *cube, t_vars *vars)
 	if (vars->israyfacingup)
 		a = 1;
 	while (vars->nexthorztouchx > 0
-		&& vars->nexthorztouchx < cube->data->map_cols * tile_size
+		&& vars->nexthorztouchx < cube->data->map_cols * TILE_SIZE
 		&& vars->nexthorztouchy > 0
-		&& vars->nexthorztouchy < cube->data->map_row * tile_size)
+		&& vars->nexthorztouchy < cube->data->map_row * TILE_SIZE)
 	{
 		if (has_wall(cube, vars->nexthorztouchx, vars->nexthorztouchy, a))
 		{

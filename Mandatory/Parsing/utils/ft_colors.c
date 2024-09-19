@@ -11,8 +11,7 @@ int	ft_count_cammas(char *ptr)
 		return (-1);
 	while (ptr[i])
 	{
-		if (ptr[i] == ',' && (ptr[i + 1]
-				&& ptr[i + 1] >= '0' && ptr[i + 1] <= '9'))
+		if (ptr[i] == ',')
 			comma++;
 		i++;
 	}
@@ -62,12 +61,12 @@ int	ft_check_char(char c, int is)
 {
 	if (is == 1)
 		return (c == '1' || c == '0' || c == 'N' || c == 'E'
-			|| c == 'W' || c == 'S' || c == 'D' || c == '$' || c == '\t');
+			|| c == 'W' || c == 'S' || c == '$' || c == '\t');
 	if (is == 2)
 		return (c == 'N' || c == 'E' || c == 'W' || c == 'S');
 	if (is == 3)
 		return (c == '1' || c == '0' || c == 'N'
-			|| c == 'E' || c == 'W' || c == 'S' || c == 'D');
+			|| c == 'E' || c == 'W' || c == 'S');
 	return (c == '0' || c == 'N' || c == 'E'
-		|| c == 'W' || c == 'S' || c == 'D');
+		|| c == 'W' || c == 'S');
 }

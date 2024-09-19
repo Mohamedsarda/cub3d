@@ -13,8 +13,8 @@ static void	init_wh_if(t_cub *cube, int is, int x, int y)
 	{
 		cube->map_data.world_x = cube->player->player_x + x * 2;
 		cube->map_data.world_y = cube->player->player_y + y * 2;
-		cube->map_data.map_x = floor(cube->map_data.world_x / tile_size);
-		cube->map_data.map_y = floor(cube->map_data.world_y / tile_size);
+		cube->map_data.map_x = floor(cube->map_data.world_x / TILE_SIZE);
+		cube->map_data.map_y = floor(cube->map_data.world_y / TILE_SIZE);
 	}
 	else
 	{
