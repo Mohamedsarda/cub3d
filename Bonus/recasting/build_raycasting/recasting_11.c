@@ -52,4 +52,8 @@ void	handle_mouse(t_cub *cube)
 	v.prev_ypos = HEIGHT / 2;
 	v.delta_y = v.ypos - v.prev_ypos;
 	cube->player->player_z = cube->player->player_z + v.delta_y;
+	if (cube->player->player_z > 1000)
+		cube->player->player_z = 1000;
+	if (cube->player->player_z < -1000)
+		cube->player->player_z = -1000;
 }

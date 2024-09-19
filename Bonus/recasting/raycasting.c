@@ -47,8 +47,8 @@ void	check_if_door(t_cub *cube, t_vars *vars)
 		fy--;
 	if (vars->washitvert && vars->israyfacingleft)
 		fx--;
-	x = floor(fx / tile_size);
-	y = floor(fy / tile_size);
+	x = floor(fx / TILE_SIZE);
+	y = floor(fy / TILE_SIZE);
 	if (cube->data->map[y][x] == 'D' )
 		vars->door = 1;
 }
@@ -80,12 +80,12 @@ void	draw_lines(t_cub *cube, int is)
 	int		i;
 
 	cube->is = MAP_SCALE;
-	angle = cube->player->rotat_angle + (FOV_ANGLE / 2);
+	angle = cube->player->rotat_angle + ((M_PI / 3) / 2);
 	i = 0;
 	while (i < NUM_RAYS)
 	{
 		draw_line(cube, angle, is);
-		angle -= FOV_ANGLE / NUM_RAYS;
+		angle -= (M_PI / 3) / NUM_RAYS;
 		i++;
 	}
 }

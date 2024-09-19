@@ -9,8 +9,8 @@ int	has_wall(t_cub *cube, double x1, double y1, int is)
 		y1--;
 	else if (is == 2)
 		x1--;
-	x = floor(x1 / tile_size);
-	y = floor(y1 / tile_size);
+	x = floor(x1 / TILE_SIZE);
+	y = floor(y1 / TILE_SIZE);
 	if (cube->data->map[y][x] == '1'
 		|| cube->data->map[y][x] == 'D' || cube->data->map[y][x] == 'O')
 		return (1);
@@ -22,9 +22,9 @@ static void	ft_draw_her_wh(t_cub *cube, t_vars *vars, int a)
 	int	wall;
 
 	while (vars->nexthorztouchx > 0
-		&& vars->nexthorztouchx < cube->data->map_cols * tile_size
+		&& vars->nexthorztouchx < cube->data->map_cols * TILE_SIZE
 		&& vars->nexthorztouchy > 0
-		&& vars->nexthorztouchy < cube->data->map_row * tile_size)
+		&& vars->nexthorztouchy < cube->data->map_row * TILE_SIZE)
 	{
 		wall = has_wall(cube, vars->nexthorztouchx, vars->nexthorztouchy, a);
 		if (wall == 1)
@@ -47,15 +47,15 @@ void	ft_draw_hero(t_cub *cube, t_vars *vars)
 {
 	int	a;
 
-	vars->y_intercept = floor(cube->player->player_y / tile_size) * tile_size;
+	vars->y_intercept = floor(cube->player->player_y / TILE_SIZE) * TILE_SIZE;
 	if (vars->israyfacingdown)
-		vars->y_intercept += tile_size;
+		vars->y_intercept += TILE_SIZE;
 	vars->x_intercept = cube->player->player_x
 		+ (vars->y_intercept - cube->player->player_y) / tan(vars->angle);
-	vars->ystep = tile_size;
+	vars->ystep = TILE_SIZE;
 	if (vars->israyfacingup)
 		vars->ystep *= -1;
-	vars->xstep = tile_size / tan(vars->angle);
+	vars->xstep = TILE_SIZE / tan(vars->angle);
 	if (vars->israyfacingleft && vars->xstep > 0)
 		vars->xstep *= -1;
 	if (vars->israyfacingright && vars->xstep < 0)
@@ -73,9 +73,9 @@ static void	ft_draw_ver_wh(t_cub *cube, t_vars *vars, int a)
 	int	wall;
 
 	while (vars->nextverttouchx > 0
-		&& vars->nextverttouchx < cube->data->map_cols * tile_size
+		&& vars->nextverttouchx < cube->data->map_cols * TILE_SIZE
 		&& vars->nextverttouchy > 0
-		&& vars->nextverttouchy < cube->data->map_row * tile_size)
+		&& vars->nextverttouchy < cube->data->map_row * TILE_SIZE)
 	{
 		wall = has_wall(cube, vars->nextverttouchx, vars->nextverttouchy, a);
 		if (wall == 1)
@@ -101,15 +101,15 @@ void	ft_draw_ver(t_cub *cube, t_vars *vars)
 	vars->foundvertwallhit = 0;
 	vars->vertwallhitx = 0;
 	vars->vertwallhity = 0;
-	vars->x_intercept = floor(cube->player->player_x / tile_size) * tile_size;
+	vars->x_intercept = floor(cube->player->player_x / TILE_SIZE) * TILE_SIZE;
 	if (vars->israyfacingright)
-		vars->x_intercept += tile_size;
+		vars->x_intercept += TILE_SIZE;
 	vars->y_intercept = cube->player->player_y
 		+ (vars->x_intercept - cube->player->player_x) * tan(vars->angle);
-	vars->xstep = tile_size;
+	vars->xstep = TILE_SIZE;
 	if (vars->israyfacingleft)
 		vars->xstep *= -1;
-	vars->ystep = tile_size * tan(vars->angle);
+	vars->ystep = TILE_SIZE * tan(vars->angle);
 	if (vars->israyfacingup && vars->ystep > 0)
 		vars->ystep *= -1;
 	if (vars->israyfacingdown && vars->ystep < 0)

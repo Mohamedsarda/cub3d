@@ -7,11 +7,11 @@ void	draw_lines(t_cub *cube, int is)
 
 	cube->is = MAP_SCALE;
 	i = 0;
-	angle = cube->player->rotat_angle + (FOV_ANGLE / 2);
+	angle = cube->player->rotat_angle + ((M_PI / 3) / 2);
 	while (i < NUM_RAYS)
 	{
 		draw_line(cube, angle, is);
-		angle -= FOV_ANGLE / NUM_RAYS;
+		angle -= (M_PI / 3) / NUM_RAYS;
 		i++;
 	}
 }
@@ -22,12 +22,12 @@ void	draw_cube(t_cub *cube, int x, int y, int color)
 	int	j;
 
 	j = -1;
-	while (++j < tile_size)
+	while (++j < TILE_SIZE)
 	{
 		i = -1;
-		while (++i < tile_size)
-			mlx_put_pixel(cube->image, (x * tile_size) + i,
-				(y * tile_size) + j, color);
+		while (++i < TILE_SIZE)
+			mlx_put_pixel(cube->image, (x * TILE_SIZE) + i,
+				(y * TILE_SIZE) + j, color);
 	}
 	return ;
 }

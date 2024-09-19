@@ -44,15 +44,15 @@ static void	ft_ver_calc(t_cub *cube, t_vars *vars)
 	vars->foundvertwallhit = 0;
 	vars->vertwallhitx = 0;
 	vars->vertwallhity = 0;
-	vars->x_intercept = floor(cube->player->player_x / tile_size) * tile_size;
+	vars->x_intercept = floor(cube->player->player_x / TILE_SIZE) * TILE_SIZE;
 	if (vars->israyfacingright)
-		vars->x_intercept += tile_size;
+		vars->x_intercept += TILE_SIZE;
 	vars->y_intercept = cube->player->player_y
 		+ (vars->x_intercept - cube->player->player_x) * tan(vars->angle);
-	vars->xstep = tile_size;
+	vars->xstep = TILE_SIZE;
 	if (vars->israyfacingleft)
 		vars->xstep *= -1;
-	vars->ystep = tile_size * tan(vars->angle);
+	vars->ystep = TILE_SIZE * tan(vars->angle);
 	if (vars->israyfacingup && vars->ystep > 0)
 		vars->ystep *= -1;
 	if (vars->israyfacingdown && vars->ystep < 0)
@@ -70,9 +70,9 @@ void	ft_draw_ver(t_cub *cube, t_vars *vars)
 	if (vars->israyfacingleft)
 		a = 2;
 	while (vars->nextverttouchx > 0
-		&& vars->nextverttouchx < cube->data->map_cols * tile_size
+		&& vars->nextverttouchx < cube->data->map_cols * TILE_SIZE
 		&& vars->nextverttouchy > 0
-		&& vars->nextverttouchy < cube->data->map_row * tile_size)
+		&& vars->nextverttouchy < cube->data->map_row * TILE_SIZE)
 	{
 		if (has_wall(cube, vars->nextverttouchx, vars->nextverttouchy, a))
 		{

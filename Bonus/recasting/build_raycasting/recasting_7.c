@@ -66,9 +66,9 @@ void	ft_calc_text_data(t_texture_data *v, t_vars vars,
 		v->texture = cube->doors[0];
 	else
 		v->texture = cube->texture[txturnm];
-	v->textureposx = fmod(vars.wallhitx, tile_size) / tile_size;
+	v->textureposx = fmod(vars.wallhitx, TILE_SIZE) / TILE_SIZE;
 	if (vars.washitvert)
-		v->textureposx = fmod(vars.wallhity, tile_size) / tile_size;
+		v->textureposx = fmod(vars.wallhity, TILE_SIZE) / TILE_SIZE;
 	v->textureposx = 1.0 - v->textureposx;
 	v->texture_x = (int)(v->textureposx * v->texture->width);
 	v->texture_pos = vars.textureoffsety * vars.texturestep;
