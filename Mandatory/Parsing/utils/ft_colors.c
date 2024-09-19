@@ -11,8 +11,7 @@ int	ft_count_cammas(char *ptr)
 		return (-1);
 	while (ptr[i])
 	{
-		if (ptr[i] == ',' && (ptr[i + 1]
-				&& ptr[i + 1] >= '0' && ptr[i + 1] <= '9'))
+		if (ptr[i] == ',')
 			comma++;
 		i++;
 	}
