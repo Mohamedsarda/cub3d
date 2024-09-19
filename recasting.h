@@ -360,7 +360,6 @@ void		init_vars_1(t_vars *vars, t_cub *cube,
 				double dis_pr_plan, double angle);
 int			texternum(t_vars vars);
 void		draw_lines_3d_m(t_cub *cube);
-void		ft_check_line(char *tmp, int i);
 void		ft_check_extention(char *dst);
 
 #endif
