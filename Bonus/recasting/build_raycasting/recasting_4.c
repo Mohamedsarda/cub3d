@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   recasting_4.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eel-ghal <eel-ghal@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/18 22:02:30 by eel-ghal          #+#    #+#             */
+/*   Updated: 2024/09/18 22:02:31 by eel-ghal         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../../recasting.h"
 
 void	init_player_1(t_cub *cube, t_player *player)
@@ -50,22 +62,6 @@ t_player	*init_player(t_cub *cube)
 int	c_rgba(int r, int g, int b, int a)
 {
 	return ((r << 24) | (g << 16) | (b << 8) | a);
-}
-
-void	draw_cube(t_cub *cube, int x, int y, int color)
-{
-	int	i;
-	int	j;
-
-	j = -1;
-	while (++j < TILE_SIZE)
-	{
-		i = -1;
-		while (++i < TILE_SIZE)
-			mlx_put_pixel(cube->image, (x * TILE_SIZE) + i,
-				(y * TILE_SIZE) + j, color);
-	}
-	return ;
 }
 
 double	normalize_angle(double angle)

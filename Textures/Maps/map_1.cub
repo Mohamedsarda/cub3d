@@ -3,7 +3,7 @@ SO ../Textures/png/Ground_01.png
 
 C    20,20,0
 
-WE ../Textures/png/4.png
+WE ./Textures/png/4.png
 
      EA ../Textures/png/Ground_02.png
 NO ../Textures/png/Ground_03.png
