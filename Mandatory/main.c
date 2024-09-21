@@ -6,7 +6,7 @@
 /*   By: eel-ghal <eel-ghal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 22:04:15 by eel-ghal          #+#    #+#             */
-/*   Updated: 2024/09/18 22:04:16 by eel-ghal         ###   ########.fr       */
+/*   Updated: 2024/09/21 23:01:48 by eel-ghal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,25 +91,6 @@ void	ft_cube_func(t_cub *cube)
 	mlx_loop(cube->mlx);
 }
 
-void f()
-{
-	system("leaks cub3D");
-}
-
-void	ft_free_init(t_init *init, t_data *data)
-{
-	free_double_arr(init->file);
-	free_double_arr(init->colors);
-	free_double_arr(init->map);
-	free_double_arr(init->coordinats);
-	free(init);
-	free(data->ea);
-	free(data->we);
-	free(data->so);
-	free(data->no);
-	free(data);
-}
-
 int	main(int c, char **dst)
 {
 	t_init	*init;
@@ -121,7 +102,6 @@ int	main(int c, char **dst)
 		ft_putstr_fd("To Play the game u need to provide a map\n", 2);
 		return (1);
 	}
-	atexit(f);
 	data = NULL;
 	data = (t_data *)ft_calloc(sizeof(t_data));
 	init = (t_init *)ft_calloc(sizeof(t_init));

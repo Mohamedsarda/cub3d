@@ -6,7 +6,7 @@
 /*   By: eel-ghal <eel-ghal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 22:02:26 by eel-ghal          #+#    #+#             */
-/*   Updated: 2024/09/18 22:02:27 by eel-ghal         ###   ########.fr       */
+/*   Updated: 2024/09/21 23:04:30 by eel-ghal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -369,4 +369,6 @@ int			texternum(t_vars vars);
 void		draw_lines_3d_m(t_cub *cube);
 void		ft_check_extention(char *dst);
 
+void		ft_free_init(t_init *init, t_data *data);
+void		ft_free_init_b(t_init *init, t_data *data);
 #endif

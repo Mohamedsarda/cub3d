@@ -6,7 +6,7 @@
 /*   By: eel-ghal <eel-ghal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 22:04:13 by eel-ghal          #+#    #+#             */
-/*   Updated: 2024/09/18 22:04:15 by eel-ghal         ###   ########.fr       */
+/*   Updated: 2024/09/21 23:01:54 by eel-ghal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,4 +60,18 @@ double	normalize_angle(double angle)
 	if (angle < 0)
 		angle += 2 * M_PI;
 	return (angle);
+}
+
+void	ft_free_init(t_init *init, t_data *data)
+{
+	free_double_arr(init->file);
+	free_double_arr(init->colors);
+	free_double_arr(init->map);
+	free_double_arr(init->coordinats);
+	free(init);
+	free(data->ea);
+	free(data->we);
+	free(data->so);
+	free(data->no);
+	free(data);
 }

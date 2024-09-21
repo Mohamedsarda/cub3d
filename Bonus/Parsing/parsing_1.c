@@ -6,7 +6,7 @@
 /*   By: eel-ghal <eel-ghal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 22:03:00 by eel-ghal          #+#    #+#             */
-/*   Updated: 2024/09/18 22:03:01 by eel-ghal         ###   ########.fr       */
+/*   Updated: 2024/09/21 23:04:39 by eel-ghal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,4 +85,18 @@ int	ft_count_map_words(char **map)
 		i++;
 	}
 	return (counter);
+}
+
+void	ft_free_init_b(t_init *init, t_data *data)
+{
+	free_double_arr(init->file);
+	free_double_arr(init->colors);
+	free_double_arr(init->map);
+	free_double_arr(init->coordinats);
+	free(init);
+	free(data->ea);
+	free(data->we);
+	free(data->so);
+	free(data->no);
+	free(data);
 }

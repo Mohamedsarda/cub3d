@@ -6,7 +6,7 @@
 /*   By: eel-ghal <eel-ghal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 22:03:38 by eel-ghal          #+#    #+#             */
-/*   Updated: 2024/09/18 22:03:39 by eel-ghal         ###   ########.fr       */
+/*   Updated: 2024/09/21 23:04:34 by eel-ghal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,21 +80,6 @@ void	ft_cube_func(t_cub *cube)
 	mlx_loop(cube->mlx);
 }
 
-
-void	ft_free_init(t_init *init, t_data *data)
-{
-	free_double_arr(init->file);
-	free_double_arr(init->colors);
-	free_double_arr(init->map);
-	free_double_arr(init->coordinats);
-	free(init);
-	free(data->ea);
-	free(data->we);
-	free(data->so);
-	free(data->no);
-	free(data);
-}
-
 int	main(int c, char **dst)
 {
 	t_init	*init;
@@ -115,7 +100,7 @@ int	main(int c, char **dst)
 	init->file = (char **)ft_calloc((init->file_lines + 1) * sizeof(t_init *));
 	ft_read_file_0(init, dst);
 	if (ft_get_data_init(init, data) == -1)
-		return (ft_free_init(init, data), 1);
+		return (ft_free_init_b(init, data), 1);
 	if (ft_get_data(init, data) == -1)
 		return (ft_check_map_print(data), 1);
 	free(init);
