@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   recasting_3.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eel-ghal <eel-ghal@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/18 22:03:08 by eel-ghal          #+#    #+#             */
+/*   Updated: 2024/09/18 22:25:32 by eel-ghal         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../../recasting.h"
 
 char	**arr_guns(void)
@@ -14,7 +26,7 @@ char	**arr_guns(void)
 		return (NULL);
 	while (++i < Y_CLICK)
 	{
-		tmp = ft_strdup("../Textures/png/guns_0/");
+		tmp = ft_strdup("./Textures/png/guns_0/");
 		num = ft_itoa(i);
 		str = ft_strjoin(tmp, num);
 		str = ft_strjoin(str, ".png");
@@ -81,7 +93,7 @@ void	ft_fractol_init(t_cub *cube)
 	if (!cube->image || (mlx_image_to_window(cube->mlx, cube->image, 0, 0) < 0))
 		ft_error();
 	ft_load_guns(cube);
-	ft_load_doors(cube, 0, "../Textures/Doors/tile000.png");
+	ft_load_doors(cube, 0, "./Textures/Doors/tile000.png");
 	ft_load_textures(cube);
 	cube->player = init_player(cube);
 }
