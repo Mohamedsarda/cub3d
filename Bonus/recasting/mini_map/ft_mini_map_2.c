@@ -1,6 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_mini_map_2.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eel-ghal <eel-ghal@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/18 22:03:30 by eel-ghal          #+#    #+#             */
+/*   Updated: 2024/09/18 22:06:27 by eel-ghal         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../../recasting.h"
-// v.sx = cube->player->minimap_player_x < v.end_x ? 1 : -1;
-// v.sy = cube->player->minimap_player_y < v.end_y ? 1 : -1;
 
 void	ft_draw_player_indecator_helper(t_p_indecator *v, t_cub *cube)
 {

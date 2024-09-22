@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Draw.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eel-ghal <eel-ghal@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/18 22:02:28 by eel-ghal          #+#    #+#             */
+/*   Updated: 2024/09/18 22:04:07 by eel-ghal         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../recasting.h"
 
 void	draw_lines(t_cub *cube, int is)
@@ -13,37 +25,6 @@ void	draw_lines(t_cub *cube, int is)
 		draw_line(cube, angle, is);
 		angle -= (M_PI / 3) / NUM_RAYS;
 		i++;
-	}
-}
-
-void	draw_cube(t_cub *cube, int x, int y, int color)
-{
-	int	i;
-	int	j;
-
-	j = -1;
-	while (++j < TILE_SIZE)
-	{
-		i = -1;
-		while (++i < TILE_SIZE)
-			mlx_put_pixel(cube->image, (x * TILE_SIZE) + i,
-				(y * TILE_SIZE) + j, color);
-	}
-	return ;
-}
-
-void	draw_all_black(t_cub *cube)
-{
-	int	x;
-	int	y;
-
-	y = -1;
-	x = -1;
-	while (++y < HEIGHT)
-	{
-		x = -1;
-		while (++x < WIDTH)
-			mlx_put_pixel(cube->image, x, y, c_rgba(0, 0, 0, 150));
 	}
 }
 

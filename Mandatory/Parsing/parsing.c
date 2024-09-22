@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eel-ghal <eel-ghal@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/18 22:04:05 by eel-ghal          #+#    #+#             */
+/*   Updated: 2024/09/18 22:04:06 by eel-ghal         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../parsing.h"
 
 static int	validate_color_input(char **colors, t_data *data)
@@ -5,7 +17,6 @@ static int	validate_color_input(char **colors, t_data *data)
 	int	len;
 
 	len = ft_strlen(colors[0]);
-	printf("%s %d\n", colors[1], ft_count_cammas(colors[1]));
 	if (len != 1 || ft_count_cammas(colors[1]) != 2
 		|| colors[1][ft_strlen(colors[1]) - 1] == ',')
 		return (free_double_arr(colors), ft_check_color_print(data), -1);

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   raycasting_1.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eel-ghal <eel-ghal@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/18 22:03:35 by eel-ghal          #+#    #+#             */
+/*   Updated: 2024/09/18 22:03:36 by eel-ghal         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../recasting.h"
 
 int	has_wall(t_cub *cube, double x1, double y1, int is)
@@ -12,7 +24,7 @@ int	has_wall(t_cub *cube, double x1, double y1, int is)
 	x = floor(x1 / TILE_SIZE);
 	y = floor(y1 / TILE_SIZE);
 	if (cube->data->map[y][x] == '1'
-		|| cube->data->map[y][x] == 'D' || cube->data->map[y][x] == 'O')
+		|| cube->data->map[y][x] == 'D')
 		return (1);
 	return (0);
 }

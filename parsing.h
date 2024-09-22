@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eel-ghal <eel-ghal@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/18 22:04:49 by eel-ghal          #+#    #+#             */
+/*   Updated: 2024/09/18 22:04:50 by eel-ghal         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PARSING_H
 # define PARSING_H
 
@@ -44,7 +56,6 @@ typedef struct s_data
 
 // parsing
 int		ft_count_map_words(char **map);
-int		my_ft_strlen(char *str);
 int		ft_count_map_door(char **map);
 int		ft_get_color_data(t_init *init, t_data *data, int type);
 
@@ -82,7 +93,6 @@ int		ft_get_data(t_init *init, t_data *data);
 
 void	ft_check_color_print(t_data *data);
 void	ft_print_cords_err(t_init *init);
-void	ft_check_file(t_init *init);
 void	ft_check_map_print(t_data *data);
 
 // ft_colors
@@ -101,6 +111,5 @@ void	ft_open_files(t_data *data);
 int		ft_map_check_words(char **map);
 int		check_only_space(char *str);
 int		ft_get_player(t_data *data);
-int		ft_check_map(t_data *data);
 
 #endif
