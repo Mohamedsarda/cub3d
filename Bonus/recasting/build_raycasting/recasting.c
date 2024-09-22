@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   recasting.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eel-ghal <eel-ghal@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/18 22:03:19 by eel-ghal          #+#    #+#             */
+/*   Updated: 2024/09/18 22:03:20 by eel-ghal         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../../recasting.h"
 #include <time.h>
 
@@ -51,7 +63,6 @@ void	loop_fun(void *param)
 	cube = (t_cub *)param;
 	update_player(cube);
 	mlx_get_mouse_pos(cube->mlx, &xpos, &ypos);
-	update_player(cube);
 	ft_threads(cube);
 	draw_per(cube);
 	update_y_press(cube);
