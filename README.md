@@ -1,5 +1,7 @@
 # Cub3D
 
+![alt text](/Textures/cub.png)
+
 Cub3D is a 42 project that involves creating a 3D graphical application inspired by the game Wolfenstein 3D. This project demonstrates a basic understanding of raycasting techniques, handling textures, and creating a real-time rendering engine.
 
 ---
@@ -70,9 +72,7 @@ Cub3D is a 42 project that involves creating a 3D graphical application inspired
   - Only valid characters (`0`, `1`, `N`, `S`, `E`, `W`, etc.).
 - Raycasting algorithm for rendering.
 
-
 ---
-
 
 ## Authors
 
@@ -86,6 +86,3 @@ Cub3D is a 42 project that involves creating a 3D graphical application inspired
 - 42 Network for the project.
 - Resources on raycasting and 3D rendering.
 - Peers and collaborators for feedback and support.
-
-
-
